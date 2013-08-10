@@ -1,7 +1,7 @@
 package plg.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import plg.exceptions.IllegalSequenceException;
 import plg.exceptions.InvalidProcessException;
@@ -14,17 +14,17 @@ public class Process {
 
 	private String name;
 	private boolean valid = false;
-	private List<StartEvent> startEvents;
-	private List<Task> tasks;
-	private List<EndEvent> endEvents;
-	private List<Sequence> sequences;
+	private Set<StartEvent> startEvents;
+	private Set<Task> tasks;
+	private Set<EndEvent> endEvents;
+	private Set<Sequence> sequences;
 	
 	public Process(String name) {
 		this.name = name;
-		this.startEvents = new ArrayList<StartEvent>();
-		this.endEvents = new ArrayList<EndEvent>();
-		this.tasks = new ArrayList<Task>();
-		this.sequences = new ArrayList<Sequence>();
+		this.startEvents = new HashSet<StartEvent>();
+		this.endEvents = new HashSet<EndEvent>();
+		this.tasks = new HashSet<Task>();
+		this.sequences = new HashSet<Sequence>();
 	}
 	
 	public void setName(String name) {
@@ -47,15 +47,21 @@ public class Process {
 			if (se.isIsolated()) {
 				throw new InvalidProcessException("Invalid model: " + se + " is isolated.");
 			}
-		}
-		for(Task t : tasks) {
-			if (t.isIsolated()) {
-				throw new InvalidProcessException("Invalid model: " + t + " is isolated.");
+			if (!se.canReachEndEvent()) {
+				throw new InvalidProcessException("Invalid model: " + se + " cannot reach an end event.");
 			}
 		}
 		for(EndEvent ee : endEvents) {
 			if (ee.isIsolated()) {
 				throw new InvalidProcessException("Invalid model: " + ee + " is isolated.");
+			}
+		}
+		for(Task t : tasks) {
+			if (t.isIsolated()) {
+				throw new InvalidProcessException("Invalid model: " + t + " is isolated.");
+			}
+			if (!t.canReachEndEvent()) {
+				throw new InvalidProcessException("Invalid model: " + t + " cannot reach an end event.");
 			}
 		}
 	}
