@@ -1,17 +1,19 @@
 package plg.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
+
+import plg.model.event.EndEvent;
 
 public abstract class FlowObject extends Component {
 
-	private List<FlowObject> incoming;
-	private List<FlowObject> outgoing;
+	private Set<FlowObject> incoming;
+	private Set<FlowObject> outgoing;
 	
 	public FlowObject(Process owner) {
 		super(owner);
-		this.incoming = new ArrayList<FlowObject>();
-		this.outgoing = new ArrayList<FlowObject>();
+		this.incoming = new HashSet<FlowObject>();
+		this.outgoing = new HashSet<FlowObject>();
 	}
 	
 	public boolean isIsolated() {
@@ -44,11 +46,45 @@ public abstract class FlowObject extends Component {
 		}
 	}
 	
-	public List<FlowObject> getIncomingObjects() {
+	public Set<FlowObject> getIncomingObjects() {
 		return incoming;
 	}
 	
-	public List<FlowObject> getOutgoingObjects() {
+	public Set<FlowObject> getOutgoingObjects() {
 		return outgoing;
+	}
+	
+	/**
+	 * This method can be used to know whether the current object can reach at
+	 * least one {@link EndEvent}.
+	 * 
+	 * @return <tt>true</tt> if the current object can reach and end event,
+	 * <tt>false</tt> otherwise
+	 */
+	public boolean canReachEndEvent() {
+		return canReachEndEvent(new HashSet<FlowObject>());
+	}
+	
+	/**
+	 * This private method is the actual recursive method that implements the
+	 * depth-first search.
+	 * 
+	 * @param visitedObjects the list of objects already visited
+	 * @return <tt>true</tt> if the current object can reach and end event,
+	 * <tt>false</tt> otherwise
+	 */
+	private boolean canReachEndEvent(Set<FlowObject> visitedObjects) {
+		if (this instanceof EndEvent) {
+			return true;
+		}
+		for(FlowObject o : outgoing) {
+			if (!visitedObjects.contains(o)) {
+				visitedObjects.add(o);
+				if (o.canReachEndEvent(visitedObjects)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }
