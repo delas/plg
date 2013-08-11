@@ -127,6 +127,22 @@ public class Process {
 		return new Sequence(this, source, sink);
 	}
 	
+	public Set<StartEvent> getStartEvents() {
+		return startEvents;
+	}
+
+	public Set<Task> getTasks() {
+		return tasks;
+	}
+
+	public Set<EndEvent> getEndEvents() {
+		return endEvents;
+	}
+
+	public Set<Sequence> getSequences() {
+		return sequences;
+	}
+
 	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
