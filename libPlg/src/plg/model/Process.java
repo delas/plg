@@ -10,15 +10,26 @@ import plg.model.event.EndEvent;
 import plg.model.event.StartEvent;
 import plg.model.sequence.Sequence;
 
+/**
+ * This class represents a process. A process, in this context, is a set of
+ * start and end events, a set of tasks and a set of connections.
+ * 
+ * @author Andrea Burattin
+ */
 public class Process {
 
 	private String name;
-	private boolean valid = false;
+	private Boolean valid = null;
 	private Set<StartEvent> startEvents;
 	private Set<Task> tasks;
 	private Set<EndEvent> endEvents;
 	private Set<Sequence> sequences;
 	
+	/**
+	 * Process constructor. This constructor creates and empty process.
+	 * 
+	 * @param name the name of the new process
+	 */
 	public Process(String name) {
 		this.name = name;
 		this.startEvents = new HashSet<StartEvent>();
@@ -27,46 +38,89 @@ public class Process {
 		this.sequences = new HashSet<Sequence>();
 	}
 	
+	/**
+	 * Method to set the process name
+	 * 
+	 * @param name the name of the process
+	 */
 	public void setName(String name) {
 		this.name = name;
 	}
 	
+	/**
+	 * Method to get the process name
+	 * 
+	 * @return the name of the process
+	 */
 	public String getName() {
 		return name;
 	}
 	
-	public void check() throws InvalidProcessException {
+	/**
+	 * This method verifies that the process is <em>valid</em>. In this context,
+	 * a process is <em>valid</em> if it contains at least one start event, one
+	 * end event, one task, and if from every start event and from every task,
+	 * it is possible to reach an end event.
+	 * 
+	 * @throws InvalidProcessException exception thrown if the process is not
+	 * valid
+	 * @return <tt>true</tt> if the process is <em>valid</em>
+	 */
+	public boolean check() throws InvalidProcessException {
 		if (startEvents.isEmpty()) {
+			valid = false;
 			throw new InvalidProcessException("Invalid model: no start event given.");
 		}
 		if (endEvents.isEmpty()) {
+			valid = false;
 			throw new InvalidProcessException("Invalid model: no end event given.");
 		}
 		
 		for(StartEvent se : startEvents) {
 			if (se.isIsolated()) {
+				valid = false;
 				throw new InvalidProcessException("Invalid model: " + se + " is isolated.");
 			}
 			if (!se.canReachEndEvent()) {
+				valid = false;
 				throw new InvalidProcessException("Invalid model: " + se + " cannot reach an end event.");
 			}
 		}
 		for(EndEvent ee : endEvents) {
 			if (ee.isIsolated()) {
+				valid = false;
 				throw new InvalidProcessException("Invalid model: " + ee + " is isolated.");
 			}
 		}
 		for(Task t : tasks) {
 			if (t.isIsolated()) {
+				valid = false;
 				throw new InvalidProcessException("Invalid model: " + t + " is isolated.");
 			}
 			if (!t.canReachEndEvent()) {
+				valid = false;
 				throw new InvalidProcessException("Invalid model: " + t + " cannot reach an end event.");
 			}
 		}
+		valid = true;
+		return true;
 	}
 	
+	/**
+	 * This method can be used to get the cached value returned by the
+	 * {@link #check()} method.
+	 * 
+	 * @return <tt>true</tt> if the process is <em>valid</em>, <tt>false</tt>
+	 * otherwise
+	 */
 	public boolean isValid() {
+		if (valid == null) {
+			try {
+				valid = check();
+			} catch (InvalidProcessException e) {
+				valid = false;
+			}
+		}
 		return valid;
 	}
 	
