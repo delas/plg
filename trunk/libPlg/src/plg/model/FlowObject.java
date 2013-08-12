@@ -3,7 +3,7 @@ package plg.model;
 import java.util.HashSet;
 import java.util.Set;
 
-import plg.data.DataObject;
+import plg.model.data.DataObject;
 import plg.model.event.EndEvent;
 import plg.model.sequence.Sequence;
 

@@ -1,4 +1,4 @@
-package plg.data;
+package plg.model.data;
 
 import plg.model.Component;
 import plg.model.FlowObject;
