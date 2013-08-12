@@ -124,6 +124,12 @@ public class Process {
 		return valid;
 	}
 	
+	/**
+	 * This method is used to register every process components, to the
+	 * corresponding process.
+	 * 
+	 * @param component the component to be registered
+	 */
 	public void registerComponent(Component component) {
 		if (component instanceof StartEvent) {
 			startEvents.add((StartEvent) component);
@@ -140,6 +146,12 @@ public class Process {
 		}
 	}
 	
+	/**
+	 * This method can be used to remove a process component. If the given
+	 * component is not registered, then nothing will be removed.
+	 * 
+	 * @param component the component to remove
+	 */
 	public void removeComponent(Component component) {
 		if (component instanceof FlowObject) {
 			for(Sequence s : sequences) {
@@ -165,34 +177,77 @@ public class Process {
 		}
 	}
 	
+	/**
+	 * This method creates a new task registered to the current process.
+	 * 
+	 * @param name the new task name
+	 * @return the newly created task
+	 */
 	public Task newTask(String name) {
 		return new Task(this, name);
 	}
 	
+	/**
+	 * This method creates a new start event registered to the current process.
+	 * 
+	 * @return the newly created start event
+	 */
 	public StartEvent newStartEvent() {
 		return new StartEvent(this);
 	}
 	
+	/**
+	 * This method creates a new end event registered to the current process.
+	 * 
+	 * @return the newly created end event
+	 */
 	public EndEvent newEndEvent() {
 		return new EndEvent(this);
 	}
 	
+	/**
+	 * This method creates a new sequence registered to the current process.
+	 * 
+	 * @param source the source object of the sequence
+	 * @param sink the destination object of the sequence
+	 * @return the newly created sequence
+	 */
 	public Sequence newSequence(FlowObject source, FlowObject sink) throws IllegalSequenceException {
 		return new Sequence(this, source, sink);
 	}
 	
+	/**
+	 * This method returns all the registered start events
+	 * 
+	 * @return the set of start event
+	 */
 	public Set<StartEvent> getStartEvents() {
 		return startEvents;
 	}
 
+	/**
+	 * This method returns all the registered tasks
+	 *  
+	 * @return the set of task
+	 */
 	public Set<Task> getTasks() {
 		return tasks;
 	}
 
+	/**
+	 * This method returns all the registered end events
+	 * 
+	 * @return the set of end events
+	 */
 	public Set<EndEvent> getEndEvents() {
 		return endEvents;
 	}
 
+	/**
+	 * This method returns all the registered sequences
+	 * 
+	 * @return the set of sequences
+	 */
 	public Set<Sequence> getSequences() {
 		return sequences;
 	}
