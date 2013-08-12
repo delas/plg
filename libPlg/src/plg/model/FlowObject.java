@@ -3,6 +3,7 @@ package plg.model;
 import java.util.HashSet;
 import java.util.Set;
 
+import plg.data.DataObject;
 import plg.model.event.EndEvent;
 import plg.model.sequence.Sequence;
 
@@ -18,6 +19,7 @@ import plg.model.sequence.Sequence;
  */
 public abstract class FlowObject extends Component {
 
+	private Set<DataObject> dataObjects;
 	private Set<FlowObject> incoming;
 	private Set<FlowObject> outgoing;
 	
@@ -28,6 +30,7 @@ public abstract class FlowObject extends Component {
 	 */
 	public FlowObject(Process owner) {
 		super(owner);
+		this.dataObjects = new HashSet<DataObject>();
 		this.incoming = new HashSet<FlowObject>();
 		this.outgoing = new HashSet<FlowObject>();
 	}
@@ -105,6 +108,38 @@ public abstract class FlowObject extends Component {
 	 */
 	public Set<FlowObject> getOutgoingObjects() {
 		return outgoing;
+	}
+	
+	/**
+	 * This method to add a new data object to the current flow object
+	 * 
+	 * @param data the data object to be added to the current flow object
+	 */
+	public void addDataObject(DataObject data) {
+		if (!dataObjects.contains(data)) {
+			dataObjects.add(data);
+		}
+	}
+	
+	/**
+	 * This method to remove the given data object from the current flow object
+	 * 
+	 * @param data the data object to be removed from the current flow object
+	 */
+	public void removeDataObject(DataObject data) {
+		if (dataObjects.contains(data)) {
+			dataObjects.remove(data);
+		}
+	}
+	
+	/**
+	 * This method returns the set of all the data objects associated to the
+	 * current flow object
+	 * 
+	 * @return the set of data objects
+	 */
+	public Set<DataObject> getDataObjects() {
+		return dataObjects;
 	}
 	
 	/**

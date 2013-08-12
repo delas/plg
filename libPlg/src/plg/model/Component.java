@@ -15,9 +15,9 @@ public abstract class Component {
 	protected Process owner;
 	
 	/**
-	 * This method creates a new component and registers it to the given process
-	 * owner. This constructor is also responsible for the generation of the
-	 * component identifier.
+	 * This method creates a new component and tries to register it to the
+	 * given process owner. This constructor is also responsible for the
+	 * generation of the component identifier.
 	 * 
 	 * @param owner the process owner of this component
 	 */
@@ -34,6 +34,15 @@ public abstract class Component {
 	 */
 	public int getComponentId() {
 		return componentId;
+	}
+	
+	/**
+	 * This method returns the component owner
+	 * 
+	 * @return the process owner of the component
+	 */
+	public Process getOwner() {
+		return owner;
 	}
 	
 	/**
