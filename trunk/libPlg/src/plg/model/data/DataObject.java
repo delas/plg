@@ -27,6 +27,17 @@ public class DataObject extends Component {
 	}
 	
 	/**
+	 * This method sets the data object attribute name and value
+	 * 
+	 * @param name the name to set
+	 * @param value the value to set
+	 */
+	public void set(String name, Object value) {
+		setName(name);
+		setValue(value);
+	}
+	
+	/**
 	 * This method returns the attribute name of the data object
 	 * 
 	 * @return the name of the current data object
