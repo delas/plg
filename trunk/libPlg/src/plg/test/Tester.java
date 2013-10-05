@@ -1,16 +1,18 @@
 package plg.test;
 
 import plg.exceptions.IllegalSequenceException;
+import plg.exceptions.InvalidDataObject;
 import plg.exceptions.InvalidProcessException;
 import plg.model.Process;
 import plg.model.activity.Task;
 import plg.model.data.DataObject;
+import plg.model.data.TimeDataObject;
 import plg.model.event.EndEvent;
 import plg.model.event.StartEvent;
 
 public class Tester {
 
-	public static void main(String[] args) throws IllegalSequenceException, InvalidProcessException {
+	public static void main(String[] args) throws IllegalSequenceException, InvalidProcessException, InvalidDataObject {
 		Process p = new Process("test");
 		
 		StartEvent start = p.newStartEvent();
@@ -19,6 +21,9 @@ public class Tester {
 		Task a = p.newTask("a");
 		Task b = p.newTask("b");
 		Task c = p.newTask("c");
+		
+		TimeDataObject tdo = new TimeDataObject(a, 0, 100);
+		System.out.println(tdo.getValue());
 		
 		DataObject a_d1 = new DataObject(a);
 		a_d1.set("test_string", "test value");

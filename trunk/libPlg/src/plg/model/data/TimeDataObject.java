@@ -48,6 +48,8 @@ public class TimeDataObject extends DataObject {
 					" has already a TimeDataObject.");
 			}
 		}
+		
+		generateInstanceDuration();
 	}
 	
 	/**
@@ -56,7 +58,12 @@ public class TimeDataObject extends DataObject {
 	 * 
 	 * @return the duration (in seconds) of the current instance
 	 */
-	public Integer getInstanceDuration() {
-		return minDuration + randomGenerator.nextInt(maxDuration - minDuration);
+	public void generateInstanceDuration() {
+		setValue(minDuration + randomGenerator.nextInt(maxDuration - minDuration));
+	}
+	
+	@Override
+	public Integer getValue() {
+		return (Integer) super.getValue();
 	}
 }
