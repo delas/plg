@@ -57,6 +57,6 @@ public class TimeDataObject extends DataObject {
 	 * @return the duration (in seconds) of the current instance
 	 */
 	public Integer getInstanceDuration() {
-		return minDuration + randomGenerator.nextInt(maxDuration);
+		return minDuration + randomGenerator.nextInt(maxDuration - minDuration);
 	}
 }
