@@ -94,7 +94,7 @@ public class DataObject extends Component {
 		this.objectOwner = objectOwner;
 		this.objectOwner.addDataObject(this);
 	}
-
+	
 	@Override
 	public String getComponentName() {
 		return "Data Object";

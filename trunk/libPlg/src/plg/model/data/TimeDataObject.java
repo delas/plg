@@ -17,7 +17,7 @@ import plg.model.activity.Activity;
  * 
  * @author Andrea Burattin
  */
-public class TimeDataObject extends DataObject {
+public class TimeDataObject extends GeneratedDataObject {
 
 	private static Random randomGenerator = new Random();
 	private Integer minDuration = 0;
@@ -49,16 +49,11 @@ public class TimeDataObject extends DataObject {
 			}
 		}
 		
-		generateInstanceDuration();
+		generateInstance("");
 	}
 	
-	/**
-	 * This method returns the duration of the current activity instance.
-	 * Different invocations of this method may return different values.
-	 * 
-	 * @return the duration (in seconds) of the current instance
-	 */
-	public void generateInstanceDuration() {
+	@Override
+	public void generateInstance(String caseId) {
 		setValue(minDuration + randomGenerator.nextInt(maxDuration - minDuration));
 	}
 	
