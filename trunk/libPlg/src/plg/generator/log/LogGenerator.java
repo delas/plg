@@ -92,6 +92,8 @@ public class LogGenerator {
 				} else if (dataObj instanceof StringDataObject) {
 					((GeneratedDataObject) dataObj).generateInstance(caseId);
 					XLogHelper.decorateElement(e, dataObj.getName(), (String) dataObj.getValue());
+				} else if (dataObj instanceof DataObject) {
+					XLogHelper.decorateElement(e, dataObj.getName(), (String) dataObj.getValue());
 				}
 			}
 		}

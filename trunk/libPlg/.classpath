@@ -5,5 +5,10 @@
 	<classpathentry kind="lib" path="lib/Spex.jar"/>
 	<classpathentry kind="lib" path="lib/jython-standalone-2.5.3.jar"/>
 	<classpathentry kind="lib" path="lib/OpenXES.jar"/>
+	<classpathentry kind="lib" path="lib/jdom-2.0.5.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/libPlg/lib/jdom-2.0.5-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
