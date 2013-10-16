@@ -2,9 +2,17 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
-	<classpathentry kind="lib" path="lib/Spex.jar"/>
-	<classpathentry kind="lib" path="lib/jython-standalone-2.5.3.jar"/>
-	<classpathentry kind="lib" path="lib/OpenXES.jar"/>
-	<classpathentry kind="lib" path="lib/jdom-2.0.5.jar"/>
+	<classpathentry kind="lib" path="lib/prom/OpenXES.jar"/>
+	<classpathentry kind="lib" path="lib/prom/Spex.jar"/>
+	<classpathentry kind="lib" path="lib/jython/jython-standalone-2.5.3.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/libPlg/lib/jython/jython-standalone-2.7-b1-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/jdom/jdom-2.0.5.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/libPlg/lib/jdom/jdom-2.0.5-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
