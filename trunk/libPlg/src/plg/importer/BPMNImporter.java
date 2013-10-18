@@ -30,7 +30,7 @@ import plg.model.sequence.Sequence;
 public class BPMNImporter implements AbstractImporter {
 
 	private static final Namespace ns = Namespace.getNamespace("http://schema.omg.org/spec/BPMN/2.0");
-	private static final Pattern REGEX_SIMPLE = Pattern.compile("(\\w+)\\s*=\\s*(\\w+)");
+	private static final Pattern REGEX_SIMPLE = Pattern.compile("(\\S+)\\s*=\\s*(\\S+)");
 	private static final Pattern REGEX_INTEGER_SCRIPT = Pattern.compile("(?i)\\s*(\\S+)\\s*\\(\\s*Integer\\s*\\)\\s*");
 	private static final Pattern REGEX_STRING_SCRIPT = Pattern.compile("(?i)\\s*(\\S+)\\s*\\(\\s*String\\s*\\)\\s*");
 	
