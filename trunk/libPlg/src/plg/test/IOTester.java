@@ -16,25 +16,39 @@ import plg.model.Process;
 public class IOTester {
 
 	public static void main(String[] args) throws InvalidProcessException, FileNotFoundException, IOException {
-		System.out.println("start");
+		if (args.length != 3) {
+			System.err.println("Please use: java -jar ProcessGenerator.jar MODEL_FILE LOG_DESTINATION NO_TRACES");
+			System.exit(-1);
+		}
 		
+		String modelFile = args[0];
+		String logDestination = args[1];
+		Integer noTraces = Integer.parseInt(args[2]);
+		
+		System.out.println("Welcome!");
+		
+		System.out.println("Model: " + modelFile);
+		System.out.println("Log destination: " + logDestination);
+		System.out.println("No. of traces: " + noTraces);
+		
+		System.out.print("1. Importing model... ");
 		BPMNImporter importer = new BPMNImporter();
-		System.out.print("importing... ");
-		Process p = importer.importModel("/home/delas/desktop/model.xml");
-		System.out.println("done");
+		Process p = importer.importModel(modelFile);
+		System.out.println("done!");
 		
-		System.out.print("checking... ");
+		System.out.print("2. Model checking... ");
 		p.check();
-		System.out.println("done");
+		System.out.println("done!");
 		
-		System.out.print("generating log... ");
+		System.out.print("3. Generating log... ");
 		LogGenerator generator = new LogGenerator(p);
-		XLog log = generator.generateLog(1000);
-		System.out.println("done");
-		System.out.print("exporting log... ");
+		XLog log = generator.generateLog(noTraces);
+		System.out.println("done!");
+		
+		System.out.print("4. Exporting log... ");
 		XSerializer serializer = new XMxmlSerializer();
-		serializer.serialize(log, new FileOutputStream("/home/delas/desktop/log.mxml"));
-		System.out.println("done");
+		serializer.serialize(log, new FileOutputStream(logDestination));
+		System.out.println("done!");
 	}
 
 }
