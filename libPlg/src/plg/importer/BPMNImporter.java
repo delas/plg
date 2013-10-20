@@ -27,6 +27,21 @@ import plg.model.gateway.ExclusiveGateway;
 import plg.model.gateway.ParallelGateway;
 import plg.model.sequence.Sequence;
 
+/**
+ * This importing module works with process models represented as BPMN. In
+ * particular, this class imports from XML files expresses using the
+ * {@link http://schema.omg.org/spec/BPMN/2.0}.
+ * 
+ * This class imports:
+ * <ul>
+ * 	<li>start and end events;</li>
+ * 	<li>tasks;</li>
+ * 	<li>AND and XOR gateways;</li>
+ * 	<li>data objects.</li>
+ * </ul>
+ * 
+ * @author Andrea Burattin
+ */
 public class BPMNImporter implements AbstractImporter {
 
 	private static final Namespace ns = Namespace.getNamespace("http://schema.omg.org/spec/BPMN/2.0");
@@ -89,8 +104,12 @@ public class BPMNImporter implements AbstractImporter {
 			// Data Objects
 			for (Element ds : process.getChildren("dataObject", ns)) {
 				String doId = ds.getAttributeValue("id");
-				for(Task t : dataObjectToTasks.get(doId)) {
-					parseDataObject(ds, t);
+				if (dataObjectToTasks.containsKey(doId)) {
+					for(Task t : dataObjectToTasks.get(doId)) {
+						parseDataObject(ds, t, p);
+					}
+				} else {
+					parseDataObject(ds, null, p);
 				}
 			}
 			
@@ -100,7 +119,15 @@ public class BPMNImporter implements AbstractImporter {
 		return p;
 	}
 	
-	private DataObject parseDataObject(Element dataObjectElement, FlowObject owner) {
+	/**
+	 * Method that parses a data object XML structure to generate the logic
+	 * business object
+	 * 
+	 * @param dataObjectElement
+	 * @param owner
+	 * @return
+	 */
+	private DataObject parseDataObject(Element dataObjectElement, FlowObject owner, Process process) {
 		DataObject dataObject = null;
 		String name = dataObjectElement.getAttributeValue("name");
 		Matcher matcherSimple = REGEX_SIMPLE.matcher(name);
@@ -108,17 +135,21 @@ public class BPMNImporter implements AbstractImporter {
 		Matcher matcherStringScript = REGEX_STRING_SCRIPT.matcher(name);
 		
 		if (matcherSimple.matches()) {
-			dataObject = new DataObject(owner);
+			dataObject = new DataObject(process);
 			dataObject.setName(matcherSimple.group(1));
 			dataObject.setValue(matcherSimple.group(2));
 		} else if (matcherIntegerScript.matches()) {
 			String script = dataObjectElement.getChildText("documentation", ns);
-			dataObject = new IntegerDataObject(owner, new IntegerScriptExecutor(script));
+			dataObject = new IntegerDataObject(process, new IntegerScriptExecutor(script));
 			dataObject.setName(matcherIntegerScript.group(1));
 		} else if (matcherStringScript.matches()) {
 			String script = dataObjectElement.getChildText("documentation", ns);
-			dataObject = new StringDataObject(owner, new StringScriptExecutor(script));
+			dataObject = new StringDataObject(process, new StringScriptExecutor(script));
 			dataObject.setName(matcherStringScript.group(1));
+		}
+		
+		if (owner != null) {
+			dataObject.setObjectOwner(owner);
 		}
 		
 		return dataObject;

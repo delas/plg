@@ -2,6 +2,7 @@ package plg.model.data;
 
 import plg.exceptions.InvalidScript;
 import plg.generator.scriptexecuter.ScriptExecutor;
+import plg.model.Process;
 import plg.model.FlowObject;
 
 /**
@@ -18,12 +19,37 @@ public abstract class GeneratedDataObject extends DataObject {
 	 * Class constructor that build a new data object associated to the current
 	 * process.
 	 * 
-	 * @param owner the process owner of this data object
+	 * @param processOwner the process owner of this data object
+	 * @param objectOwner the process owner of this data object
+	 * @param generateInstance manually decide whether the instance value
+	 * should be generated or not
+	 */
+	protected GeneratedDataObject(Process processOwner, FlowObject objectOwner) {
+		super(processOwner, objectOwner);
+	}
+	
+	/**
+	 * Class constructor that build a new data object associated to the current
+	 * process.
+	 * 
+	 * @param objectOwner the process owner of this data object
 	 * @param generateInstance manually decide whether the instance value
 	 * should be generated or not
 	 */
 	protected GeneratedDataObject(FlowObject objectOwner) {
-		super(objectOwner);
+		this(objectOwner.getOwner(), objectOwner);
+	}
+	
+	/**
+	 * Class constructor that build a new data object associated to the current
+	 * process.
+	 * 
+	 * @param processOwner the process owner of this data object
+	 * @param generateInstance manually decide whether the instance value
+	 * should be generated or not
+	 */
+	protected GeneratedDataObject(Process processOwner) {
+		this(processOwner, null);
 	}
 
 	/**

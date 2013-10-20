@@ -6,6 +6,7 @@ import java.util.Set;
 import plg.exceptions.IllegalSequenceException;
 import plg.exceptions.InvalidProcessException;
 import plg.model.activity.Task;
+import plg.model.data.DataObject;
 import plg.model.event.EndEvent;
 import plg.model.event.StartEvent;
 import plg.model.sequence.Sequence;
@@ -24,6 +25,7 @@ public class Process {
 	private Set<Task> tasks;
 	private Set<EndEvent> endEvents;
 	private Set<Sequence> sequences;
+	private Set<DataObject> dataObjects;
 	
 	/**
 	 * Process constructor. This constructor creates and empty process.
@@ -36,6 +38,7 @@ public class Process {
 		this.endEvents = new HashSet<EndEvent>();
 		this.tasks = new HashSet<Task>();
 		this.sequences = new HashSet<Sequence>();
+		this.dataObjects = new HashSet<DataObject>();
 	}
 	
 	/**
@@ -143,6 +146,8 @@ public class Process {
 		} else if (component instanceof Sequence) {
 			sequences.add((Sequence) component);
 			valid = false;
+		} else if (component instanceof DataObject) {
+			dataObjects.add((DataObject) component);
 		}
 	}
 	
@@ -250,6 +255,16 @@ public class Process {
 	 */
 	public Set<Sequence> getSequences() {
 		return sequences;
+	}
+
+	/**
+	 * This method returns all the registered data objects associated to the
+	 * process
+	 * 
+	 * @return the set of data objects
+	 */
+	public Set<DataObject> getDataObjects() {
+		return dataObjects;
 	}
 
 	@Override

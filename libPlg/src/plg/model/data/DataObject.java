@@ -2,10 +2,11 @@ package plg.model.data;
 
 import plg.model.Component;
 import plg.model.FlowObject;
+import plg.model.Process;
 
 /**
- * This class describes a general data object that can be associated to any flow
- * object
+ * This class describes a general data object. Each data object must be
+ * associated to a process model and possibly to any flow object.
  * 
  * @author Andrea Burattin
  */
@@ -19,11 +20,34 @@ public class DataObject extends Component {
 	 * Class constructor that build a new data object associated to the current
 	 * process.
 	 * 
-	 * @param owner the process owner of this data object
+	 * @param processOwner the process owner of this data object
+	 * @param objectOwner the flow object owner owner of this data object
+	 */
+	public DataObject(Process processOwner, FlowObject objectOwner) {
+		super(processOwner);
+		if (objectOwner != null) {
+			setObjectOwner(objectOwner);
+		}
+	}
+	
+	/**
+	 * Class constructor that build a new data object associated to the current
+	 * process.
+	 * 
+	 * @param processOwner the process owner of this data object
+	 */
+	public DataObject(Process processOwner) {
+		this(processOwner, null);
+	}
+	
+	/**
+	 * Class constructor that build a new data object associated to the current
+	 * process.
+	 * 
+	 * @param objectOwner the flow object owner owner of this data object
 	 */
 	public DataObject(FlowObject objectOwner) {
-		super(objectOwner.getOwner());
-		setObjectOwner(objectOwner);
+		this(objectOwner.getOwner(), objectOwner);
 	}
 	
 	/**
@@ -80,6 +104,15 @@ public class DataObject extends Component {
 	 */
 	public FlowObject getObjectOwner() {
 		return objectOwner;
+	}
+
+	/**
+	 * This method returns the object owner of the data object
+	 * 
+	 * @return the object owner
+	 */
+	public Process getProcessOwner() {
+		return getOwner();
 	}
 
 	/**
