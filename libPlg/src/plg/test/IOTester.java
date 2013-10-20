@@ -7,17 +7,18 @@ import java.io.IOException;
 import org.deckfour.xes.model.XLog;
 import org.deckfour.xes.out.XMxmlSerializer;
 import org.deckfour.xes.out.XSerializer;
+import org.deckfour.xes.out.XesXmlSerializer;
 
 import plg.exceptions.InvalidProcessException;
 import plg.generator.log.LogGenerator;
 import plg.importer.BPMNImporter;
 import plg.model.Process;
 
-public class IOTester {
+public class LogGeneratorMain {
 
 	public static void main(String[] args) throws InvalidProcessException, FileNotFoundException, IOException {
 		if (args.length != 3) {
-			System.err.println("Please use: java -jar ProcessGenerator.jar MODEL_FILE LOG_DESTINATION NO_TRACES");
+			System.err.println("Please use: java -jar LogGenerator.jar MODEL_FILE LOG_DESTINATION NO_TRACES");
 			System.exit(-1);
 		}
 		
@@ -47,6 +48,9 @@ public class IOTester {
 		
 		System.out.print("4. Exporting log... ");
 		XSerializer serializer = new XMxmlSerializer();
+		if (logDestination.substring(logDestination.length() - 3).equals("xes")) {
+			serializer = new XesXmlSerializer();
+		}
 		serializer.serialize(log, new FileOutputStream(logDestination));
 		System.out.println("done!");
 	}
