@@ -11,7 +11,7 @@ import plg.model.data.TimeDataObject;
 import plg.model.event.EndEvent;
 import plg.model.event.StartEvent;
 
-public class ModelTester {
+public class TestModel {
 
 	public static void main(String[] args) throws IllegalSequenceException, InvalidProcessException, InvalidDataObject {
 		Process p = new Process("test");
