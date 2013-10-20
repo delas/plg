@@ -16,7 +16,6 @@ import plg.model.data.DataObject;
 import plg.model.data.GeneratedDataObject;
 import plg.model.data.IntegerDataObject;
 import plg.model.data.StringDataObject;
-import plg.model.data.TimeDataObject;
 import plg.model.event.StartEvent;
 import plg.model.gateway.ExclusiveGateway;
 import plg.model.gateway.ParallelGateway;
@@ -44,6 +43,20 @@ public class LogGenerator {
 		observedComponents = new HashSet<Component>();
 		XTrace trace = XLogHelper.insertTrace(log, caseId);
 		processFlowObject(SetUtils.getRandom(process.getStartEvents()), trace);
+		
+		for (DataObject dataObj : process.getDataObjects()) {
+			if (dataObj.getObjectOwner() == null) {
+				if (dataObj instanceof IntegerDataObject) {
+					((GeneratedDataObject) dataObj).generateInstance(caseId);
+					XLogHelper.decorateElement(trace, dataObj.getName(), (Integer) dataObj.getValue());
+				} else if (dataObj instanceof StringDataObject) {
+					((GeneratedDataObject) dataObj).generateInstance(caseId);
+					XLogHelper.decorateElement(trace, dataObj.getName(), (String) dataObj.getValue());
+				} else if (dataObj instanceof DataObject) {
+					XLogHelper.decorateElement(trace, dataObj.getName(), (String) dataObj.getValue());
+				}
+			}
+		}
 		return trace;
 	}
 	
