@@ -24,9 +24,8 @@ import plg.model.event.EndEvent;
 import plg.model.event.StartEvent;
 import plg.model.gateway.ExclusiveGateway;
 import plg.model.gateway.Gateway;
-import plg.model.gateway.ParallelGateway;
 
-public class LogGeneratorTest {
+public class TestLogGenerator {
 
 	public static void main(String[] args) throws InvalidProcessException, IllegalSequenceException, InvalidScript, FileNotFoundException, IOException {
 		System.out.println("start");
