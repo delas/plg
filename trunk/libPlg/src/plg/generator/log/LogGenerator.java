@@ -23,15 +23,31 @@ import plg.model.sequence.Sequence;
 import plg.utils.SetUtils;
 import plg.utils.XLogHelper;
 
+/**
+ * This class describes a general log generator
+ * 
+ * @author Andrea Burattin
+ */
 public class LogGenerator {
 
 	private Process process;
 	private Set<Component> observedComponents;
 	
+	/**
+	 * Basic constructor for a log generator
+	 * 
+	 * @param process the process to use for the log generation
+	 */
 	public LogGenerator(Process process) {
 		this.process = process;
 	}
 	
+	/**
+	 * This method returns an {@link XLog} object with the generated log
+	 * 
+	 * @param noTraces the number of traces to generate
+	 * @return the generated log
+	 */
 	public XLog generateLog(int noTraces) {
 		XLog log = XLogHelper.generateNewXLog("tmp-process");
 		for (int i = 0; i < noTraces; i++) {
@@ -40,7 +56,15 @@ public class LogGenerator {
 		return log;
 	}
 	
-	public XTrace generateProcessInstance(XLog log, String caseId) {
+	/**
+	 * This method generate a single process instance. This method adds the
+	 * generated trace into the given log.
+	 * 
+	 * @param log the log container
+	 * @param caseId the case identifier of the new generated trace
+	 * @return the generated trace
+	 */
+	private XTrace generateProcessInstance(XLog log, String caseId) {
 		observedComponents = new HashSet<Component>();
 		XTrace trace = XLogHelper.insertTrace(log, caseId);
 		processFlowObject(SetUtils.getRandom(process.getStartEvents()), trace);
@@ -61,6 +85,13 @@ public class LogGenerator {
 		return trace;
 	}
 	
+	/**
+	 * This method processes each single process object. This method is
+	 * responsible for the flow management.
+	 * 
+	 * @param object
+	 * @param trace
+	 */
 	private void processFlowObject(FlowObject object, XTrace trace) {
 		recordEventExecution(object, trace);
 		
@@ -99,6 +130,13 @@ public class LogGenerator {
 		}
 	}
 	
+	/**
+	 * This method generates the {@link XEvent} for the given {@link Task}
+	 * object
+	 * 
+	 * @param object
+	 * @param trace
+	 */
 	private void recordEventExecution(FlowObject object, XTrace trace) {
 		if (object instanceof Task) {
 			XEvent event = XLogHelper.insertEvent(trace, ((Task) object).getName(), new Date(1000 * 60 * 60 * trace.size()));
@@ -106,6 +144,13 @@ public class LogGenerator {
 		}
 	}
 	
+	/**
+	 * This method decorates an {@link XEvent} with the provided data objects
+	 * 
+	 * @param trace
+	 * @param event
+	 * @param dataObjects
+	 */
 	private void recordEventAttributes(XTrace trace, XEvent event, Set<DataObject> dataObjects) {
 		String caseId = XLogHelper.getName(trace);
 		for (DataObject dataObj : dataObjects) {
