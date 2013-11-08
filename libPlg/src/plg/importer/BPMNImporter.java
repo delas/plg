@@ -122,10 +122,6 @@ public class BPMNImporter implements AbstractImporter {
 					for(Task t : dataObjectToTask.get(doId)) {
 						for (FlowObject fo : t.getIncomingObjects()) {
 							Sequence s = p.getSequence(fo, t);
-							System.out.println(fo);
-							System.out.println(t);
-							System.out.println(s);
-							System.out.println("---");
 							parseDataObject(ds, s, p);
 						}
 					}
