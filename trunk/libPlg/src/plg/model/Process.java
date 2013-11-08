@@ -21,6 +21,7 @@ public class Process {
 
 	private String name;
 	private Boolean valid = null;
+	private Set<Component> components;
 	private Set<StartEvent> startEvents;
 	private Set<Task> tasks;
 	private Set<EndEvent> endEvents;
@@ -34,6 +35,7 @@ public class Process {
 	 */
 	public Process(String name) {
 		this.name = name;
+		this.components = new HashSet<Component>();
 		this.startEvents = new HashSet<StartEvent>();
 		this.endEvents = new HashSet<EndEvent>();
 		this.tasks = new HashSet<Task>();
@@ -134,6 +136,7 @@ public class Process {
 	 * @param component the component to be registered
 	 */
 	public void registerComponent(Component component) {
+		components.add(component);
 		if (component instanceof StartEvent) {
 			startEvents.add((StartEvent) component);
 			valid = false;
@@ -222,6 +225,15 @@ public class Process {
 	}
 	
 	/**
+	 * This method returns all the registered components
+	 * 
+	 * @return the set of all registered components
+	 */
+	public Set<Component> getComponents() {
+		return components;
+	}
+	
+	/**
 	 * This method returns all the registered start events
 	 * 
 	 * @return the set of start event
@@ -266,7 +278,63 @@ public class Process {
 	public Set<DataObject> getDataObjects() {
 		return dataObjects;
 	}
-
+	
+	/**
+	 * This method can be used to retrieve the {@link Sequence} object that
+	 * connects two flow objects. If such sequence is not reported into the
+	 * current process model, <tt>null</tt> is returned.
+	 * 
+	 * @param source the source flow object
+	 * @param sink the sink flow object
+	 * @return the connecting sequence object
+	 */
+	public Sequence getSequence(FlowObject source, FlowObject sink) {
+		for (Sequence s : sequences) {
+			if(s.getSource().equals(source) && s.getSink().equals(sink)) {
+				return s;
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * This method returns the set of {@link Task}s that directly preceded
+	 * the given {@link FlowObject}. If the provided flow object is already a
+	 * task, then a set with only this object is returned.
+	 * 
+	 * @param object a flow object of the process
+	 * @return a set of task that directly precedes the provided flow object
+	 */
+	public Set<Task> getPreviousTask(FlowObject object) {
+		return getPreviousTask(object, true);
+	}
+	
+	/**
+	 * This method returns the set of {@link Task}s that directly preceded
+	 * the given {@link FlowObject}.
+	 * 
+	 * @param object a flow object of the process
+	 * @param allowFirst if this parameter is set to <tt>true</tt> then the
+	 * procedure consider also the first element as a possible candidate
+	 * @return a set of task that directly precedes the provided flow object
+	 */
+	public Set<Task> getPreviousTask(FlowObject object, boolean allowFirst) {
+		HashSet<Task> toRet = new HashSet<Task>();
+		
+		if (allowFirst && object instanceof Task) {
+			toRet.add((Task) object);
+			return toRet;
+		} else {
+			Set<FlowObject> in = object.getIncomingObjects();
+			if (in != null) {
+				for(FlowObject fo : in) {
+					toRet.addAll(getPreviousTask(fo, true));
+				}
+			}
+		}
+		return toRet;
+	}
+	
 	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();

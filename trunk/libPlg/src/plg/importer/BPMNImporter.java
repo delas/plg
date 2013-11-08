@@ -19,6 +19,7 @@ import plg.model.FlowObject;
 import plg.model.Process;
 import plg.model.activity.Task;
 import plg.model.data.DataObject;
+import plg.model.data.DataObjectOwner;
 import plg.model.data.IntegerDataObject;
 import plg.model.data.StringDataObject;
 import plg.model.event.EndEvent;
@@ -52,7 +53,8 @@ public class BPMNImporter implements AbstractImporter {
 	@Override
 	public Process importModel(String filename) {
 		HashMap<String, Component> inverseKey = new HashMap<String, Component>();
-		HashMap<String, Set<Task>> dataObjectToTasks = new HashMap<String, Set<Task>>();
+		HashMap<String, Set<Task>> taskToDataObject = new HashMap<String, Set<Task>>();
+		HashMap<String, Set<Task>> dataObjectToTask = new HashMap<String, Set<Task>>();
 		
 		Process p = null;
 		try {
@@ -79,11 +81,19 @@ public class BPMNImporter implements AbstractImporter {
 				inverseKey.put(ts.getAttributeValue("id"), t);
 				for (Element doa : ts.getChildren("dataOutputAssociation", ns)) {
 					Set<Task> s = new HashSet<Task>();
-					if (dataObjectToTasks.containsKey(doa.getChildText("targetRef", ns))) {
-						s = dataObjectToTasks.get(doa.getChildText("targetRef", ns));
+					if (taskToDataObject.containsKey(doa.getChildText("targetRef", ns))) {
+						s = taskToDataObject.get(doa.getChildText("targetRef", ns));
 					}
 					s.add(t);
-					dataObjectToTasks.put(doa.getChildText("targetRef", ns), s);
+					taskToDataObject.put(doa.getChildText("targetRef", ns), s);
+				}
+				for (Element doa : ts.getChildren("dataInputAssociation", ns)) {
+					Set<Task> s = new HashSet<Task>();
+					if (dataObjectToTask.containsKey(doa.getChildText("sourceRef", ns))) {
+						s = dataObjectToTask.get(doa.getChildText("sourceRef", ns));
+					}
+					s.add(t);
+					dataObjectToTask.put(doa.getChildText("sourceRef", ns), s);
 				}
 			}
 			// Gateways
@@ -104,9 +114,20 @@ public class BPMNImporter implements AbstractImporter {
 			// Data Objects
 			for (Element ds : process.getChildren("dataObject", ns)) {
 				String doId = ds.getAttributeValue("id");
-				if (dataObjectToTasks.containsKey(doId)) {
-					for(Task t : dataObjectToTasks.get(doId)) {
+				if (taskToDataObject.containsKey(doId)) {
+					for(Task t : taskToDataObject.get(doId)) {
 						parseDataObject(ds, t, p);
+					}
+				} else if (dataObjectToTask.containsKey(doId)) {
+					for(Task t : dataObjectToTask.get(doId)) {
+						for (FlowObject fo : t.getIncomingObjects()) {
+							Sequence s = p.getSequence(fo, t);
+							System.out.println(fo);
+							System.out.println(t);
+							System.out.println(s);
+							System.out.println("---");
+							parseDataObject(ds, s, p);
+						}
 					}
 				} else {
 					parseDataObject(ds, null, p);
@@ -127,7 +148,7 @@ public class BPMNImporter implements AbstractImporter {
 	 * @param owner
 	 * @return
 	 */
-	private DataObject parseDataObject(Element dataObjectElement, FlowObject owner, Process process) {
+	private DataObject parseDataObject(Element dataObjectElement, DataObjectOwner owner, Process process) {
 		DataObject dataObject = null;
 		String name = dataObjectElement.getAttributeValue("name");
 		Matcher matcherSimple = REGEX_SIMPLE.matcher(name);
