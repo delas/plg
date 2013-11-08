@@ -45,6 +45,7 @@ public class Task extends Activity {
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Task `").append(getName()).append("'");
+		buffer.append(" (id: ").append(getComponentId()).append(") ");
 		buffer.append(" -- incoming: ");
 		for(FlowObject fo : getIncomingObjects()) {
 			buffer.append(fo.getComponentId()).append(" ");

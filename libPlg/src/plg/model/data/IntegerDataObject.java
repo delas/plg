@@ -1,7 +1,6 @@
 package plg.model.data;
 
 import plg.generator.scriptexecuter.IntegerScriptExecutor;
-import plg.model.FlowObject;
 import plg.model.Process;
 
 /**
@@ -19,7 +18,7 @@ public class IntegerDataObject extends GeneratedDataObject {
 	 * @param objectOwner the owner of the data object
 	 * @param executor the integer script executor
 	 */
-	public IntegerDataObject(Process processOwner, FlowObject objectOwner, IntegerScriptExecutor executor) {
+	public IntegerDataObject(Process processOwner, DataObjectOwner objectOwner, IntegerScriptExecutor executor) {
 		super(processOwner, objectOwner);
 		this.executor = executor;
 	}
@@ -32,15 +31,5 @@ public class IntegerDataObject extends GeneratedDataObject {
 	 */
 	public IntegerDataObject(Process processOwner, IntegerScriptExecutor executor) {
 		this(processOwner, null, executor);
-	}
-	
-	/**
-	 * Class constructor
-	 * 
-	 * @param objectOwner the owner of the data object
-	 * @param executor the integer script executor
-	 */
-	public IntegerDataObject(FlowObject objectOwner, IntegerScriptExecutor executor) {
-		this(objectOwner.getOwner(), objectOwner, executor);
 	}
 }

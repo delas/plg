@@ -19,6 +19,7 @@ import plg.model.data.StringDataObject;
 import plg.model.event.StartEvent;
 import plg.model.gateway.ExclusiveGateway;
 import plg.model.gateway.ParallelGateway;
+import plg.model.sequence.Sequence;
 import plg.utils.SetUtils;
 import plg.utils.XLogHelper;
 
@@ -61,9 +62,7 @@ public class LogGenerator {
 	}
 	
 	private void processFlowObject(FlowObject object, XTrace trace) {
-
-		hookBeforeFlowObjectExecution(object, trace);
-		hookAfterFlowObjectExecution(object, trace);
+		recordEventExecution(object, trace);
 		
 		observedComponents.add(object);
 		
@@ -71,6 +70,12 @@ public class LogGenerator {
 				object instanceof ExclusiveGateway ||
 				object instanceof StartEvent) {
 			FlowObject next = SetUtils.getRandom(object.getOutgoingObjects());
+			if (next instanceof Task) {
+				Sequence s = object.getOwner().getSequence(object, next);
+				if (s.getDataObjects().size() > 0) {
+					recordEventAttributes(trace, trace.get(trace.size() - 1), s.getDataObjects());
+				}
+			}
 			processFlowObject(next, trace);
 		} else if (object instanceof ParallelGateway) {
 			if (object.getOutgoingObjects().size() > 1) {
@@ -94,25 +99,25 @@ public class LogGenerator {
 		}
 	}
 	
-	private void hookBeforeFlowObjectExecution(FlowObject object, XTrace trace) {
+	private void recordEventExecution(FlowObject object, XTrace trace) {
 		if (object instanceof Task) {
-			String caseId = XLogHelper.getName(trace);
-			XEvent e = XLogHelper.insertEvent(trace, ((Task) object).getName(), new Date(1000 * 60 * 60 * trace.size()));
-			for (DataObject dataObj : object.getDataObjects()) {
-				if (dataObj instanceof IntegerDataObject) {
-					((GeneratedDataObject) dataObj).generateInstance(caseId);
-					XLogHelper.decorateElement(e, dataObj.getName(), (Integer) dataObj.getValue());
-				} else if (dataObj instanceof StringDataObject) {
-					((GeneratedDataObject) dataObj).generateInstance(caseId);
-					XLogHelper.decorateElement(e, dataObj.getName(), (String) dataObj.getValue());
-				} else if (dataObj instanceof DataObject) {
-					XLogHelper.decorateElement(e, dataObj.getName(), (String) dataObj.getValue());
-				}
-			}
+			XEvent event = XLogHelper.insertEvent(trace, ((Task) object).getName(), new Date(1000 * 60 * 60 * trace.size()));
+			recordEventAttributes(trace, event, object.getDataObjects());
 		}
 	}
 	
-	private void hookAfterFlowObjectExecution(FlowObject object, XTrace trace) {
-		
+	private void recordEventAttributes(XTrace trace, XEvent event, Set<DataObject> dataObjects) {
+		String caseId = XLogHelper.getName(trace);
+		for (DataObject dataObj : dataObjects) {
+			if (dataObj instanceof IntegerDataObject) {
+				((GeneratedDataObject) dataObj).generateInstance(caseId);
+				XLogHelper.decorateElement(event, dataObj.getName(), (Integer) dataObj.getValue());
+			} else if (dataObj instanceof StringDataObject) {
+				((GeneratedDataObject) dataObj).generateInstance(caseId);
+				XLogHelper.decorateElement(event, dataObj.getName(), (String) dataObj.getValue());
+			} else if (dataObj instanceof DataObject) {
+				XLogHelper.decorateElement(event, dataObj.getName(), (String) dataObj.getValue());
+			}
+		}
 	}
 }

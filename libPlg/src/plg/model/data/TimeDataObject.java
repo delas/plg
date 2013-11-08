@@ -37,7 +37,7 @@ public class TimeDataObject extends GeneratedDataObject {
 	 * a time data object associated to the given activity
 	 */
 	public TimeDataObject(Activity objectOwner, Integer minDuration, Integer maxDuration) throws InvalidDataObject {
-		super(objectOwner);
+		super(objectOwner.getOwner(), objectOwner);
 		this.minDuration = minDuration;
 		this.maxDuration = maxDuration;
 		

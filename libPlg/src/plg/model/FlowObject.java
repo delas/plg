@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import plg.model.data.DataObject;
+import plg.model.data.DataObjectOwner;
 import plg.model.event.EndEvent;
 import plg.model.sequence.Sequence;
 
@@ -17,7 +18,7 @@ import plg.model.sequence.Sequence;
  * 
  * @author Andrea Burattin
  */
-public abstract class FlowObject extends Component {
+public abstract class FlowObject extends Component implements DataObjectOwner {
 
 	private Set<DataObject> dataObjects;
 	private Set<FlowObject> incoming;
@@ -111,38 +112,6 @@ public abstract class FlowObject extends Component {
 	}
 	
 	/**
-	 * This method to add a new data object to the current flow object
-	 * 
-	 * @param data the data object to be added to the current flow object
-	 */
-	public void addDataObject(DataObject data) {
-		if (!dataObjects.contains(data)) {
-			dataObjects.add(data);
-		}
-	}
-	
-	/**
-	 * This method to remove the given data object from the current flow object
-	 * 
-	 * @param data the data object to be removed from the current flow object
-	 */
-	public void removeDataObject(DataObject data) {
-		if (dataObjects.contains(data)) {
-			dataObjects.remove(data);
-		}
-	}
-	
-	/**
-	 * This method returns the set of all the data objects associated to the
-	 * current flow object
-	 * 
-	 * @return the set of data objects
-	 */
-	public Set<DataObject> getDataObjects() {
-		return dataObjects;
-	}
-	
-	/**
 	 * This method can be used to know whether the current object can reach at
 	 * least one {@link EndEvent}.
 	 * 
@@ -174,5 +143,24 @@ public abstract class FlowObject extends Component {
 			}
 		}
 		return false;
+	}
+	
+	@Override
+	public void addDataObject(DataObject data) {
+		if (!dataObjects.contains(data)) {
+			dataObjects.add(data);
+		}
+	}
+	
+	@Override
+	public void removeDataObject(DataObject data) {
+		if (dataObjects.contains(data)) {
+			dataObjects.remove(data);
+		}
+	}
+	
+	@Override
+	public Set<DataObject> getDataObjects() {
+		return dataObjects;
 	}
 }

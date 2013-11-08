@@ -12,7 +12,7 @@ import plg.model.Process;
  */
 public class DataObject extends Component {
 
-	private FlowObject objectOwner;
+	private DataObjectOwner objectOwner;
 	private String name;
 	private Object value;
 	
@@ -23,7 +23,7 @@ public class DataObject extends Component {
 	 * @param processOwner the process owner of this data object
 	 * @param objectOwner the flow object owner owner of this data object
 	 */
-	public DataObject(Process processOwner, FlowObject objectOwner) {
+	public DataObject(Process processOwner, DataObjectOwner objectOwner) {
 		super(processOwner);
 		if (objectOwner != null) {
 			setObjectOwner(objectOwner);
@@ -102,7 +102,7 @@ public class DataObject extends Component {
 	 * 
 	 * @return the object owner
 	 */
-	public FlowObject getObjectOwner() {
+	public DataObjectOwner getObjectOwner() {
 		return objectOwner;
 	}
 
@@ -120,7 +120,7 @@ public class DataObject extends Component {
 	 * 
 	 * @param objectOwner the object owner to set
 	 */
-	public void setObjectOwner(FlowObject objectOwner) {
+	public void setObjectOwner(DataObjectOwner objectOwner) {
 		if (this.objectOwner != null) {
 			this.objectOwner.removeDataObject(this);
 		}

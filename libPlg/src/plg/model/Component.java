@@ -32,8 +32,8 @@ public abstract class Component {
 	 * 
 	 * @return the component id
 	 */
-	public int getComponentId() {
-		return componentId;
+	public String getComponentId() {
+		return "" + componentId;
 	}
 	
 	/**
