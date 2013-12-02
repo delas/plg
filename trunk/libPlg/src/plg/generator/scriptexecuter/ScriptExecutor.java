@@ -21,7 +21,6 @@ public abstract class ScriptExecutor {
 
 	private static PythonInterpreter interpreter = new PythonInterpreter();
 	private String script;
-	private String functionName = "generate";
 	protected PyObject result;
 	
 	/**
@@ -38,11 +37,12 @@ public abstract class ScriptExecutor {
 	 * This method executes the script, without returning any value (see
 	 * {@link #getValue()} for this).
 	 * 
+	 * @param functionName the name of the function to call
 	 * @param arg string with the argument to be passed to the script
 	 * @throws InvalidScript this exception is thrown when the required
 	 * function is not found
 	 */
-	public void execute(String arg) throws InvalidScript {
+	public void execute(String functionName, String arg) throws InvalidScript {
 		interpreter.exec(script);
 		PyObject generator = interpreter.get(functionName);
 		if (generator == null) {
@@ -50,6 +50,18 @@ public abstract class ScriptExecutor {
 					"required `" + functionName + "(str)' function.");
 		}
 		result = generator.__call__(new PyString(arg));
+	}
+	
+	/**
+	 * This method executes the script, without returning any value (see
+	 * {@link #getValue()} for this).
+	 * 
+	 * @param arg string with the argument to be passed to the script
+	 * @throws InvalidScript this exception is thrown when the required
+	 * function is not found
+	 */
+	public void execute(String arg) throws InvalidScript {
+		execute("generate", arg);
 	}
 	
 	/**

@@ -2,7 +2,6 @@ package plg.model.activity;
 
 import plg.model.FlowObject;
 import plg.model.Process;
-import plg.model.data.DataObjectOwner;
 
 /**
  * This class represents a general process activity

@@ -1,7 +1,10 @@
 package plg.generator.log;
 
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.deckfour.xes.model.XEvent;
@@ -31,7 +34,7 @@ import plg.utils.XLogHelper;
 public class LogGenerator {
 
 	private Process process;
-	private Set<Component> observedComponents;
+	private Map<Component, Long> observedComponents;
 	
 	/**
 	 * Basic constructor for a log generator
@@ -65,9 +68,11 @@ public class LogGenerator {
 	 * @return the generated trace
 	 */
 	private XTrace generateProcessInstance(XLog log, String caseId) {
-		observedComponents = new HashSet<Component>();
+		observedComponents = new HashMap<Component, Long>();
 		XTrace trace = XLogHelper.insertTrace(log, caseId);
-		processFlowObject(SetUtils.getRandom(process.getStartEvents()), trace);
+		processFlowObject(SetUtils.getRandom(process.getStartEvents()), trace, 0);
+		
+		XLogHelper.sort(trace);
 		
 		for (DataObject dataObj : process.getDataObjects()) {
 			if (dataObj.getObjectOwner() == null) {
@@ -92,39 +97,45 @@ public class LogGenerator {
 	 * @param object
 	 * @param trace
 	 */
-	private void processFlowObject(FlowObject object, XTrace trace) {
-		recordEventExecution(object, trace);
-		
-		observedComponents.add(object);
+	private void processFlowObject(FlowObject object, XTrace trace, long traceProgressiveTime) {
+		long executionDuration = recordEventExecution(object, trace, traceProgressiveTime);
+		observedComponents.put(object, traceProgressiveTime + executionDuration);
 		
 		if (object instanceof Task ||
 				object instanceof ExclusiveGateway ||
-				object instanceof StartEvent) {
+				object instanceof StartEvent) { /* sequence / xor case */
+			
 			FlowObject next = SetUtils.getRandom(object.getOutgoingObjects());
 			if (next instanceof Task) {
 				Sequence s = object.getOwner().getSequence(object, next);
 				if (s.getDataObjects().size() > 0) {
-					recordEventAttributes(trace, trace.get(trace.size() - 1), s.getDataObjects());
+					recordEventAttributes(trace, s.getDataObjects(), trace.get(trace.size() - 1));
 				}
 			}
-			processFlowObject(next, trace);
-		} else if (object instanceof ParallelGateway) {
+			processFlowObject(next, trace, traceProgressiveTime + executionDuration);
+			
+		} else if (object instanceof ParallelGateway) { /* and split/join case */
+			
 			if (object.getOutgoingObjects().size() > 1) {
 				for (FlowObject fo : SetUtils.randomizeSet(object.getOutgoingObjects())) {
-					processFlowObject(fo, trace);
+					processFlowObject(fo, trace, traceProgressiveTime);
 				}
 			}
 			if (object.getIncomingObjects().size() > 1) {
 				boolean observedAll = true;
+				Set<Long> incomingTimestamps = new HashSet<Long>();
 				for (FlowObject fo : object.getIncomingObjects()) {
-					if (!observedComponents.contains(fo)) {
+					if (!observedComponents.containsKey(fo)) {
 						observedAll = false;
 						break;
+					} else {
+						incomingTimestamps.add(observedComponents.get(fo));
 					}
 				}
 				if (observedAll) {
+					Long maxProgressive = Collections.max(incomingTimestamps);
 					FlowObject next = SetUtils.getRandom(object.getOutgoingObjects());
-					processFlowObject(next, trace);
+					processFlowObject(next, trace, maxProgressive);
 				}
 			}
 		}
@@ -137,11 +148,25 @@ public class LogGenerator {
 	 * @param object
 	 * @param trace
 	 */
-	private void recordEventExecution(FlowObject object, XTrace trace) {
+	private long recordEventExecution(FlowObject object, XTrace trace, long traceProgressiveTime) {
 		if (object instanceof Task) {
-			XEvent event = XLogHelper.insertEvent(trace, ((Task) object).getName(), new Date(1000 * 60 * 60 * trace.size()));
-			recordEventAttributes(trace, event, object.getDataObjects());
+			String caseId = XLogHelper.getName(trace);
+			Task t = ((Task) object);
+			XEvent event_start = XLogHelper.insertEvent(trace, t.getName(), new Date(traceProgressiveTime));
+			XEvent event_complete = null;
+			
+			long duration = t.getDutarion(caseId) * 1000;
+			if (duration > 0) {
+				event_complete = XLogHelper.insertEvent(trace, t.getName(), new Date(traceProgressiveTime + duration));
+				XLogHelper.decorateElement(event_start, "lifecycle:transition", "start");
+				XLogHelper.decorateElement(event_complete, "lifecycle:transition", "complete");
+			}
+			
+			recordEventAttributes(trace, object.getDataObjects(), event_start, event_complete);
+			return duration + (t.getTimeAfter(caseId) * 1000);
 		}
+		
+		return 0;
 	}
 	
 	/**
@@ -151,17 +176,26 @@ public class LogGenerator {
 	 * @param event
 	 * @param dataObjects
 	 */
-	private void recordEventAttributes(XTrace trace, XEvent event, Set<DataObject> dataObjects) {
+	private void recordEventAttributes(XTrace trace, Set<DataObject> dataObjects, XEvent... events) {
 		String caseId = XLogHelper.getName(trace);
 		for (DataObject dataObj : dataObjects) {
 			if (dataObj instanceof IntegerDataObject) {
 				((GeneratedDataObject) dataObj).generateInstance(caseId);
-				XLogHelper.decorateElement(event, dataObj.getName(), (Integer) dataObj.getValue());
+				Integer value = (Integer) dataObj.getValue();
+				for (XEvent event : events) {
+					XLogHelper.decorateElement(event, dataObj.getName(), value);
+				}
 			} else if (dataObj instanceof StringDataObject) {
 				((GeneratedDataObject) dataObj).generateInstance(caseId);
-				XLogHelper.decorateElement(event, dataObj.getName(), (String) dataObj.getValue());
+				String value = (String) dataObj.getValue();
+				for (XEvent event : events) {
+					XLogHelper.decorateElement(event, dataObj.getName(), value);
+				}
 			} else if (dataObj instanceof DataObject) {
-				XLogHelper.decorateElement(event, dataObj.getName(), (String) dataObj.getValue());
+				String value = (String) dataObj.getValue();
+				for (XEvent event : events) {
+					XLogHelper.decorateElement(event, dataObj.getName(), value);
+				}
 			}
 		}
 	}

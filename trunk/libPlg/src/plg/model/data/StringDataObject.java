@@ -1,7 +1,6 @@
 package plg.model.data;
 
 import plg.generator.scriptexecuter.StringScriptExecutor;
-import plg.model.FlowObject;
 import plg.model.Process;
 
 /**

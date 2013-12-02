@@ -78,6 +78,10 @@ public class BPMNImporter implements AbstractImporter {
 			// Tasks
 			for (Element ts : process.getChildren("task", ns)) {
 				Task t = new Task(p, ts.getAttributeValue("name"));
+				String script = ts.getChildText("documentation", ns);
+				if (script != null) {
+					t.setActivityScript(new IntegerScriptExecutor(script));
+				}
 				inverseKey.put(ts.getAttributeValue("id"), t);
 				for (Element doa : ts.getChildren("dataOutputAssociation", ns)) {
 					Set<Task> s = new HashSet<Task>();
