@@ -1,5 +1,7 @@
 package plg.utils;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 
 import org.deckfour.xes.extension.XExtensionManager;
@@ -367,5 +369,34 @@ public class XLogHelper {
 	public static String getName(XAttributable element) {
 		XAttributeLiteral name = (XAttributeLiteral) element.getAttributes().get("concept:name");
 		return name.getValue();
+	}
+	
+	/**
+	 * This method returns the value of the attribute <tt>time:timestamp</tt>
+	 * for the given attributable element
+	 * 
+	 * @param element the element to analyze
+	 * @return the value of the <tt>time:timestamp</tt> attribute
+	 */
+	public static Date getTimestamp(XAttributable element) {
+		XAttributeTimestamp time = (XAttributeTimestamp) element.getAttributes().get("time:timestamp");
+		return time.getValue();
+	}
+	
+	/**
+	 * This method sorts the given trace according to the timestamps of its
+	 * events
+	 * 
+	 * @param trace the trace to be sorted
+	 */
+	public static void sort(XTrace trace) {
+		Collections.sort(trace, new Comparator<XEvent>() {
+			@Override
+			public int compare(XEvent e1, XEvent e2) {
+				Date d1 = getTimestamp(e1);
+				Date d2 = getTimestamp(e2);
+				return d1.compareTo(d2);
+			}
+		});
 	}
 }
