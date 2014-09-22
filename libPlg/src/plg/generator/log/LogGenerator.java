@@ -196,6 +196,7 @@ public class LogGenerator {
 				for (XEvent event : events) {
 					XLogHelper.decorateElement(event, dataObj.getName(), value);
 				}
+				
 			}
 		}
 	}

@@ -12,6 +12,8 @@ import org.jdom2.Element;
 import org.jdom2.Namespace;
 import org.jdom2.input.SAXBuilder;
 
+import com.google.common.base.CharMatcher;
+
 import plg.generator.scriptexecuter.IntegerScriptExecutor;
 import plg.generator.scriptexecuter.StringScriptExecutor;
 import plg.model.Component;
@@ -45,7 +47,7 @@ import plg.model.sequence.Sequence;
  */
 public class BPMNImporter implements AbstractImporter {
 
-	private static final Namespace ns = Namespace.getNamespace("http://schema.omg.org/spec/BPMN/2.0");
+	private static final Namespace ns = Namespace.getNamespace("http://www.omg.org/spec/BPMN/20100524/MODEL");
 	private static final Pattern REGEX_SIMPLE = Pattern.compile("(\\S+)\\s*=\\s*(\\S+)");
 	private static final Pattern REGEX_INTEGER_SCRIPT = Pattern.compile("(?i)\\s*(\\S+)\\s*\\(\\s*Integer\\s*\\)\\s*");
 	private static final Pattern REGEX_STRING_SCRIPT = Pattern.compile("(?i)\\s*(\\S+)\\s*\\(\\s*String\\s*\\)\\s*");
@@ -116,7 +118,7 @@ public class BPMNImporter implements AbstractImporter {
 				new Sequence(p, source, sink);
 			}
 			// Data Objects
-			for (Element ds : process.getChildren("dataObject", ns)) {
+			for (Element ds : process.getChildren("dataObjectReference", ns)) {
 				String doId = ds.getAttributeValue("id");
 				if (taskToDataObject.containsKey(doId)) {
 					for(Task t : taskToDataObject.get(doId)) {
@@ -160,11 +162,11 @@ public class BPMNImporter implements AbstractImporter {
 			dataObject.setName(matcherSimple.group(1));
 			dataObject.setValue(matcherSimple.group(2));
 		} else if (matcherIntegerScript.matches()) {
-			String script = dataObjectElement.getChildText("documentation", ns);
+			String script = CharMatcher.ASCII.retainFrom(dataObjectElement.getChildText("documentation", ns));
 			dataObject = new IntegerDataObject(process, new IntegerScriptExecutor(script));
 			dataObject.setName(matcherIntegerScript.group(1));
 		} else if (matcherStringScript.matches()) {
-			String script = dataObjectElement.getChildText("documentation", ns);
+			String script = CharMatcher.ASCII.retainFrom(dataObjectElement.getChildText("documentation", ns));
 			dataObject = new StringDataObject(process, new StringScriptExecutor(script));
 			dataObject.setName(matcherStringScript.group(1));
 		}
