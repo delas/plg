@@ -9,6 +9,9 @@ import plg.model.activity.Task;
 import plg.model.data.DataObject;
 import plg.model.event.EndEvent;
 import plg.model.event.StartEvent;
+import plg.model.gateway.ExclusiveGateway;
+import plg.model.gateway.Gateway;
+import plg.model.gateway.ParallelGateway;
 import plg.model.sequence.Sequence;
 
 /**
@@ -24,6 +27,7 @@ public class Process {
 	private Set<Component> components;
 	private Set<StartEvent> startEvents;
 	private Set<Task> tasks;
+	private Set<Gateway> gateways;
 	private Set<EndEvent> endEvents;
 	private Set<Sequence> sequences;
 	private Set<DataObject> dataObjects;
@@ -39,6 +43,7 @@ public class Process {
 		this.startEvents = new HashSet<StartEvent>();
 		this.endEvents = new HashSet<EndEvent>();
 		this.tasks = new HashSet<Task>();
+		this.gateways = new HashSet<Gateway>();
 		this.sequences = new HashSet<Sequence>();
 		this.dataObjects = new HashSet<DataObject>();
 	}
@@ -107,6 +112,16 @@ public class Process {
 				throw new InvalidProcessException("Invalid model: " + t + " cannot reach an end event.");
 			}
 		}
+		for(Gateway g : gateways) {
+			if (g.isIsolated()) {
+				valid = false;
+				throw new InvalidProcessException("Invalid model: " + g + " is isolated.");
+			}
+			if (!g.canReachEndEvent()) {
+				valid = false;
+				throw new InvalidProcessException("Invalid model: " + g + " cannot reach an end event.");
+			}
+		}
 		valid = true;
 		return true;
 	}
@@ -145,6 +160,9 @@ public class Process {
 			valid = false;
 		} else if (component instanceof Task) {
 			tasks.add((Task) component);
+			valid = false;
+		} else if (component instanceof Gateway) {
+			gateways.add((Gateway) component);
 			valid = false;
 		} else if (component instanceof Sequence) {
 			sequences.add((Sequence) component);
@@ -193,6 +211,26 @@ public class Process {
 	 */
 	public Task newTask(String name) {
 		return new Task(this, name);
+	}
+	
+	/**
+	 * This method creates a new exclusive gateway registered to the current
+	 * process.
+	 * 
+	 * @return the newly created exclusive gateway
+	 */
+	public ExclusiveGateway newExclusiveGateway() {
+		return new ExclusiveGateway(this);
+	}
+	
+	/**
+	 * This method creates a new parallel gateway registered to the current
+	 * process.
+	 * 
+	 * @return the newly created parallel gateway
+	 */
+	public ParallelGateway newParallelGateway() {
+		return new ParallelGateway(this);
 	}
 	
 	/**
@@ -245,10 +283,19 @@ public class Process {
 	/**
 	 * This method returns all the registered tasks
 	 *  
-	 * @return the set of task
+	 * @return the set of tasks
 	 */
 	public Set<Task> getTasks() {
 		return tasks;
+	}
+
+	/**
+	 * This method returns all the registered gateways
+	 *  
+	 * @return the set of gateways
+	 */
+	public Set<Gateway> getGateways() {
+		return gateways;
 	}
 
 	/**

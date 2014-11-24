@@ -7,10 +7,10 @@ import plg.model.Process;
  * 
  * @author Andrea Burattin
  */
-public interface AbstractImporter {
+public interface Importer {
 
 	/**
-	 * General interface of a method that import a model.
+	 * General interface of a method that imports a model.
 	 * 
 	 * @param filename the source of the model to import
 	 * @return the imported model
