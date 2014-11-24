@@ -63,6 +63,7 @@ digraph G {
 		style="filled",
 		fillcolor="#e7efff",
 		color="#5a677b",
+		width="0.5",
 		fontcolor="#5a677b",
 		fontname="sans-serif",
 		penwidth=1
