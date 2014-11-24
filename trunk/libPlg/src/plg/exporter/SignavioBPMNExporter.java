@@ -13,7 +13,7 @@ import plg.model.event.EndEvent;
 import plg.model.event.StartEvent;
 import plg.model.sequence.Sequence;
 
-public class BPMNXMLExporter implements AbstractExporter {
+public class SignavioBPMNExporter implements Exporter {
 
 	@Override
 	public void exportModel(Process model, String filename) {

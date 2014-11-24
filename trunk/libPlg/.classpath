@@ -16,5 +16,16 @@
 	<classpathentry kind="lib" path="lib/OpenXES/OpenXES.jar"/>
 	<classpathentry kind="lib" path="lib/ProMFramework/lib/Spex.jar"/>
 	<classpathentry kind="lib" path="lib/ProMFramework/lib/guava-16.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/multiline-string-0.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/commons-io/commons-io-2.4.jar" sourcepath="lib/commons-io/commons-io-2.4-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/libPlg/lib/commons-io/commons-io-2.4-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="src" path=".apt_generated">
+		<attributes>
+			<attribute name="optional" value="true"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
