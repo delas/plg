@@ -11,7 +11,8 @@ import org.deckfour.xes.out.XesXmlSerializer;
 
 import plg.exceptions.InvalidProcessException;
 import plg.generator.log.LogGenerator;
-import plg.importer.BPMNImporter;
+import plg.generator.log.SimulationConfiguration;
+import plg.importer.SignavioBPMNImporter;
 import plg.model.Process;
 
 public class LogGeneratorMain {
@@ -33,7 +34,7 @@ public class LogGeneratorMain {
 		System.out.println("No. of traces: " + noTraces);
 		
 		System.out.print("1. Importing model... ");
-		BPMNImporter importer = new BPMNImporter();
+		SignavioBPMNImporter importer = new SignavioBPMNImporter();
 		Process p = importer.importModel(modelFile);
 		System.out.println("done!");
 		
@@ -42,8 +43,9 @@ public class LogGeneratorMain {
 		System.out.println("done!");
 		
 		System.out.print("3. Generating log... ");
-		LogGenerator generator = new LogGenerator(p);
-		XLog log = generator.generateLog(noTraces);
+		SimulationConfiguration sc = new SimulationConfiguration(noTraces);
+		LogGenerator generator = new LogGenerator(p, sc);
+		XLog log = generator.generateLog();
 		System.out.println("done!");
 		
 		System.out.print("4. Exporting log... ");
