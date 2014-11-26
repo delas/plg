@@ -14,13 +14,13 @@ import java.util.Set;
 public class SetUtils {
 
 	private static Random randomGenerator = new Random();
-	
+
 	/**
 	 * This method returns a random object form a set.
 	 * 
 	 * @param set the given set
 	 * @return a random object contained in the set, or <tt>null</tt> if the
-	 * set is empty or a null object
+	 * set is empty or a <tt>null</tt> object
 	 */
 	public static <E> E getRandom(Set<E> set) {
 		if (set != null && set.size() > 0) {
@@ -31,6 +31,34 @@ public class SetUtils {
 					return e;
 				}
 				i = i + 1;
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * This method returns a random object form a set in which each element has
+	 * a probability.
+	 * 
+	 * @param set the given set. Each probability is expressed by the Double
+	 * component, which is assumed to be in <tt>[0,1]</tt>.
+	 * @return a random object contained in the set, or <tt>null</tt> if the
+	 * set is empty or a <tt>null</tt> object
+	 */
+	public static <E> E getRandomWeighted(Set<Pair<E, Double>> set) {
+		if (set != null && set.size() > 0) {
+			
+			int totalSum = 0;
+			for (Pair<E, Double> e : set) {
+				totalSum += (e.getSecond() * 1000);
+			}
+			int index = randomGenerator.nextInt(totalSum);
+			int sum = 0;
+			for (Pair<E, Double> e : set) {
+				sum += (e.getSecond() * 1000);
+				if (index <= sum) {
+					return e.getFirst();
+				}
 			}
 		}
 		return null;

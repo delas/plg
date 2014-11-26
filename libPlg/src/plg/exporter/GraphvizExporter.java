@@ -32,6 +32,7 @@ public class GraphvizExporter implements Exporter {
 	 */
 	/**
 digraph G {
+	graph [splines=ortho, nodesep="0.5"];
 	rankdir=LR;
 	
 	// start events
@@ -40,7 +41,8 @@ digraph G {
 		shape=circle,
 		width="0.3",
 		style=filled,
-		fillcolor="#a5e69c",
+		fillcolor="#5dbd5a:#bafcc2",
+		gradientangle=270,
 		color="#20962f"
 	];
 ### START EVENTS ###
@@ -51,7 +53,8 @@ digraph G {
 		shape=circle,
 		width="0.3",
 		style=filled,
-		fillcolor="#ff9c9c",
+		fillcolor="#e46e60:#ffc5c1",
+		gradientangle=270,
 		color="#630000",
 		penwidth=2
 	];
@@ -61,7 +64,8 @@ digraph G {
 	node [
 		shape=box,
 		style="filled",
-		fillcolor="#e7efff",
+		fillcolor="#cedeef:#ffffff",
+		gradientangle=270,
 		color="#5a677b",
 		width="0.5",
 		fontcolor="#5a677b",
@@ -78,7 +82,8 @@ digraph G {
 		height="0.5",
 		fontsize="20.0",
 		style="filled",
-		fillcolor="#f7f794",
+		fillcolor="#ffff84:#ffffbd",
+		gradientangle=270,
 		color="#a6a855",
 		fontcolor="#708041",
 		fontname="sans-serif"
@@ -147,7 +152,10 @@ digraph G {
 		// edges
 		buffer = "";
 		for(Sequence s : model.getSequences()) {
-			buffer +=  "\tc_" + s.getSource().getComponentId() + " -> c_" + s.getSink().getComponentId() + ";\n";
+			String left = "c_" + s.getSource().getComponentId();
+			String right = "c_" + s.getSink().getComponentId();
+			
+			buffer +=  "\t" + left + " -> " + right + ";\n";
 		}
 		basic = basic.replace("### EDGES ###", buffer);
 	}
