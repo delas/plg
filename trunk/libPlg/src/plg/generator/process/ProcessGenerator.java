@@ -2,7 +2,6 @@ package plg.generator.process;
 
 import plg.generator.process.RandomizationConfiguration.RANDOMIZATION_PATTERN;
 import plg.model.Process;
-import plg.model.activity.Task;
 import plg.model.event.EndEvent;
 import plg.model.event.Event;
 import plg.model.event.StartEvent;
