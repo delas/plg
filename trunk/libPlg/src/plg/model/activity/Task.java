@@ -2,7 +2,6 @@ package plg.model.activity;
 
 import plg.exceptions.InvalidScript;
 import plg.generator.scriptexecuter.IntegerScriptExecutor;
-import plg.model.FlowObject;
 import plg.model.Process;
 
 /**
@@ -104,14 +103,14 @@ public class Task extends Activity {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Task `").append(getName()).append("'");
 		buffer.append(" (id: ").append(getComponentId()).append(") ");
-		buffer.append(" -- incoming: ");
-		for(FlowObject fo : getIncomingObjects()) {
-			buffer.append(fo.getComponentId()).append(" ");
-		}
-		buffer.append(" | outgoing: ");
-		for(FlowObject fo : getOutgoingObjects()) {
-			buffer.append(fo.getComponentId()).append(" ");
-		}
+//		buffer.append(" -- incoming: ");
+//		for(FlowObject fo : getIncomingObjects()) {
+//			buffer.append(fo.getComponentId()).append(" ");
+//		}
+//		buffer.append(" | outgoing: ");
+//		for(FlowObject fo : getOutgoingObjects()) {
+//			buffer.append(fo.getComponentId()).append(" ");
+//		}
 		return buffer.toString();
 	}
 	

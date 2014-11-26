@@ -259,7 +259,12 @@ public class Process {
 	 * @return the newly created sequence
 	 */
 	public Sequence newSequence(FlowObject source, FlowObject sink) throws IllegalSequenceException {
-		return new Sequence(this, source, sink);
+		Sequence s = getSequence(source, sink);
+		if (s == null) {
+			return new Sequence(this, source, sink);
+		} else {
+			return s;
+		}
 	}
 	
 	/**

@@ -90,6 +90,20 @@ public class XLogHelper {
 	}
 	
 	/**
+	 * This method creates a new {@link XTrace} with the given case id, and
+	 * returns the new trace
+	 * 
+	 * @param caseId the case identifier of the new trace
+	 * @return the new trace created, or <tt>null</tt> if the given log is not
+	 * valid
+	 */
+	public static XTrace createTrace(String caseId) {
+		XTrace trace = xesFactory.createTrace();
+		decorateElement(trace, "concept:name", caseId, "Concept");
+		return trace;
+	}
+	
+	/**
 	 * This method creates a new {@link XTrace} with the given case id, adds it
 	 * to the given log object, and returns the new trace
 	 * 
