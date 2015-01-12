@@ -2,11 +2,11 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/libPlg"/>
 	<classpathentry kind="lib" path="lib/args4j/args4j-2.0.21.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="jar:platform:/resource/plg-cli/lib/args4j/args4j-2.0.21-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="lib/libPlg/libPlg.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

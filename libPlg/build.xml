@@ -59,8 +59,9 @@
 					<exclude name="test**" />
 				</fileset>
 				<fileset dir="${dist}/lib">
-					<include name="**/*.class" />
+					<include name="**/*" />
 					<exclude name="test**" />
+					<exclude name="**/*html" />
 				</fileset>
 				<manifest>
 					<attribute name="Built-By" value="${user.name}" />
