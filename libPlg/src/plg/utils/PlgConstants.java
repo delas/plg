@@ -13,6 +13,6 @@ public class PlgConstants {
 	public static final String libPLG_VERSION = "1.0.0-alpha";
 	
 	/** */
-	public static final String libPLG_SIGNATURE = LibPLG_NAME + " v." + libPLG_VERSION + " (see http://andrea.burattin.net)";
+	public static final String libPLG_SIGNATURE = LibPLG_NAME + " v." + libPLG_VERSION;
 }
 
