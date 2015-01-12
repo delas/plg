@@ -1,6 +1,8 @@
 package plg.model;
 
+import java.math.BigInteger;
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 
 import plg.exceptions.IllegalSequenceException;
@@ -22,6 +24,7 @@ import plg.model.sequence.Sequence;
  */
 public class Process {
 
+	private String id;
 	private String name;
 	private Boolean valid = null;
 	private Set<Component> components;
@@ -38,6 +41,7 @@ public class Process {
 	 * @param name the name of the new process
 	 */
 	public Process(String name) {
+		this.id = new BigInteger(130, new Random()).toString(32);
 		this.name = name;
 		this.components = new HashSet<Component>();
 		this.startEvents = new HashSet<StartEvent>();
@@ -46,6 +50,15 @@ public class Process {
 		this.gateways = new HashSet<Gateway>();
 		this.sequences = new HashSet<Sequence>();
 		this.dataObjects = new HashSet<DataObject>();
+	}
+	
+	/**
+	 * Method to get the process id
+	 * 
+	 * @return the process id
+	 */
+	public String getId() {
+		return id;
 	}
 	
 	/**

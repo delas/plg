@@ -45,7 +45,7 @@ import plg.model.sequence.Sequence;
  * 
  * @author Andrea Burattin
  */
-public class SignavioBPMNImporter implements Importer {
+public class SignavioBPMNImporter implements FileImporter {
 
 	private static final Namespace ns = Namespace.getNamespace("http://www.omg.org/spec/BPMN/20100524/MODEL");
 	private static final Pattern REGEX_SIMPLE = Pattern.compile("(\\S+)\\s*=\\s*(\\S+)");

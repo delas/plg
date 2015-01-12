@@ -6,6 +6,7 @@ import plg.model.event.EndEvent;
 import plg.model.event.Event;
 import plg.model.event.StartEvent;
 import plg.model.gateway.Gateway;
+import plg.utils.Logger;
 
 /**
  * This class contains the random generator of processes. Actually, this class
@@ -60,11 +61,12 @@ public class ProcessGenerator {
 	 * and end events, and then populating the internal structure.
 	 */
 	protected void begin() {
+		Logger.instance().info("Starting process randomization");
 		Event start = process.newStartEvent();
 		Event end = process.newEndEvent();
 		PatternFrame p = newInternalPattern(1, true, false);
-		System.out.println(p);
 		PatternFrame.connect(start, p).connect(end);
+		Logger.instance().info("Process randomization complete");
 	}
 	
 	/**
@@ -81,8 +83,7 @@ public class ProcessGenerator {
 			
 			RANDOMIZATION_PATTERN nextAction = parameters.getRandomPattern(canLoop, canSkip);
 			PatternFrame generatedFrame = null;
-			System.out.println(nextAction);
-
+			
 			switch (nextAction) {
 			case SEQUENCE:
 				generatedFrame = newSequence(currentDepth + 1, canLoop, canSkip);
@@ -107,15 +108,14 @@ public class ProcessGenerator {
 			return generatedFrame;
 			
 		} else {
-			System.out.print("\tFORCING ");
 			if (canSkip) {
 				RANDOMIZATION_PATTERN nextAction = parameters.getRandomPattern(RANDOMIZATION_PATTERN.SKIP, RANDOMIZATION_PATTERN.SINGLE_ACTIVITY);
 				if (nextAction == RANDOMIZATION_PATTERN.SKIP) {
-					System.out.println("SKIP");
+					Logger.instance().debug("Skip forced");
 					return null;
 				}
 			}
-			System.out.println("ACTIVITY");
+			Logger.instance().debug("Activity forced");
 			return newActivity();
 		}
 	}
@@ -127,6 +127,7 @@ public class ProcessGenerator {
 	 */
 	protected PatternFrame newActivity() {
 		String activityName = askNewName();
+		Logger.instance().debug("New activity created (`" + activityName + "')");
 		return new PatternFrame(process.newTask(activityName));
 	}
 	
@@ -140,6 +141,7 @@ public class ProcessGenerator {
 	 * @return the frame containing the generated pattern
 	 */
 	protected PatternFrame newSequence(int currentDepth, boolean canLoop, boolean canSkip) {
+		Logger.instance().debug("New sequence pattern to create");
 		PatternFrame p1 = newInternalPattern(currentDepth, canLoop, canSkip);
 		PatternFrame p2 = newInternalPattern(currentDepth, canLoop, canSkip);
 		return PatternFrame.connect(p1, p2);
@@ -154,6 +156,7 @@ public class ProcessGenerator {
 	 * @return the frame containing the generated pattern
 	 */
 	protected PatternFrame newAndBranches(int currentDepth, boolean loopAllowed) {
+		Logger.instance().debug("New AND pattern to create");
 		PatternFrame beforeSplit = newActivity();
 		Gateway split = process.newParallelGateway();
 		Gateway join = process.newParallelGateway();
@@ -180,6 +183,7 @@ public class ProcessGenerator {
 	 * @return the frame containing the generated pattern
 	 */
 	protected PatternFrame newXorBranches(int currentDepth, boolean loopAllowed, boolean canSkip) {
+		Logger.instance().debug("New XOR pattern to create");
 		PatternFrame beforeSplit = newActivity();
 		Gateway split = process.newExclusiveGateway();
 		Gateway join = process.newExclusiveGateway();
@@ -205,6 +209,7 @@ public class ProcessGenerator {
 	 * @return the frame containing the generated pattern
 	 */
 	protected PatternFrame newLoopBranch(int currentDepth) {
+		Logger.instance().debug("New loop pattern to create");
 		PatternFrame beforeSplit = newActivity();
 		Gateway split = process.newExclusiveGateway();
 		Gateway join = process.newExclusiveGateway();

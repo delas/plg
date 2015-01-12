@@ -6,6 +6,7 @@ import java.io.IOException;
 import org.adrianwalker.multilinestring.Multiline;
 import org.apache.commons.io.FileUtils;
 
+import plg.annotations.Exporter;
 import plg.model.Process;
 import plg.model.activity.Task;
 import plg.model.event.EndEvent;
@@ -14,15 +15,20 @@ import plg.model.gateway.ExclusiveGateway;
 import plg.model.gateway.Gateway;
 import plg.model.gateway.ParallelGateway;
 import plg.model.sequence.Sequence;
+import plg.utils.Logger;
 
 /**
- * This class contains the exported module into a Graphviz Dot file, which can
- * be converted, for example, into a PDF or SVG or PNG file.
+ * This class contains the export module for Graphviz Dot file (of the BPMN),
+ * which can be converted, for example, into a PDF or SVG or PNG file.
  * 
  * @author Andrea Burattin
  * @see http://www.graphviz.org/content/dot-language
  */
-public class GraphvizExporter implements Exporter {
+@Exporter(
+	name = "Graphviz exporter for a BPMN version of the process",
+	fileExtension = "dot"
+)
+public class GraphvizBPMNExporter implements FileExporter {
 
 	/**
 	 * The following comment contains the basic string with the Graphviz Dot
@@ -102,12 +108,14 @@ digraph G {
 	
 	@Override
 	public void exportModel(Process model, String filename) {
+		Logger.instance().info("Starting process exportation");
 		preprocessString(model);
 		try {
 			FileUtils.writeStringToFile(new File(filename), basic);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		Logger.instance().info("Process exportation complete");
 	}
 	
 	/**

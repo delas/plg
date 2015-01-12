@@ -9,11 +9,16 @@ import org.deckfour.spex.SXTag;
 import plg.model.Component;
 import plg.model.Process;
 import plg.model.activity.Task;
+import plg.model.data.DataObject;
+import plg.model.data.IntegerDataObject;
+import plg.model.data.StringDataObject;
+import plg.model.data.TimeDataObject;
 import plg.model.event.EndEvent;
 import plg.model.event.StartEvent;
 import plg.model.sequence.Sequence;
+import plg.utils.PlgConstants;
 
-public class SignavioBPMNExporter implements Exporter {
+public class SignavioBPMNExporter implements FileExporter {
 
 	@Override
 	public void exportModel(Process model, String filename) {
@@ -22,36 +27,50 @@ public class SignavioBPMNExporter implements Exporter {
 			SXDocument doc = new SXDocument(file);
 			
 			SXTag definitions = doc.addNode("definitions");
-			definitions.addAttribute("id", "process_" + model.getName());
-			// oryx definitions
-			definitions.addAttribute("typeLanguage", "http://www.w3.org/2001/XMLSchema");
+			definitions.addAttribute("id",model.getId());
+			
+			// signavio definitions
+			definitions.addAttribute("xmlns", "http://www.omg.org/spec/BPMN/20100524/MODEL");
+			definitions.addAttribute("xmlns:bpmndi", "http://www.omg.org/spec/BPMN/20100524/DI");
+			definitions.addAttribute("xmlns:omgdc", "http://www.omg.org/spec/DD/20100524/DC");
+			definitions.addAttribute("xmlns:omgdi", "http://www.omg.org/spec/DD/20100524/DI");
+			definitions.addAttribute("xmlns:signavio", "http://www.signavio.com");
+			definitions.addAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+			definitions.addAttribute("exporter", PlgConstants.libPLG_SIGNATURE);
+			definitions.addAttribute("exporterVersion", PlgConstants.libPLG_VERSION);
 			definitions.addAttribute("expressionLanguage", "http://www.w3.org/1999/XPath");
-			definitions.addAttribute("targetNamespace", "http://www.omg.org/bpmn20");
-			definitions.addAttribute("xmlns", "http://schema.omg.org/spec/BPMN/2.0");
-			definitions.addAttribute("xmlns:bpmndi", "http://bpmndi.org");
-			// yaoquiang definitions
-//			definitions.addAttribute("xmlns", "http://www.omg.org/spec/BPMN/20100524/MODEL");
-//			definitions.addAttribute("xmlns:bpmndi", "http://www.omg.org/spec/BPMN/20100524/DI");
-//			definitions.addAttribute("xmlns:dc", "http://www.omg.org/spec/DD/20100524/DC");
-//			definitions.addAttribute("xmlns:di", "http://www.omg.org/spec/DD/20100524/DI");
-//			definitions.addAttribute("xmlns:xsd", "http://www.w3.org/2001/XMLSchema");
-//			definitions.addAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-//			definitions.addAttribute("expressionLanguage", "http://www.w3.org/1999/XPath");
-//			definitions.addAttribute("typeLanguage", "http://www.w3.org/2001/XMLSchema");
-//			definitions.addAttribute("targetNamespace", "http://www.omg.org/bpmn20");
-//			definitions.addAttribute("xsi:schemaLocation", "http://www.omg.org/spec/BPMN/20100524/MODEL http://bpmn.sourceforge.net/schemas/BPMN20.xsd");
+			definitions.addAttribute("targetNamespace", "http://www.signavio.com/bpmn20");
+			definitions.addAttribute("typeLanguage", "http://www.w3.org/2001/XMLSchema");
+			definitions.addAttribute("xsi:schemaLocation", "http://www.omg.org/spec/BPMN/20100524/MODEL http://www.omg.org/spec/BPMN/2.0/20100501/BPMN20.xsd");
 			
 			// process
 			SXTag process = definitions.addChildNode("process");
 			process.addAttribute("id", model.getName());
+			process.addAttribute("isClosed", "false");
+			process.addAttribute("isExecutable", "false");
+			process.addAttribute("processType", "None");
 			
-			SXTag lanes = process.addChildNode("laneSet");
-			lanes.addAttribute("id", model.getName() + "_laneSet");
-			SXTag lane = lanes.addChildNode("lane");
-			lane.addAttribute("name", "DefaultLane");
-			lane.addAttribute("id", model.getName() + "_lane1");
-			for (Component c : model.getComponents()) {
-				lane.addChildNode("flowElementRef").addTextNode(c.getComponentId());
+//			SXTag lanes = process.addChildNode("laneSet");
+//			lanes.addAttribute("id", model.getName() + "_laneSet");
+//			SXTag lane = lanes.addChildNode("lane");
+//			lane.addAttribute("name", "DefaultLane");
+//			lane.addAttribute("id", model.getName() + "_lane1");
+//			for (Component c : model.getComponents()) {
+//				lane.addChildNode("flowElementRef").addTextNode(c.getComponentId());
+//			}
+			
+			for(DataObject dobj : model.getDataObjects()) {
+				SXTag dobjTag = process.addChildNode("dataObject");
+				dobjTag.addAttribute("isCollection", "false");
+				if (dobj instanceof StringDataObject) {
+					dobjTag.addAttribute("name", dobj.getName() + "(string)");
+				} else if (dobj instanceof IntegerDataObject) {
+					dobjTag.addAttribute("name", dobj.getName() + "(integer)");
+				} else if (dobj instanceof TimeDataObject) {
+					dobjTag.addAttribute("name", dobj.getName() + "(time)");
+				} else {
+					dobjTag.addAttribute("name", dobj.getName() + " = " + dobj.getValue());
+				}
 			}
 			
 			for(StartEvent se : model.getStartEvents()) {

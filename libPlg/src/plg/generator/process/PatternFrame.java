@@ -65,6 +65,33 @@ public class PatternFrame extends Pair<FlowObject, FlowObject> {
 		return null;
 	}
 	
+	/**
+	 * Connect the current frame to the flow object of the process.
+	 * 
+	 * @param right the element to connect
+	 * @return a new pattern frame wrapping the components
+	 */
+	public PatternFrame connect(PatternFrame right) {
+		return connect(this, right);
+	}
+	
+	/**
+	 * Connect the current frame to the flow object of the process.
+	 * 
+	 * @param right the element to connect
+	 * @return a new pattern frame wrapping the components
+	 */
+	public PatternFrame connect(FlowObject right) {
+		return connect(this, right);
+	}
+	
+	/**
+	 * Connect the left component to the right one
+	 * 
+	 * @param left the left element of the new pattern
+	 * @param right the right element of the new pattern
+	 * @return a new pattern frame wrapping the two components
+	 */
 	public static PatternFrame connect(PatternFrame left, PatternFrame right) {
 		if (left == null && right == null) {
 			return null;
@@ -83,6 +110,13 @@ public class PatternFrame extends Pair<FlowObject, FlowObject> {
 		return new PatternFrame(left.getLeftBound(), right.getRightBound());
 	}
 	
+	/**
+	 * Connect the left component to the right one
+	 * 
+	 * @param left the left element of the new pattern
+	 * @param right the right element of the new pattern
+	 * @return a new pattern frame wrapping the two components
+	 */
 	public static PatternFrame connect(FlowObject left, PatternFrame right) {
 		if (right == null) {
 			return new PatternFrame(left);
@@ -95,6 +129,13 @@ public class PatternFrame extends Pair<FlowObject, FlowObject> {
 		return new PatternFrame(left, right.getRightBound());
 	}
 	
+	/**
+	 * Connect the left component to the right one
+	 * 
+	 * @param left the left element of the new pattern
+	 * @param right the right element of the new pattern
+	 * @return a new pattern frame wrapping the two components
+	 */
 	public static PatternFrame connect(PatternFrame left, FlowObject right) {
 		if (left == null) {
 			return new PatternFrame(right);
@@ -107,6 +148,13 @@ public class PatternFrame extends Pair<FlowObject, FlowObject> {
 		return new PatternFrame(left.getLeftBound(), right);
 	}
 	
+	/**
+	 * Connect the left component to the right one
+	 * 
+	 * @param left the left element of the new pattern
+	 * @param right the right element of the new pattern
+	 * @return a new pattern frame wrapping the two components
+	 */
 	public static PatternFrame connect(FlowObject left, FlowObject right) {
 		try {
 			left.getOwner().newSequence(left, right);
@@ -114,13 +162,5 @@ public class PatternFrame extends Pair<FlowObject, FlowObject> {
 			e.printStackTrace();
 		}
 		return new PatternFrame(left, right);
-	}
-	
-	public PatternFrame connect(PatternFrame right) {
-		return connect(this, right);
-	}
-	
-	public PatternFrame connect(FlowObject right) {
-		return connect(this, right);
 	}
 }

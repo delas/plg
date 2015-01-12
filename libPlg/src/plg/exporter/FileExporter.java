@@ -7,7 +7,7 @@ import plg.model.Process;
  * 
  * @author Andrea Burattin
  */
-public interface Exporter {
+public interface FileExporter {
 
 	/**
 	 * General interface of a method that exports a model.

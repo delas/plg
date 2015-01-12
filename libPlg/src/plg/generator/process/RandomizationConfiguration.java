@@ -23,12 +23,12 @@ public class RandomizationConfiguration {
 	public static final RandomizationConfiguration BASIC_VALUES = new RandomizationConfiguration(
 			5, // max AND branches
 			5, // max XOR branches
-			0.1, // loop probability
-			0.2, // single activity probability
-			0.1, // skip probability
-			0.7, // sequence probability
-			0.3, // AND probability
-			0.3, // XOR probability
+			0.1, // loop weight
+			0.2, // single activity weight
+			0.1, // skip weight
+			0.7, // sequence weight
+			0.3, // AND weight
+			0.3, // XOR weight
 			3 // maximum depth
 		);
 	
@@ -44,7 +44,7 @@ public class RandomizationConfiguration {
 	/* Class' private fields */
 	private int ANDBranches;
 	private int XORBranches;
-	private Map<RANDOMIZATION_PATTERN, Double> probabilites;
+	private Map<RANDOMIZATION_PATTERN, Double> weights;
 	private int maxDepth;
 	
 	/**
@@ -67,18 +67,18 @@ public class RandomizationConfiguration {
 	
 	/**
 	 * This method generates boolean values with respect to the given
-	 * probability.
+	 * weight.
 	 * 
-	 * @param successProbability the probability of success
-	 * @return <tt>true</tt> with probability <tt>successPercent/100</tt>, <tt>false</tt> otherwise
+	 * @param successWeight the weight of success
+	 * @return <tt>true</tt> with weight <tt>successPercent/100</tt>, <tt>false</tt> otherwise
 	 */
-	public static boolean randomFromProbability(double successProbability) {
-		return (successProbability > RANDOM_GENERATOR.nextDouble());
+	public static boolean randomFromWeight(double successWeight) {
+		return (successWeight > RANDOM_GENERATOR.nextDouble());
 	}
 	
 	/**
 	 * This method generates a new random number with respect to the current
-	 * probability distribution and in a particular range.
+	 * weight distribution and in a particular range.
 	 *
 	 * @param min the minimal value (excluded)
 	 * @param max the maximal value (excluded)
@@ -97,35 +97,32 @@ public class RandomizationConfiguration {
 	 * 
 	 * @param ANDBranches the maximum number of AND branches (must be > 1)
 	 * @param XORBranches the maximum number of XOR branches (must be > 1)
-	 * @param loopProbability the loop probability (must be in [0, 1])
-	 * @param singleActivityProbability the probability of single activity (must
+	 * @param loopWeight the loop weight (must be in [0, 1])
+	 * @param singleActivityWeight the weight of single activity (must
 	 * be in <tt>[0,1]</tt>)
-	 * @param skupProbability the probability of a skip (must be in
-	 * <tt>[0,1]</tt>)
-	 * @param sequenceProbability he probability of sequence activity (must be
+	 * @param skupWeight the weight of a skip (must be in <tt>[0,1]</tt>)
+	 * @param sequenceWeight he weight of sequence activity (must be
 	 * in <tt>[0,1]</tt>)
-	 * @param ANDProbability the probability of AND split-join (must be in
-	 * <tt>[0,1]</tt>)
-	 * @param XORProbability the probability of XOR split-join (must be in
-	 * <tt>[0,1]</tt>)
-	 * @param emptyPercent the probability of an empty pattern (must be in
+	 * @param ANDWeight the weight of AND split-join (must be in <tt>[0,1]</tt>)
+	 * @param XORWeight the weight of XOR split-join (must be in <tt>[0,1]</tt>)
+	 * @param emptyPercent the weight of an empty pattern (must be in
 	 * <tt>[0,1]</tt>)
 	 * @param maxDepth the maximum network deep
 	 */
 	public RandomizationConfiguration(int ANDBranches, int XORBranches,
-			double loopProbability, double singleActivityProbability, double skipProbability,
-			double sequenceProbability, double ANDProbability, double XORProbability,
+			double loopWeight, double singleActivityWeight, double skipWeight,
+			double sequenceWeight, double ANDWeight, double XORWeight,
 			int maxDepth) {
-		this.probabilites = new HashMap<RandomizationConfiguration.RANDOMIZATION_PATTERN, Double>();
+		this.weights = new HashMap<RandomizationConfiguration.RANDOMIZATION_PATTERN, Double>();
 		
 		setAndBranches(ANDBranches);
 		setXorBranches(XORBranches);
-		setLoopProbability(loopProbability);
-		setSingleActivityProbability(singleActivityProbability);
-		setSkipProbability(skipProbability);
-		setSequenceProbability(sequenceProbability);
-		setANDProbability(ANDProbability);
-		setXORProbability(XORProbability);
+		setLoopWeight(loopWeight);
+		setSingleActivityWeight(singleActivityWeight);
+		setSkipWeight(skipWeight);
+		setSequenceWeight(sequenceWeight);
+		setANDWeight(ANDWeight);
+		setXORWeight(XORWeight);
 		setDepth(maxDepth);
 	}
 	
@@ -133,9 +130,11 @@ public class RandomizationConfiguration {
 	 * Set the AND branches parameter
 	 * 
 	 * @param andBranches the maximum number of AND branches
+	 * @return the object after the modification
 	 */
-	public void setAndBranches(int andBranches) {
+	public RandomizationConfiguration setAndBranches(int andBranches) {
 		ANDBranches = (andBranches > 1)? andBranches : MAX_AND_BRANCHES;
+		return this;
 	}
 	
 	/**
@@ -151,9 +150,11 @@ public class RandomizationConfiguration {
 	 * Set the XOR branches parameter
 	 * 
 	 * @param xorBranches the maximum number of XOR branches
+	 * @return the object after the modification
 	 */
-	public void setXorBranches(int xorBranches) {
+	public RandomizationConfiguration setXorBranches(int xorBranches) {
 		XORBranches = (xorBranches > 1)? xorBranches : MAX_XOR_BRANCHES;
+		return this;
 	}
 	
 	/**
@@ -166,138 +167,153 @@ public class RandomizationConfiguration {
 	}
 	
 	/**
-	 * Set the loop probability parameter
+	 * Set the loop weight parameter
 	 * 
-	 * @param loopProbability
+	 * @param loopWeight
+	 * @return 
+	 * @return the object after the modification
 	 */
-	public void setLoopProbability(double loopProbability) {
-		probabilites.put(RANDOMIZATION_PATTERN.LOOP,
-				(loopProbability >= 0.0 && loopProbability <= 1.0)?
-					loopProbability :
-					BASIC_VALUES.probabilites.get(RANDOMIZATION_PATTERN.LOOP));
+	public RandomizationConfiguration setLoopWeight(double loopWeight) {
+		weights.put(RANDOMIZATION_PATTERN.LOOP,
+				(loopWeight >= 0.0 && loopWeight <= 1.0)?
+					loopWeight :
+					BASIC_VALUES.weights.get(RANDOMIZATION_PATTERN.LOOP));
+		return this;
 	}
 	
 	/**
-	 * Get the current value of the loop probability parameter
+	 * Get the current value of the loop weight parameter
 	 * 
 	 * @return the value of the parameter
 	 */
-	public double getLoopProbability() {
-		return probabilites.get(RANDOMIZATION_PATTERN.LOOP);
+	public double getLoopWeight() {
+		return weights.get(RANDOMIZATION_PATTERN.LOOP);
 	}
 	
 	/**
-	 * Set the single activity probability parameter
+	 * Set the single activity weight parameter
 	 * 
-	 * @param singleActivityProbability
+	 * @param singleActivityWeight
+	 * @return the object after the modification
 	 */
-	public void setSingleActivityProbability(double singleActivityProbability) {
-		probabilites.put(RANDOMIZATION_PATTERN.SINGLE_ACTIVITY,
-				(singleActivityProbability >= 0.0 && singleActivityProbability <= 1.0)?
-						singleActivityProbability :
-						BASIC_VALUES.probabilites.get(RANDOMIZATION_PATTERN.SINGLE_ACTIVITY));
+	public RandomizationConfiguration setSingleActivityWeight(double singleActivityWeight) {
+		weights.put(RANDOMIZATION_PATTERN.SINGLE_ACTIVITY,
+				(singleActivityWeight >= 0.0 && singleActivityWeight <= 1.0)?
+						singleActivityWeight :
+						BASIC_VALUES.weights.get(RANDOMIZATION_PATTERN.SINGLE_ACTIVITY));
+		return this;
 	}
 	
 	/**
-	 * Get the current value of the single activity probability parameter
-	 * 
-	 * @return the value of the parameter
-	 */
-	public double getSingleActivityProbability() {
-		return probabilites.get(RANDOMIZATION_PATTERN.SINGLE_ACTIVITY);
-	}
-	
-	/**
-	 * Set the skip probability parameter
-	 * 
-	 * @param skipProbability
-	 */
-	public void setSkipProbability(double skipProbability) {
-		probabilites.put(RANDOMIZATION_PATTERN.SKIP,
-				(skipProbability >= 0.0 && skipProbability <= 1.0)?
-						skipProbability :
-							BASIC_VALUES.probabilites.get(RANDOMIZATION_PATTERN.SKIP));
-	}
-	
-	/**
-	 * Get the current value of the skip probability parameter
+	 * Get the current value of the single activity weight parameter
 	 * 
 	 * @return the value of the parameter
 	 */
-	public double getSkipProbability() {
-		return probabilites.get(RANDOMIZATION_PATTERN.SKIP);
+	public double getSingleActivityWeight() {
+		return weights.get(RANDOMIZATION_PATTERN.SINGLE_ACTIVITY);
 	}
 	
 	/**
-	 * Set the sequence probability parameter
+	 * Set the skip weight parameter
 	 * 
-	 * @param sequenceProbability
+	 * @param skipWeight
+	 * @return the object after the modification
 	 */
-	public void setSequenceProbability(double sequenceProbability) {
-		probabilites.put(RANDOMIZATION_PATTERN.SEQUENCE,
-				(sequenceProbability >= 0.0 && sequenceProbability <= 1.0)?
-						sequenceProbability :
-							BASIC_VALUES.probabilites.get(RANDOMIZATION_PATTERN.SEQUENCE));
+	public RandomizationConfiguration setSkipWeight(double skipWeight) {
+		weights.put(RANDOMIZATION_PATTERN.SKIP,
+				(skipWeight >= 0.0 && skipWeight <= 1.0)?
+						skipWeight :
+							BASIC_VALUES.weights.get(RANDOMIZATION_PATTERN.SKIP));
+		return this;
 	}
 	
 	/**
-	 * Get the current value of the sequence probability parameter
-	 * 
-	 * @return the value of the parameter
-	 */
-	public double getSequenceProbability() {
-		return probabilites.get(RANDOMIZATION_PATTERN.SEQUENCE);
-	}
-	
-	/**
-	 * Set the AND probability parameter
-	 * 
-	 * @param ANDProbability
-	 */
-	public void setANDProbability(double ANDProbability) {
-		probabilites.put(RANDOMIZATION_PATTERN.PARALLEL_EXECUTION,
-				(ANDProbability >= 0.0 && ANDProbability <= 1.0)?
-						ANDProbability :
-							BASIC_VALUES.probabilites.get(RANDOMIZATION_PATTERN.PARALLEL_EXECUTION));
-	}
-	
-	/**
-	 * Get the current value of the AND probability parameter
+	 * Get the current value of the skip weight parameter
 	 * 
 	 * @return the value of the parameter
 	 */
-	public double getANDProbability() {
-		return probabilites.get(RANDOMIZATION_PATTERN.PARALLEL_EXECUTION);
+	public double getSkipWeight() {
+		return weights.get(RANDOMIZATION_PATTERN.SKIP);
 	}
 	
 	/**
-	 * Set the XOR probability parameter
+	 * Set the sequence weight parameter
 	 * 
-	 * @param XORProbability
+	 * @param sequenceWeight
+	 * @return the object after the modification
 	 */
-	public void setXORProbability(double XORProbability) {
-		probabilites.put(RANDOMIZATION_PATTERN.MUTUAL_EXCLUSION,
-				(XORProbability >= 0.0 && XORProbability <= 1.0)?
-						XORProbability :
-							BASIC_VALUES.probabilites.get(RANDOMIZATION_PATTERN.MUTUAL_EXCLUSION));
+	public RandomizationConfiguration setSequenceWeight(double sequenceWeight) {
+		weights.put(RANDOMIZATION_PATTERN.SEQUENCE,
+				(sequenceWeight >= 0.0 && sequenceWeight <= 1.0)?
+						sequenceWeight :
+							BASIC_VALUES.weights.get(RANDOMIZATION_PATTERN.SEQUENCE));
+		return this;
 	}
 	
 	/**
-	 * Get the current value of the XOR probability parameter
+	 * Get the current value of the sequence weight parameter
 	 * 
 	 * @return the value of the parameter
 	 */
-	public double getXORProbability() {
-		return probabilites.get(RANDOMIZATION_PATTERN.MUTUAL_EXCLUSION);
+	public double getSequenceWeight() {
+		return weights.get(RANDOMIZATION_PATTERN.SEQUENCE);
+	}
+	
+	/**
+	 * Set the AND weight parameter
+	 * 
+	 * @param ANDWeight
+	 * @return the object after the modification
+	 */
+	public RandomizationConfiguration setANDWeight(double ANDWeight) {
+		weights.put(RANDOMIZATION_PATTERN.PARALLEL_EXECUTION,
+				(ANDWeight >= 0.0 && ANDWeight <= 1.0)?
+						ANDWeight :
+							BASIC_VALUES.weights.get(RANDOMIZATION_PATTERN.PARALLEL_EXECUTION));
+		return this;
+	}
+	
+	/**
+	 * Get the current value of the AND weight parameter
+	 * 
+	 * @return the value of the parameter
+	 */
+	public double getANDWeight() {
+		return weights.get(RANDOMIZATION_PATTERN.PARALLEL_EXECUTION);
+	}
+	
+	/**
+	 * Set the XOR weight parameter
+	 * 
+	 * @param XORWeight
+	 * @return the object after the modification
+	 */
+	public RandomizationConfiguration setXORWeight(double XORWeight) {
+		weights.put(RANDOMIZATION_PATTERN.MUTUAL_EXCLUSION,
+				(XORWeight >= 0.0 && XORWeight <= 1.0)?
+						XORWeight :
+							BASIC_VALUES.weights.get(RANDOMIZATION_PATTERN.MUTUAL_EXCLUSION));
+		return this;
+	}
+	
+	/**
+	 * Get the current value of the XOR weight parameter
+	 * 
+	 * @return the value of the parameter
+	 */
+	public double getXORWeight() {
+		return weights.get(RANDOMIZATION_PATTERN.MUTUAL_EXCLUSION);
 	}
 	
 	/**
 	 * Set the maximum depth parameter
 	 * 
 	 * @param depth
+	 * @return the object after the modification
 	 */
-	public void setDepth(int depth) {
+	public RandomizationConfiguration setDepth(int depth) {
 		this.maxDepth = (depth > 0)? depth : BASIC_VALUES.maxDepth;
+		return this;
 	}
 	
 	/**
@@ -311,7 +327,7 @@ public class RandomizationConfiguration {
 	
 	/**
 	 * This method return the number of AND branches to generate, according to
-	 * the given probability
+	 * the given weight
 	 * 
 	 * @return the number of AND branches to generate
 	 */
@@ -322,7 +338,7 @@ public class RandomizationConfiguration {
 	
 	/**
 	 * This method return the number of XOR branches to generate, according to
-	 * the given probability
+	 * the given weight
 	 * 
 	 * @return the number of XOR branches to generate
 	 */
@@ -337,7 +353,7 @@ public class RandomizationConfiguration {
 	 * @return true if a loop must be inserted, false otherwise
 	 */
 	public boolean getLoopPresence() {
-		return randomFromProbability(getLoopProbability());
+		return randomFromWeight(getLoopWeight());
 	}
 	
 	/**
@@ -384,7 +400,7 @@ public class RandomizationConfiguration {
 	public RANDOMIZATION_PATTERN getRandomPattern(RANDOMIZATION_PATTERN ... patterns) {
 		Set<Pair<RANDOMIZATION_PATTERN, Double>> options = new HashSet<Pair<RANDOMIZATION_PATTERN, Double>>();
 		for(RANDOMIZATION_PATTERN p : patterns) {
-			options.add(new Pair<RANDOMIZATION_PATTERN, Double>(p, probabilites.get(p)));
+			options.add(new Pair<RANDOMIZATION_PATTERN, Double>(p, weights.get(p)));
 		}
 		return SetUtils.getRandomWeighted(options);
 	}

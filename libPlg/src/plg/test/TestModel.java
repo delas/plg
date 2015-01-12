@@ -4,18 +4,20 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+
 import plg.exceptions.IllegalSequenceException;
 import plg.exceptions.InvalidDataObject;
 import plg.exceptions.InvalidProcessException;
-import plg.exporter.Exporter;
-import plg.exporter.GraphvizExporter;
+import plg.exporter.FileExporter;
+import plg.exporter.GraphvizBPMNExporter;
+import plg.exporter.GraphvizPetriNetExporter;
+import plg.exporter.PNMLExporter;
 import plg.generator.process.ProcessGenerator;
 import plg.generator.process.RandomizationConfiguration;
+import plg.generator.process.petrinet.PetriNet;
 import plg.model.Process;
-import plg.model.activity.Task;
-import plg.model.event.EndEvent;
-import plg.model.event.StartEvent;
-import plg.model.gateway.Gateway;
 
 public class TestModel {
 
@@ -25,16 +27,12 @@ public class TestModel {
 			InvalidDataObject,
 			FileNotFoundException,
 			IOException,
-			InterruptedException {
+			InterruptedException, ParserConfigurationException, TransformerException {
 		
-		final Process p = new Process("test");
-		ProcessGenerator.randomizeProcess(p, RandomizationConfiguration.BASIC_VALUES);
-		System.out.println("Process randomization complete");
+		Process p = new Process("test");
+		ProcessGenerator.randomizeProcess(p, RandomizationConfiguration.BASIC_VALUES.setDepth(2));
 		
-		File dotFile = File.createTempFile("model", ".dot");
-		Exporter exporter = new GraphvizExporter();
-		exporter.exportModel(p, dotFile.getAbsolutePath());
-		
+		// process simulation
 //		SimulationConfiguration sc = new SimulationConfiguration(1);
 //		sc.setMultithreadingUsage(true);
 //		LogGenerator generator = new LogGenerator(p, sc);
@@ -43,6 +41,7 @@ public class TestModel {
 //		System.out.println("Millisecs required: " + (System.currentTimeMillis() - startSimTime));
 //		System.out.println("Log generated");
 		
+		// log serialization
 //		File xesFile = new File("/home/delas/desktop/log.xes"); //File.createTempFile("model", ".xes");
 //		XesXmlSerializer serializer = new XesXmlSerializer();
 //		try {
@@ -53,43 +52,23 @@ public class TestModel {
 //		System.out.println("Log file: " + xesFile.getAbsolutePath());
 //		System.out.println("Log serialized");
 		
-		File pdfFile = File.createTempFile("model", ".pdf");
 		
+		// output and pdf visualization
+		File dotFile = File.createTempFile("model", ".dot");
+		FileExporter exporter = new GraphvizBPMNExporter();
+		exporter.exportModel(p, dotFile.getAbsolutePath());
+		File pdfFile = File.createTempFile("model", ".pdf");
 		String[] env = {"PATH=/bin:/usr/bin/"};
 		Runtime.getRuntime().exec("dot -Tpdf "+ dotFile.getAbsolutePath() + " -o " + pdfFile.getAbsolutePath(), env);
+		
+		File dotFile2 = File.createTempFile("model", ".dot");
+		FileExporter exporter2 = new GraphvizPetriNetExporter();
+		exporter2.exportModel(p, dotFile2.getAbsolutePath());
+		File pdfFile2 = File.createTempFile("model", ".pdf");
+		Runtime.getRuntime().exec("dot -Tpdf "+ dotFile2.getAbsolutePath() + " -o " + pdfFile2.getAbsolutePath(), env);
 		Thread.sleep(500);
+		
 		new ProcessBuilder("evince", pdfFile.getAbsolutePath()).start();
-	}
-	
-	@SuppressWarnings("unused")
-	private static Process generateProcess() throws IllegalSequenceException, InvalidProcessException {
-		Process p = new Process("test");
-		StartEvent start = p.newStartEvent();
-		EndEvent end = p.newEndEvent();
-		Gateway split = p.newParallelGateway();
-		Gateway join = p.newParallelGateway();
-		Gateway loop2_split = p.newExclusiveGateway();
-		Gateway loop2_join = p.newExclusiveGateway();
-		Task a = p.newTask("a");
-		Task d = p.newTask("d");
-		Task i = p.newTask("i");
-		Task l = p.newTask("l");
-		Task m = p.newTask("m");
-		Task z = p.newTask("z");
-		p.newSequence(start, a);
-		p.newSequence(a, loop2_join);
-		p.newSequence(loop2_join, m);
-		p.newSequence(m, split);
-		p.newSequence(split, d);
-		p.newSequence(split, i);
-		p.newSequence(d, join);
-		p.newSequence(i, join);
-		p.newSequence(join, z);
-		p.newSequence(z, loop2_split);
-		p.newSequence(loop2_split, l);
-		p.newSequence(loop2_split, loop2_join);
-		p.newSequence(l, end);
-		p.check();
-		return p;
+		new ProcessBuilder("evince", pdfFile2.getAbsolutePath()).start();
 	}
 }

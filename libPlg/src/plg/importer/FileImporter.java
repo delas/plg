@@ -7,7 +7,7 @@ import plg.model.Process;
  * 
  * @author Andrea Burattin
  */
-public interface Importer {
+public interface FileImporter {
 
 	/**
 	 * General interface of a method that imports a model.
