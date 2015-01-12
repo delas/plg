@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <project name="libPlg" default="Compile Sources" basedir=".">
-	
+
 	<!-- Set global properties for this build -->
 	<property environment="env" />
 	<property name="src" location="src" />
@@ -12,7 +12,7 @@
 	<property name="version" value="1.0.0-alpha" />
 	<property name="project" value="libPlg" />
 	<property name="javaVersion" value="1.7" />
-	
+
 	<path id="classpath">
 		<pathelement path="${build}" />
 		<pathelement path="${java.class.path}" />
@@ -20,14 +20,24 @@
 			<include name="lib/**/*.jar" />
 		</fileset>
 	</path>
-	
+
 	<!-- Macros -->
 	<macrodef name="compile">
 		<sequential>
 			<!-- Compile the java code from ${src}-@{module} into ${build} -->
-			<javac srcdir="${src}" classpathref="classpath" destdir="${build}" 
-				nowarn="false" verbose="no" debug="true" debuglevel="lines,vars,source" 
-				deprecation="yes" source="${javaVersion}" target="${javaVersion}">
+			<javac
+				srcdir="${src}"
+				classpathref="classpath"
+				destdir="${build}"
+				nowarn="false"
+				verbose="no"
+				debug="true"
+				debuglevel="lines,vars,source"
+				deprecation="yes"
+				source="${javaVersion}"
+				target="${javaVersion}"
+				includeantruntime="build.sysclasspath=last"
+				>
 				<!-- Check for unsafe operations -->
 				<compilerarg value="-Xlint:unchecked" />
 			</javac>
@@ -38,17 +48,18 @@
 		<sequential>
 			<!-- Create the distribution directory -->
 			<!-- Put everything in ${build} into the MyProject-${DSTAMP}.jar file -->
-			<jar jarfile="${dist}/${project}-${DSTAMP}.jar">
+			<unzip dest="${dist}/lib">
+				<fileset dir="${lib}">
+					<include name="**/*.jar" />
+				</fileset>
+			</unzip>
+			<jar jarfile="${dist}/${project}-v${version}.${build.number}.jar">
 				<fileset dir="${build}">
 					<include name="**" />
 					<exclude name="test**" />
 				</fileset>
-				<fileset dir="${src}">
-					<include name="**" />
-					<exclude name="test**" />
-				</fileset>
-				<fileset dir="${doc}">
-					<include name="**" />
+				<fileset dir="${dist}/lib">
+					<include name="**/*.class" />
 					<exclude name="test**" />
 				</fileset>
 				<manifest>
@@ -57,15 +68,15 @@
 					<attribute name="Specification-Version" value="${version}" />
 					<attribute name="Specification-Vendor" value="http://andrea.burattin.net" />
 					<attribute name="Implementation-Title" value="${project}" />
-					<attribute name="Implementation-Version" value="${version} ${TODAY}" />
+					<attribute name="Implementation-Version" value="${version}.${build.number} ${TODAY}" />
 					<attribute name="Implementation-Vendor" value="http://andrea.burattin.net" />
-					<attribute name="Sealed" value="false" />
 				</manifest>
 			</jar>
-			<copy file="${dist}/${project}-${DSTAMP}.jar" tofile="${dist}/${project}.jar" overwrite="true" />
+			<delete dir="${dist}/lib" />
+			<copy file="${dist}/${project}-v${version}.${build.number}.jar" tofile="${dist}/${project}.jar" overwrite="true" />
 		</sequential>
 	</macrodef>
-	
+
 	<!-- Targets -->
 	<target name="Create Javadoc" description="Generated javadoc">
 		<javadoc packagenames="**" classpathref="classpath" useexternalfile="true" 
@@ -79,8 +90,9 @@
 			</fileset>
 		</javadoc>
 	</target>
-	
+
 	<target name="Compile Sources">
+		<buildnumber />
 		<!-- Create the build directory structure used by compile -->
 		<!-- Create the time stamp -->
 		<tstamp />
