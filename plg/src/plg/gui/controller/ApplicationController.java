@@ -6,7 +6,6 @@ import plg.gui.config.ConfigurationSet;
 import plg.gui.config.UIConfiguration;
 import plg.gui.window.MainFrame;
 import plg.gui.window.MainWindow;
-import plg.utils.Logger;
 
 /**
  * This class represents the application controller, and is in charge of
@@ -23,6 +22,7 @@ public class ApplicationController {
 	private ConfigurationSet configuration;
 	
 	private ConsoleController consoleController;
+	private ProcessesController processesController;
 	
 	/**
 	 * This method returns the available instance of the application controller.
@@ -49,10 +49,29 @@ public class ApplicationController {
 				this,
 				configuration.getChild(ConsoleController.class.getCanonicalName()),
 				mainWindow.getConsole());
+		processesController = new ProcessesController(
+				this,
+				configuration.getChild(ProcessesController.class.getCanonicalName()),
+				mainWindow.getProcessesList(),
+				mainWindow.getSingleProcessVisualizer());
 	}
 	
+	/**
+	 * This method returns the console controller
+	 * 
+	 * @return the console controller
+	 */
 	public ConsoleController console() {
 		return consoleController;
+	}
+	
+	/**
+	 * This method returns the processes controller
+	 * 
+	 * @return the processes controller
+	 */
+	public ProcessesController processes() {
+		return processesController;
 	}
 	
 	/**

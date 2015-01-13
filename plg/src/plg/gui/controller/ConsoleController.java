@@ -6,6 +6,7 @@ import java.io.PrintStream;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 
 import plg.gui.config.ConfigurationSet;
 import plg.gui.panels.Console;
@@ -16,10 +17,10 @@ public class ConsoleController {
 	protected static final String KEY_CONSOLE_VISIBLE = "CONSOLE_VISIBLE";
 	protected static final boolean DEFAULT_VISIBILITY = false;
 	
-	private ApplicationController applicationController = null;
-	private ConfigurationSet configuration = null;
-	private Console console = null;
-	private ConsolePrintStream consolePrintStream = null;
+	private ApplicationController applicationController;
+	private ConfigurationSet configuration;
+	private Console console;
+	private ConsolePrintStream consolePrintStream;
 	
 	protected ConsoleController(
 			ApplicationController applicationController,
@@ -28,7 +29,7 @@ public class ConsoleController {
 		this.applicationController = applicationController;
 		this.configuration = configuration;
 		this.console = console;
-		consolePrintStream = new ConsolePrintStream();
+		this.consolePrintStream = new ConsolePrintStream(console.getStyledDocument());
 		
 		// redirect the logger to the application console
 		Logger.LOG_PRINT_STREAM = consolePrintStream;
@@ -61,14 +62,16 @@ public class ConsoleController {
 	 */
 	class ConsolePrintStream extends PrintStream {
 		
+		private StyledDocument log;
 		private SimpleAttributeSet infoStyle = new SimpleAttributeSet();
 		private SimpleAttributeSet debugStyle = new SimpleAttributeSet();
 		
 		/**
 		 * Basic class constructor
 		 */
-		public ConsolePrintStream() {
+		public ConsolePrintStream(StyledDocument log) {
 			super(System.out);
+			this.log = log;
 			
 			infoStyle.addAttribute(StyleConstants.CharacterConstants.Foreground, Color.green);
 			debugStyle.addAttribute(StyleConstants.CharacterConstants.Foreground, Color.green.darker().darker().darker());
@@ -83,7 +86,7 @@ public class ConsoleController {
 		 */
 		private void printInfo(String message) {
 			try {
-				console.getStyledDocument().insertString(0, message + "\n", infoStyle);
+				log.insertString(console.getStyledDocument().getLength(), message + "\n", infoStyle);
 			} catch (BadLocationException e) { }
 		}
 		
@@ -94,7 +97,7 @@ public class ConsoleController {
 		 */
 		private void printDebug(String message) {
 			try {
-				console.getStyledDocument().insertString(0, message + "\n", debugStyle);
+				log.insertString(console.getStyledDocument().getLength(), message + "\n", debugStyle);
 			} catch (BadLocationException e) { }
 		}
 		
@@ -105,6 +108,7 @@ public class ConsoleController {
 			} else {
 				printInfo(message);
 			}
+			console.moveCaret();
 		}
 	}
 }
