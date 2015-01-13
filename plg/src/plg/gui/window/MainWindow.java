@@ -5,11 +5,9 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 
 import plg.gui.config.ConfigurationSet;
 import plg.gui.controller.ApplicationController;
-import plg.gui.controller.ConsoleController;
 import plg.gui.panels.Console;
 import plg.gui.panels.ProcessesList;
 import plg.gui.panels.SingleProcessVisualizer;
@@ -49,6 +47,14 @@ public class MainWindow extends JPanel {
 	
 	public MainToolbar getToolbar() {
 		return mainWindowToolbar;
+	}
+	
+	public SingleProcessVisualizer getSingleProcessVisualizer() {
+		return singleProcessVisualizer;
+	}
+	
+	public ProcessesList getProcessesList() {
+		return generatedProcessesList;
 	}
 	
 	/**
