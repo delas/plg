@@ -2,11 +2,14 @@ package plg.gui.panels;
 
 import java.awt.Color;
 
-public class SingleProcessVisualizer extends PlgPanels {
+import plg.gui.config.ConfigurationSet;
+
+public class SingleProcessVisualizer extends MainWindowPanel {
 
 	private static final long serialVersionUID = -4811133888838143863L;
 
-	public SingleProcessVisualizer() {
+	public SingleProcessVisualizer(ConfigurationSet conf) {
+		super(conf);
 		setBackground(Color.white);
 	}
 }

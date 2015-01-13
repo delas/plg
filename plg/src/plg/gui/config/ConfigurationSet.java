@@ -40,6 +40,7 @@ import java.util.HashMap;
 /**
  *
  * @author Christian W. Guenther (christian@deckfour.org)
+ * @author Andrea Burattin (just for minor changes)
  */
 public class ConfigurationSet extends HashMap<String, String> {
 
@@ -114,6 +115,23 @@ public class ConfigurationSet extends HashMap<String, String> {
 			return defaultValue;
 		} else {
 			return Double.parseDouble(value);
+		}
+	}
+	
+	public void setBoolean(String key, boolean value) {
+		this.put(key, Boolean.toString(value));
+	}
+	
+	public boolean getBoolean(String key) {
+		return getBoolean(key, false);
+	}
+	
+	public boolean getBoolean(String key, boolean defaultValue) {
+		String value = get(key);
+		if(value == null) {
+			return defaultValue;
+		} else {
+			return Boolean.parseBoolean(value);
 		}
 	}
 	

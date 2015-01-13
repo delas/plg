@@ -17,9 +17,9 @@ import javax.swing.JPanel;
 import javax.swing.JToolBar;
 
 import plg.gui.config.ConfigurationSet;
-import plg.gui.config.UIConfiguration;
+import plg.gui.controller.ApplicationController;
 import plg.gui.panels.Console;
-import plg.gui.panels.PlgPanels;
+import plg.gui.panels.MainWindowPanel;
 import plg.gui.panels.ProcessesList;
 import plg.gui.panels.SingleProcessVisualizer;
 import plg.gui.widgets.MainToolbar;
@@ -39,19 +39,32 @@ public class MainWindow extends JFrame {
 	private static final String KEY_POSITION_X = "KEY_POSITION_X";
 	private static final String KEY_POSITION_Y = "KEY_POSITION_Y";
 	
+	// default configuration values
+	private static final int DEFAULT_WIDTH = 1366;
+	private static final int DAFAULT_HEIGHT = 768;
+	private static final int MINIMUM_WIDTH = 800;
+	private static final int MINIMUM_HEIGHT = 600;
+	private static final String FRAME_TITLE = "PLG - Processes and Logs Generator";
+	
+	// application controller
+	private ApplicationController controller = null;
+	
 	// the actual configuration
 	private ConfigurationSet conf;
 	
 	// main window components
-	JToolBar mainWindowToolbar = null;
-	PlgPanels generatedProcessesList = null;
-	PlgPanels singleProcessVisualizer = null;
-	PlgPanels debugConsole = null;
+	private JToolBar mainWindowToolbar = null;
+	private MainWindowPanel generatedProcessesList = null;
+	private MainWindowPanel singleProcessVisualizer = null;
+	private MainWindowPanel debugConsole = null;
 
 	/**
 	 * Main window class constructor
 	 */
-	public MainWindow() {
+	public MainWindow(ApplicationController controller) {
+		this.controller = controller;
+		this.conf = controller.getConfiguration(this.getClass().getCanonicalName());
+		
 		// register closing action..
 		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		this.addWindowListener(new WindowAdapter() {
@@ -76,15 +89,18 @@ public class MainWindow extends JFrame {
 		});
 		
 		// restore window position and size
-		conf = UIConfiguration.master().getChild(this.getClass().getCanonicalName());
 		restoreWindowState();
 		
 		// set minimum dimensions
-		setMinimumSize(new Dimension(800, 600));
+		setMinimumSize(new Dimension(MINIMUM_WIDTH, MINIMUM_HEIGHT));
 		
+		// place the components of the window
 		placeComponents();
 	}
 	
+	/**
+	 * This method places all the components into their right place
+	 */
 	protected void placeComponents() {
 		// set the main layout
 		setLayout(new BorderLayout());
@@ -99,28 +115,26 @@ public class MainWindow extends JFrame {
 		add(mainWindowToolbar, BorderLayout.NORTH);
 		
 		// add the list of generated processes
-		generatedProcessesList = new ProcessesList();
+		generatedProcessesList = new ProcessesList(conf.getChild(ProcessesList.class.getCanonicalName()));
 		GridBagConstraints c = new GridBagConstraints();
 		c.gridx = 0;
 		c.gridy = 0;
-		c.weightx = 0.25;
-		c.weighty = 1;
 		c.gridheight = 2;
-		c.fill = GridBagConstraints.BOTH;
+		c.fill = GridBagConstraints.VERTICAL;
 		mainWindowContainer.add(generatedProcessesList, c);
 		
 		// add the current process visualizer
-		singleProcessVisualizer = new SingleProcessVisualizer();
+		singleProcessVisualizer = new SingleProcessVisualizer(conf.getChild(SingleProcessVisualizer.class.getCanonicalName()));
 		c = new GridBagConstraints();
 		c.gridx = 1;
 		c.gridy = 0;
-		c.weightx = 0.75;
+		c.weightx = 1;
 		c.weighty = 1;
 		c.fill = GridBagConstraints.BOTH;
 		mainWindowContainer.add(singleProcessVisualizer, c);
 		
 		// add the debug console
-		debugConsole = new Console();
+		debugConsole = new Console(conf.getChild(Console.class.getCanonicalName()));
 		c = new GridBagConstraints();
 		c.gridx = 1;
 		c.gridy = 1;
@@ -133,21 +147,18 @@ public class MainWindow extends JFrame {
 	 * Method to restore the current state of the window
 	 */
 	protected void restoreWindowState() {
-		int default_width = 1366;
-		int defauil_height = 768;
+		int default_x = (Toolkit.getDefaultToolkit().getScreenSize().width / 2) - (DEFAULT_WIDTH / 2);
+		int default_y = (Toolkit.getDefaultToolkit().getScreenSize().height / 2) - (DAFAULT_HEIGHT / 2);
 		
-		int default_x = (Toolkit.getDefaultToolkit().getScreenSize().width / 2) - (default_width / 2);
-		int default_y = (Toolkit.getDefaultToolkit().getScreenSize().height / 2) - (defauil_height / 2);
-		
-		int width = Math.min(conf.getInteger(KEY_SIZE_WIDTH, default_width), Toolkit.getDefaultToolkit().getScreenSize().width);
-		int height = Math.min(conf.getInteger(KEY_SIZE_HEIGHT, defauil_height), Toolkit.getDefaultToolkit().getScreenSize().height);
+		int width = Math.min(conf.getInteger(KEY_SIZE_WIDTH, DEFAULT_WIDTH), Toolkit.getDefaultToolkit().getScreenSize().width);
+		int height = Math.min(conf.getInteger(KEY_SIZE_HEIGHT, DAFAULT_HEIGHT), Toolkit.getDefaultToolkit().getScreenSize().height);
 		this.setSize(width, height);
 		
 		int x = Math.max(0, conf.getInteger(KEY_POSITION_X, default_x));
 		int y = Math.max(0, conf.getInteger(KEY_POSITION_Y, default_y));
 		this.setLocation(x, y);
 		
-		this.setTitle("PLG - Processes and Logs Generator");
+		this.setTitle(FRAME_TITLE);
 	}
 	
 	/**
@@ -170,7 +181,7 @@ public class MainWindow extends JFrame {
 	 */
 	protected void exitApplication() {
 		try {
-			UIConfiguration.save();
+			controller.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
