@@ -16,7 +16,7 @@ import plg.gui.config.ConfigurationSet;
 import plg.gui.controller.ApplicationController;
 
 /**
- * 
+ * This class contains the main frame of PLG
  *
  * @author Andrea Burattin
  */

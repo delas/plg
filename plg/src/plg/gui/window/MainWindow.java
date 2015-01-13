@@ -16,7 +16,7 @@ import plg.gui.panels.SingleProcessVisualizer;
 import plg.gui.widgets.MainToolbar;
 
 /**
- * 
+ * This class contains the main window of PLG
  *
  * @author Andrea Burattin
  */
