@@ -1,5 +1,9 @@
 package plg.gui.window;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ComponentAdapter;
@@ -9,9 +13,16 @@ import java.awt.event.WindowEvent;
 import java.io.IOException;
 
 import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JToolBar;
 
 import plg.gui.config.ConfigurationSet;
 import plg.gui.config.UIConfiguration;
+import plg.gui.panels.Console;
+import plg.gui.panels.PlgPanels;
+import plg.gui.panels.ProcessesList;
+import plg.gui.panels.SingleProcessVisualizer;
+import plg.gui.widgets.MainToolbar;
 
 /**
  * 
@@ -27,10 +38,15 @@ public class MainWindow extends JFrame {
 	private static final String KEY_SIZE_HEIGHT = "KEY_SIZE_HEIGHT";
 	private static final String KEY_POSITION_X = "KEY_POSITION_X";
 	private static final String KEY_POSITION_Y = "KEY_POSITION_Y";
-	private static final String KEY_TITLE = "KEY_TITLE";
 	
 	// the actual configuration
 	private ConfigurationSet conf;
+	
+	// main window components
+	JToolBar mainWindowToolbar = null;
+	PlgPanels generatedProcessesList = null;
+	PlgPanels singleProcessVisualizer = null;
+	PlgPanels debugConsole = null;
 
 	/**
 	 * Main window class constructor
@@ -63,8 +79,56 @@ public class MainWindow extends JFrame {
 		conf = UIConfiguration.master().getChild(this.getClass().getCanonicalName());
 		restoreWindowState();
 		
+		// set minimum dimensions
+		setMinimumSize(new Dimension(800, 600));
+		
+		placeComponents();
 	}
-
+	
+	protected void placeComponents() {
+		// set the main layout
+		setLayout(new BorderLayout());
+		
+		// main window container
+		JPanel mainWindowContainer = new JPanel();
+		mainWindowContainer.setLayout(new GridBagLayout());
+		add(mainWindowContainer, BorderLayout.CENTER);
+		
+		// insert the toolbar
+		mainWindowToolbar = new MainToolbar();
+		add(mainWindowToolbar, BorderLayout.NORTH);
+		
+		// add the list of generated processes
+		generatedProcessesList = new ProcessesList();
+		GridBagConstraints c = new GridBagConstraints();
+		c.gridx = 0;
+		c.gridy = 0;
+		c.weightx = 0.25;
+		c.weighty = 1;
+		c.gridheight = 2;
+		c.fill = GridBagConstraints.BOTH;
+		mainWindowContainer.add(generatedProcessesList, c);
+		
+		// add the current process visualizer
+		singleProcessVisualizer = new SingleProcessVisualizer();
+		c = new GridBagConstraints();
+		c.gridx = 1;
+		c.gridy = 0;
+		c.weightx = 0.75;
+		c.weighty = 1;
+		c.fill = GridBagConstraints.BOTH;
+		mainWindowContainer.add(singleProcessVisualizer, c);
+		
+		// add the debug console
+		debugConsole = new Console();
+		c = new GridBagConstraints();
+		c.gridx = 1;
+		c.gridy = 1;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.anchor = GridBagConstraints.SOUTH;
+		mainWindowContainer.add(debugConsole, c);
+	}
+	
 	/**
 	 * Method to restore the current state of the window
 	 */
@@ -83,7 +147,7 @@ public class MainWindow extends JFrame {
 		int y = Math.max(0, conf.getInteger(KEY_POSITION_Y, default_y));
 		this.setLocation(x, y);
 		
-		this.setTitle(conf.get(KEY_TITLE, "PLG - Processes and Logs Generator"));
+		this.setTitle("PLG - Processes and Logs Generator");
 	}
 	
 	/**
@@ -97,7 +161,6 @@ public class MainWindow extends JFrame {
 		conf.setInteger(KEY_POSITION_Y, p.y);
 		conf.setInteger(KEY_SIZE_WIDTH, getWidth());
 		conf.setInteger(KEY_SIZE_HEIGHT, getHeight());
-		conf.set(KEY_TITLE, this.getTitle());
 	}
 
 	/**

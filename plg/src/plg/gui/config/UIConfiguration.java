@@ -44,7 +44,7 @@ import plg.gui.util.RuntimeUtils;
  */
 public class UIConfiguration {
 	
-	private static final String FILE_NAME = "plgconfig.xml";
+	private static final String FILE_NAME = "plg-config.xml";
 	private static final UIConfiguration configuration = new UIConfiguration();
 	
 	public static ConfigurationSet master() {
