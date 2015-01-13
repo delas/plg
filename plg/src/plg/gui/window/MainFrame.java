@@ -25,10 +25,10 @@ public class MainFrame extends JFrame {
 	private static final long serialVersionUID = -1040942077404079636L;
 
 	// main window configuration keys
-	private static final String KEY_SIZE_WIDTH = "KEY_SIZE_WIDTH";
-	private static final String KEY_SIZE_HEIGHT = "KEY_SIZE_HEIGHT";
-	private static final String KEY_POSITION_X = "KEY_POSITION_X";
-	private static final String KEY_POSITION_Y = "KEY_POSITION_Y";
+	private static final String KEY_SIZE_WIDTH = "SIZE_WIDTH";
+	private static final String KEY_SIZE_HEIGHT = "SIZE_HEIGHT";
+	private static final String KEY_POSITION_X = "POSITION_X";
+	private static final String KEY_POSITION_Y = "POSITION_Y";
 	
 	// default configuration values
 	private static final String FRAME_TITLE = "PLG - Processes and Logs Generator";

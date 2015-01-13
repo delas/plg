@@ -22,6 +22,8 @@ public class ApplicationController {
 	private MainWindow mainWindow;
 	private ConfigurationSet configuration;
 	
+	private ConsoleController consoleController;
+	
 	/**
 	 * This method returns the available instance of the application controller.
 	 * 
@@ -37,11 +39,20 @@ public class ApplicationController {
 	 */
 	private ApplicationController() {
 		configuration = UIConfiguration.master();
+		
+		// creates gui
 		mainWindow = new MainWindow(this);
 		mainFrame = new MainFrame(this);
 		
-		// redirect the logger to the application console
-		Logger.LOG_PRINT_STREAM = mainWindow.getConsole().getConsolePrintStream();
+		// creates children controllers
+		consoleController = new ConsoleController(
+				this,
+				configuration.getChild(ConsoleController.class.getCanonicalName()),
+				mainWindow.getConsole());
+	}
+	
+	public ConsoleController console() {
+		return consoleController;
 	}
 	
 	/**

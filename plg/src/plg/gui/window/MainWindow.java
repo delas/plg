@@ -5,9 +5,11 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 import plg.gui.config.ConfigurationSet;
 import plg.gui.controller.ApplicationController;
+import plg.gui.controller.ConsoleController;
 import plg.gui.panels.Console;
 import plg.gui.panels.ProcessesList;
 import plg.gui.panels.SingleProcessVisualizer;
@@ -41,6 +43,14 @@ public class MainWindow extends JPanel {
 		placeComponents();
 	}
 	
+	public Console getConsole() {
+		return debugConsole;
+	}
+	
+	public MainToolbar getToolbar() {
+		return mainWindowToolbar;
+	}
+	
 	/**
 	 * This method places all the components into their right place
 	 */
@@ -52,10 +62,6 @@ public class MainWindow extends JPanel {
 		JPanel mainWindowContainer = new JPanel();
 		mainWindowContainer.setLayout(new GridBagLayout());
 		add(mainWindowContainer, BorderLayout.CENTER);
-		
-		// insert the toolbar
-		mainWindowToolbar = new MainToolbar();
-		add(mainWindowToolbar, BorderLayout.NORTH);
 		
 		// add the list of generated processes
 		generatedProcessesList = new ProcessesList(conf.getChild(ProcessesList.class.getCanonicalName()));
@@ -84,9 +90,9 @@ public class MainWindow extends JPanel {
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.anchor = GridBagConstraints.SOUTH;
 		mainWindowContainer.add(debugConsole, c);
-	}
-	
-	public Console getConsole() {
-		return debugConsole;
+		
+		// insert the toolbar
+		mainWindowToolbar = new MainToolbar();
+		add(mainWindowToolbar, BorderLayout.NORTH);
 	}
 }
