@@ -108,7 +108,7 @@ public class ConsoleController {
 			} else {
 				printInfo(message);
 			}
-			console.moveCaret();
+			console.resetCaret();
 		}
 	}
 }

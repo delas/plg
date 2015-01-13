@@ -6,25 +6,20 @@ import java.awt.Dimension;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
-import javax.swing.SwingUtilities;
 import javax.swing.text.StyledDocument;
 
 import plg.gui.config.ConfigurationSet;
-import plg.gui.controller.ApplicationController;
-import plg.gui.controller.ConsoleController;
 import plg.utils.Logger;
 
 /**
  * This class contains the main program console. All output of the
- * {@link Logger} class is captured into this widget.
+ * {@link Logger} class is captured into this window.
  *
  * @author Andrea Burattin
  */
 public class Console extends MainWindowPanel  {
 
 	private static final long serialVersionUID = -8707628278434660233L;
-	
-	
 	protected static final int HEIGHT = 200;
 	
 	private JTextPane console = new JTextPane();
@@ -47,22 +42,21 @@ public class Console extends MainWindowPanel  {
 		setLayout(new BorderLayout());
 		JScrollPane scrollPane = new JScrollPane(console);
 		add(scrollPane, BorderLayout.CENTER);
-		
-//		SwingUtilities.invokeLater(new Runnable() {
-//			@Override
-//			public void run() {
-//				ApplicationController.instance().console().setConsoleVisibility();
-//			}
-//		});
 	}
 	
+	/**
+	 * This method returns the document associated to the console
+	 * 
+	 * @return
+	 */
 	public StyledDocument getStyledDocument() {
 		return log;
 	}
 	
-	@Override
-	public void setVisible(boolean visible) {
-		
-		super.setVisible(visible);
+	/**
+	 * This method reset to the proper position the caret of the console.
+	 */
+	public void resetCaret() {
+		console.setCaretPosition(console.getText().length());
 	}
 }
