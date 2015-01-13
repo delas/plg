@@ -29,6 +29,7 @@ public class MainFrame extends JFrame {
 	private static final String KEY_SIZE_HEIGHT = "SIZE_HEIGHT";
 	private static final String KEY_POSITION_X = "POSITION_X";
 	private static final String KEY_POSITION_Y = "POSITION_Y";
+	private static final String KEY_WINDOW_MAXIMIZED = "WINDOW_MAXIMIZED";
 	
 	// default configuration values
 	private static final String FRAME_TITLE = "PLG - Processes and Logs Generator";
@@ -100,6 +101,10 @@ public class MainFrame extends JFrame {
 		this.setLocation(x, y);
 		
 		this.setTitle(FRAME_TITLE);
+		
+		if (conf.getBoolean(KEY_WINDOW_MAXIMIZED, false)) {
+			this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+		}
 	}
 	
 	/**
@@ -109,10 +114,13 @@ public class MainFrame extends JFrame {
 	 */
 	protected void saveWindowState() {
 		Point p = getLocation();
-		conf.setInteger(KEY_POSITION_X, p.x);
-		conf.setInteger(KEY_POSITION_Y, p.y);
-		conf.setInteger(KEY_SIZE_WIDTH, getWidth());
-		conf.setInteger(KEY_SIZE_HEIGHT, getHeight());
+		if (getExtendedState() != JFrame.MAXIMIZED_BOTH) {
+			conf.setInteger(KEY_POSITION_X, p.x);
+			conf.setInteger(KEY_POSITION_Y, p.y);
+			conf.setInteger(KEY_SIZE_WIDTH, getWidth());
+			conf.setInteger(KEY_SIZE_HEIGHT, getHeight());
+		}
+		conf.setBoolean(KEY_WINDOW_MAXIMIZED, (getExtendedState() == JFrame.MAXIMIZED_BOTH));
 	}
 
 	/**
