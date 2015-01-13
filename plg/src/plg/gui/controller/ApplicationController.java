@@ -6,6 +6,7 @@ import plg.gui.config.ConfigurationSet;
 import plg.gui.config.UIConfiguration;
 import plg.gui.window.MainFrame;
 import plg.gui.window.MainWindow;
+import plg.utils.Logger;
 
 /**
  * This class represents the application controller, and is in charge of
@@ -38,6 +39,9 @@ public class ApplicationController {
 		configuration = UIConfiguration.master();
 		mainWindow = new MainWindow(this);
 		mainFrame = new MainFrame(this);
+		
+		// redirect the logger to the application console
+		Logger.LOG_PRINT_STREAM = mainWindow.getConsole().getConsolePrintStream();
 	}
 	
 	/**

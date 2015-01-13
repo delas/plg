@@ -5,12 +5,10 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 
 import javax.swing.JPanel;
-import javax.swing.JToolBar;
 
 import plg.gui.config.ConfigurationSet;
 import plg.gui.controller.ApplicationController;
 import plg.gui.panels.Console;
-import plg.gui.panels.MainWindowPanel;
 import plg.gui.panels.ProcessesList;
 import plg.gui.panels.SingleProcessVisualizer;
 import plg.gui.widgets.MainToolbar;
@@ -28,10 +26,10 @@ public class MainWindow extends JPanel {
 	private ConfigurationSet conf;
 	
 	// main window components
-	private JToolBar mainWindowToolbar = null;
-	private MainWindowPanel generatedProcessesList = null;
-	private MainWindowPanel singleProcessVisualizer = null;
-	private MainWindowPanel debugConsole = null;
+	private MainToolbar mainWindowToolbar = null;
+	private ProcessesList generatedProcessesList = null;
+	private SingleProcessVisualizer singleProcessVisualizer = null;
+	private Console debugConsole = null;
 
 	/**
 	 * Main window class constructor
@@ -86,5 +84,9 @@ public class MainWindow extends JPanel {
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.anchor = GridBagConstraints.SOUTH;
 		mainWindowContainer.add(debugConsole, c);
+	}
+	
+	public Console getConsole() {
+		return debugConsole;
 	}
 }
