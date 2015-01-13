@@ -28,5 +28,6 @@ public class ProcessesController {
 	public void randomProcess() {
 		Process p = new Process("test");
 		ProcessGenerator.randomizeProcess(p, RandomizationConfiguration.BASIC_VALUES.setDepth(2));
+		applicationController.getMainWindow().getSingleProcessVisualizer().visualizeNewProcess(p);
 	}
 }
