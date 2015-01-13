@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import plg.gui.config.ConfigurationSet;
 import plg.gui.config.UIConfiguration;
+import plg.gui.window.MainFrame;
 import plg.gui.window.MainWindow;
 
 /**
@@ -15,6 +16,8 @@ import plg.gui.window.MainWindow;
 public class ApplicationController {
 
 	private static ApplicationController controller = new ApplicationController();
+	
+	private MainFrame mainFrame;
 	private MainWindow mainWindow;
 	private ConfigurationSet configuration;
 	
@@ -25,10 +28,15 @@ public class ApplicationController {
 	private ApplicationController() {
 		configuration = UIConfiguration.master();
 		mainWindow = new MainWindow(this);
+		mainFrame = new MainFrame(this);
 	}
 	
 	public MainWindow getMainWindow() {
 		return mainWindow;
+	}
+	
+	public MainFrame getMainFrame() {
+		return mainFrame;
 	}
 	
 	public void close() throws IOException {
