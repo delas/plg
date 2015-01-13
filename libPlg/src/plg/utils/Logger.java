@@ -27,7 +27,7 @@ public class Logger {
 	/**
 	 * The log will be written into this print stream
 	 */
-	public static final PrintStream LOG_PRINT_STREAM = System.out;
+	public static PrintStream LOG_PRINT_STREAM = System.out;
 	
 	/**
 	 * The actual logging object.
