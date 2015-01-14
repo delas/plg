@@ -19,6 +19,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
+import javax.swing.SpringLayout;
 
 /**
  * 
@@ -32,6 +33,7 @@ public abstract class GeneralDialog extends JDialog {
 	protected static int WIDTH = 615;
 	protected static int HEIGHT = 500;
 	
+	private JPanel bodyPanelContainer;
 	protected JPanel titlePanel;
 	protected JPanel bodyPanel;
 	protected JPanel footerPanel;
@@ -41,6 +43,12 @@ public abstract class GeneralDialog extends JDialog {
 	protected String title;
 	protected String help;
 	
+	/**
+	 * 
+	 * @param owner
+	 * @param title
+	 * @param help
+	 */
 	public GeneralDialog(JFrame owner, String title, String help) {
 		super(owner);
 		
@@ -54,6 +62,9 @@ public abstract class GeneralDialog extends JDialog {
 		placeComponents();
 	}
 	
+	/**
+	 * 
+	 */
 	protected void placeComponents() {
 		// title
 		JLabel titleLabel = new JLabel(title);
@@ -86,7 +97,16 @@ public abstract class GeneralDialog extends JDialog {
 		c.fill = GridBagConstraints.HORIZONTAL;
 		
 		// body
-		bodyPanel = new JPanel();
+		bodyPanel = new JPanel(new SpringLayout());
+		bodyPanelContainer = new JPanel(new GridBagLayout());
+		c = new GridBagConstraints();
+		c.gridx = 0;
+		c.gridy = 0;
+		c.weightx = 1;
+		c.weighty = 1;
+		c.anchor = GridBagConstraints.NORTHWEST;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		bodyPanelContainer.add(bodyPanel, c);
 		
 		// footer
 		cancelButton = new JButton("Cancel");
@@ -107,15 +127,19 @@ public abstract class GeneralDialog extends JDialog {
 		footerPanel.add(footerButtonsPanel, BorderLayout.EAST);
 		
 		addFooterButton(cancelButton, false);
-		addFooterButton(new JButton("OK"), true);
 		
 		// add everything
 		setLayout(new BorderLayout());
 		add(titlePanel, BorderLayout.NORTH);
-		add(bodyPanel, BorderLayout.CENTER);
+		add(bodyPanelContainer, BorderLayout.CENTER);
 		add(footerPanel, BorderLayout.SOUTH);
 	}
 	
+	/**
+	 * 
+	 * @param button
+	 * @param isDefault
+	 */
 	protected void addFooterButton(JButton button, boolean isDefault) {
 		footerButtonsPanel.add(Box.createHorizontalStrut(10));
 		footerButtonsPanel.add(button);
