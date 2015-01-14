@@ -65,6 +65,7 @@ public class ConsoleController {
 		private StyledDocument log;
 		private SimpleAttributeSet infoStyle = new SimpleAttributeSet();
 		private SimpleAttributeSet debugStyle = new SimpleAttributeSet();
+		private SimpleAttributeSet fileStyle = new SimpleAttributeSet();
 		
 		/**
 		 * Basic class constructor
@@ -75,8 +76,11 @@ public class ConsoleController {
 			
 			infoStyle.addAttribute(StyleConstants.CharacterConstants.Foreground, Color.green);
 			debugStyle.addAttribute(StyleConstants.CharacterConstants.Foreground, Color.green.darker().darker().darker());
+			fileStyle.addAttribute(StyleConstants.CharacterConstants.Foreground, Color.darkGray.darker());
+			
 			infoStyle.addAttribute(StyleConstants.CharacterConstants.FontFamily, "Monospaced");
 			debugStyle.addAttribute(StyleConstants.CharacterConstants.FontFamily, "Monospaced");
+			fileStyle.addAttribute(StyleConstants.CharacterConstants.FontFamily, "Monospaced");
 		}
 		
 		/**
@@ -86,7 +90,7 @@ public class ConsoleController {
 		 */
 		private void printInfo(String message) {
 			try {
-				log.insertString(console.getStyledDocument().getLength(), message + "\n", infoStyle);
+				log.insertString(console.getStyledDocument().getLength(), message, infoStyle);
 			} catch (BadLocationException e) { }
 		}
 		
@@ -97,17 +101,32 @@ public class ConsoleController {
 		 */
 		private void printDebug(String message) {
 			try {
-				log.insertString(console.getStyledDocument().getLength(), message + "\n", debugStyle);
+				log.insertString(console.getStyledDocument().getLength(), message, debugStyle);
+			} catch (BadLocationException e) { }
+		}
+		
+		/**
+		 * This method prints the provided string as a file name and adds a new line
+		 * 
+		 * @param file
+		 */
+		private void printFile(String file) {
+			try {
+				log.insertString(console.getStyledDocument().getLength(), file + "\n", fileStyle);
 			} catch (BadLocationException e) { }
 		}
 		
 		@Override
 		public void println(String message) {
+			int fileStartingAt = message.lastIndexOf("(");
+			String file = message.substring(fileStartingAt, message.length());
+			message = message.substring(0, fileStartingAt);
 			if (message.contains(" - DEBUG - ")) {
 				printDebug(message);
 			} else {
 				printInfo(message);
 			}
+			printFile(file);
 			console.resetCaret();
 		}
 	}
