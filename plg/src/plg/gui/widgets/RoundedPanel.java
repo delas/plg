@@ -29,7 +29,8 @@ public class RoundedPanel extends JPanel {
 	private int margin = 0;
 	
 	/** 
-	 * This enum describes the possible policy for painting the background
+	 * This enumeration describes the possible policy for painting the
+	 * background
 	 */
 	public enum BACKGROUND_POLICY {
 		/**
