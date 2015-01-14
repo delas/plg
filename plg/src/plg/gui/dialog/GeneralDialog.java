@@ -2,9 +2,7 @@ package plg.gui.dialog;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.ComponentOrientation;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -21,15 +19,13 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
-import javax.swing.WindowConstants;
-import javax.swing.border.BevelBorder;
 
 /**
  * 
  *
  * @author Andrea Burattin
  */
-public class GeneralDialog extends JDialog {
+public abstract class GeneralDialog extends JDialog {
 
 	private static final long serialVersionUID = -3969755125462223910L;
 	
@@ -51,6 +47,7 @@ public class GeneralDialog extends JDialog {
 		this.title = title;
 		this.help = help;
 		
+		setTitle(title);
 		setSize(WIDTH, HEIGHT);
 		setLocationRelativeTo(owner);
 		
@@ -127,16 +124,5 @@ public class GeneralDialog extends JDialog {
 			button.requestFocus();
 			getRootPane().setDefaultButton(button);
 		}
-	}
-	
-
-	public static void main(String args[]) {
-		JFrame f = new JFrame("test");
-		f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		f.setSize(800, 600);
-		f.setLocation(300, 300);
-		f.setVisible(true);
-		GeneralDialog d = new GeneralDialog(f, "New Process", "Use this dialog to set the new process parameters.");
-		d.setVisible(true);
 	}
 }
