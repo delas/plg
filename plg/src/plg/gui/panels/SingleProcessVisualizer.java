@@ -2,6 +2,11 @@ package plg.gui.panels;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Font;
+
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.SwingConstants;
 
 import plg.gui.config.ConfigurationSet;
 import plg.model.Process;
@@ -17,6 +22,8 @@ public class SingleProcessVisualizer extends MainWindowPanel {
 		super(conf);
 		setBackground(Color.white);
 		setLayout(new BorderLayout());
+		
+		generateProcessPlaceholder();
 	}
 	
 	public void visualizeNewProcess(Process process) {
@@ -25,6 +32,17 @@ public class SingleProcessVisualizer extends MainWindowPanel {
 		
 		removeAll();
 		add(visualizer, BorderLayout.CENTER);
+		updateUI();
+	}
+	
+	public void generateProcessPlaceholder() {
+		JLabel noProcess = new JLabel("No process to display");
+		noProcess.setHorizontalAlignment(SwingConstants.CENTER);
+		noProcess.setForeground(Color.lightGray);
+		noProcess.setFont(noProcess.getFont().deriveFont(40f).deriveFont(Font.ITALIC));
+		
+		removeAll();
+		add(noProcess, BorderLayout.CENTER);
 		updateUI();
 	}
 }

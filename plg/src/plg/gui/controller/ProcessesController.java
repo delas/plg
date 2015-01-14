@@ -6,6 +6,7 @@ import plg.gui.config.ConfigurationSet;
 import plg.gui.panels.ProcessesList;
 import plg.gui.panels.SingleProcessVisualizer;
 import plg.model.Process;
+import plg.utils.Logger;
 
 public class ProcessesController {
 
@@ -39,7 +40,12 @@ public class ProcessesController {
 	}
 	
 	public void visualizeProcess(Process p) {
-		singleProcessVisualizer.visualizeNewProcess(p);
+		if (p == null) {
+			singleProcessVisualizer.generateProcessPlaceholder();
+		} else {
+			singleProcessVisualizer.visualizeNewProcess(p);
+			Logger.instance().debug("Selected process \"" + p.getName() + "\"");
+		}
 	}
 	
 	private String getProcessSecondLine(Process p) {

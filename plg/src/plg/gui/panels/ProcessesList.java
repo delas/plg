@@ -3,6 +3,8 @@ package plg.gui.panels;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -61,14 +63,44 @@ public class ProcessesList extends MainWindowPanel {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
 				int index = list.getSelectedIndex();
-				MultilineImageListEntry entry = dlm.get(index);
-				if (entry.getId() != idCurrentProcess) {
-					Process p = (Process) entry.getItem();
-					ApplicationController.instance().processes().visualizeProcess(p);
-					idCurrentProcess = entry.getId();
-					Logger.instance().debug("Selected process id " + entry.getId());
+				if (index >= 0) {
+					MultilineImageListEntry entry = dlm.get(index);
+					if (entry.getId() != idCurrentProcess) {
+						Process p = (Process) entry.getItem();
+						ApplicationController.instance().processes().visualizeProcess(p);
+						idCurrentProcess = entry.getId();
+					}
 				}
 			}
+		});
+		this.list.addKeyListener(new KeyListener() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.getKeyCode() == KeyEvent.VK_DELETE) {
+					int index = list.getSelectedIndex();
+					if (index >= 0) {
+						MultilineImageListEntry entry = dlm.get(index);
+						dlm.remove(index);
+						if (dlm.getSize() == 0) {
+							list.clearSelection();
+							ApplicationController.instance().processes().visualizeProcess(null);
+						} else {
+							if (index == 0) {
+								list.setSelectedIndex(0);
+							} else {
+								list.setSelectedIndex(index - 1);
+							}
+						}
+						Logger.instance().debug("Removed process with id " + entry.getId());
+					}
+				}
+			}
+			
+			@Override
+			public void keyTyped(KeyEvent e) { }
+			
+			@Override
+			public void keyReleased(KeyEvent e) { }
 		});
 		
 		setPreferredSize(new Dimension(WIDTH, 0));
