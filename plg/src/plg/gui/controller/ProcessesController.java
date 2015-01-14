@@ -9,6 +9,7 @@ import plg.model.Process;
 
 public class ProcessesController {
 
+	private static int GENERATED_PROCESSES = 0;
 	private ApplicationController applicationController;
 	private ConfigurationSet configuration;
 	private ProcessesList processesList;
@@ -22,12 +23,36 @@ public class ProcessesController {
 		this.applicationController = applicationController;
 		this.configuration = configuration;
 		this.processesList = processesList;
-		this.singleProcessVisualizer = singleProcessVisualizer;
+		this.singleProcessVisualizer = singleProcessVisualizer;		
+		
 	}
 	
 	public void randomProcess() {
-		Process p = new Process("test");
-		ProcessGenerator.randomizeProcess(p, RandomizationConfiguration.BASIC_VALUES.setDepth(2));
-		applicationController.getMainWindow().getSingleProcessVisualizer().visualizeNewProcess(p);
+		GENERATED_PROCESSES++;
+		Process p = new Process("Process " + GENERATED_PROCESSES);
+		ProcessGenerator.randomizeProcess(p, RandomizationConfiguration.BASIC_VALUES.setDepth(1));
+		newProcessReady(p);
+	}
+	
+	private void newProcessReady(Process p) {
+		processesList.storeNewProcess(GENERATED_PROCESSES, p.getName(), getProcessSecondLine(p), p);
+	}
+	
+	public void visualizeProcess(Process p) {
+		singleProcessVisualizer.visualizeNewProcess(p);
+	}
+	
+	private String getProcessSecondLine(Process p) {
+		String sLine = "";
+		sLine += p.getTasks().size() + " ";
+		sLine += (p.getTasks().size() > 1)? "activities" : "activity";
+		sLine += ", ";
+		if (p.getGateways().size() == 0) {
+			sLine += "no gateways";
+		} else {
+			sLine += p.getGateways().size() + " ";
+			sLine += (p.getGateways().size() > 1)? "gateways" : "gateway";
+		}
+		return sLine;
 	}
 }
