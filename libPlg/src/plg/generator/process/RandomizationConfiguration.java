@@ -404,4 +404,19 @@ public class RandomizationConfiguration {
 		}
 		return SetUtils.getRandomWeighted(options);
 	}
+	
+	@Override
+	public String toString() {
+		String toRet = "";
+		toRet += "And Branches = " + getAndBranches() + "\n";
+		toRet += "Xor Branches = " + getXorBranches() + "\n";
+		toRet += "Loop Weight = " + getLoopWeight() + "\n";
+		toRet += "Single Activity Weight = " + getSingleActivityWeight() + "\n";
+		toRet += "Skip Weight = " + getSkipWeight() + "\n";
+		toRet += "Sequence Weight = " + getSequenceWeight() + "\n";
+		toRet += "AND Weight = " + getANDWeight() + "\n";
+		toRet += "XOR Weight = " + getXORWeight() + "\n";
+		toRet += "Maximum Depth = " + getMaximumDepth() + "\n";
+		return toRet;
+	}
 }
