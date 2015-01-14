@@ -47,11 +47,9 @@ public class ApplicationController {
 		// creates children controllers
 		consoleController = new ConsoleController(
 				this,
-				configuration.getChild(ConsoleController.class.getCanonicalName()),
 				mainWindow.getConsole());
 		processesController = new ProcessesController(
 				this,
-				configuration.getChild(ProcessesController.class.getCanonicalName()),
 				mainWindow.getProcessesList(),
 				mainWindow.getSingleProcessVisualizer());
 	}

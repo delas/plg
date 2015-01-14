@@ -1,7 +1,6 @@
 package plg.gui.controller;
 
 import plg.generator.process.ProcessGenerator;
-import plg.gui.config.ConfigurationSet;
 import plg.gui.dialog.GeneralDialog.RETURNED_VALUES;
 import plg.gui.dialog.NewProcessDialog;
 import plg.gui.panels.ProcessesList;
@@ -20,7 +19,6 @@ public class ProcessesController {
 
 	private static int GENERATED_PROCESSES = 1;
 	private ApplicationController applicationController;
-	private ConfigurationSet configuration;
 	private ProcessesList processesList;
 	private SingleProcessVisualizer singleProcessVisualizer;
 	
@@ -34,11 +32,9 @@ public class ProcessesController {
 	 */
 	protected ProcessesController(
 			ApplicationController applicationController,
-			ConfigurationSet configuration,
 			ProcessesList processesList,
 			SingleProcessVisualizer singleProcessVisualizer) {
 		this.applicationController = applicationController;
-		this.configuration = configuration;
 		this.processesList = processesList;
 		this.singleProcessVisualizer = singleProcessVisualizer;
 		
@@ -53,8 +49,8 @@ public class ProcessesController {
 		npd.setVisible(true);
 		if (RETURNED_VALUES.SUCCESS.equals(npd.returnedValue())) {
 			GENERATED_PROCESSES++;
-			Process p = new Process(npd.getProcessName());
-			ProcessGenerator.randomizeProcess(p, npd.configuredValues());
+			Process p = new Process(npd.getNewProcessName());
+			ProcessGenerator.randomizeProcess(p, npd.getConfiguredValues());
 			
 			processesList.storeNewProcess(GENERATED_PROCESSES, p.getName(), generateProcessSubtitle(p), p);
 		}
@@ -76,7 +72,7 @@ public class ProcessesController {
 	}
 	
 	/**
-	 * This method generates the "sutitle" of a process
+	 * This method generates the "subtitle" of a process
 	 * 
 	 * @param p
 	 * @return

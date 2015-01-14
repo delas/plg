@@ -24,10 +24,9 @@ public class ConsoleController {
 	
 	protected ConsoleController(
 			ApplicationController applicationController,
-			ConfigurationSet configuration,
 			Console console) {
 		this.applicationController = applicationController;
-		this.configuration = configuration;
+		this.configuration = applicationController.getConfiguration(ConsoleController.class.getCanonicalName());
 		this.console = console;
 		this.consolePrintStream = new ConsolePrintStream(console.getStyledDocument());
 		
