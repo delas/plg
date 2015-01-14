@@ -1,21 +1,37 @@
 package plg.gui.controller;
 
 import plg.generator.process.ProcessGenerator;
-import plg.generator.process.RandomizationConfiguration;
 import plg.gui.config.ConfigurationSet;
+import plg.gui.dialog.GeneralDialog.RETURNED_VALUES;
+import plg.gui.dialog.NewProcessDialog;
 import plg.gui.panels.ProcessesList;
 import plg.gui.panels.SingleProcessVisualizer;
 import plg.model.Process;
 import plg.utils.Logger;
 
+/**
+ * This class described the controller of the processes. It is in charge of
+ * managing new and existing processes, display and coordinate their
+ * interaction.
+ *
+ * @author Andrea Burattin
+ */
 public class ProcessesController {
 
-	private static int GENERATED_PROCESSES = 0;
+	private static int GENERATED_PROCESSES = 1;
 	private ApplicationController applicationController;
 	private ConfigurationSet configuration;
 	private ProcessesList processesList;
 	private SingleProcessVisualizer singleProcessVisualizer;
 	
+	/**
+	 * Controller constructor
+	 * 
+	 * @param applicationController
+	 * @param configuration
+	 * @param processesList
+	 * @param singleProcessVisualizer
+	 */
 	protected ProcessesController(
 			ApplicationController applicationController,
 			ConfigurationSet configuration,
@@ -24,32 +40,48 @@ public class ProcessesController {
 		this.applicationController = applicationController;
 		this.configuration = configuration;
 		this.processesList = processesList;
-		this.singleProcessVisualizer = singleProcessVisualizer;		
+		this.singleProcessVisualizer = singleProcessVisualizer;
 		
 	}
 	
+	/**
+	 * This method causes the startup of the procedure for the creation of a
+	 * new random process 
+	 */
 	public void randomProcess() {
-		GENERATED_PROCESSES++;
-		Process p = new Process("Process " + GENERATED_PROCESSES);
-		ProcessGenerator.randomizeProcess(p, RandomizationConfiguration.BASIC_VALUES.setDepth(1));
-		newProcessReady(p);
-	}
-	
-	private void newProcessReady(Process p) {
-		processesList.storeNewProcess(GENERATED_PROCESSES, p.getName(), getProcessSecondLine(p), p);
-	}
-	
-	public void visualizeProcess(Process p) {
-		if (p == null) {
-			singleProcessVisualizer.generateProcessPlaceholder();
-			Logger.instance().info("No process to show");
-		} else {
-			singleProcessVisualizer.visualizeNewProcess(p);
-			Logger.instance().info("Selected process \"" + p.getName() + "\"");
+		NewProcessDialog npd = new NewProcessDialog(applicationController.getMainFrame(), "Process " + GENERATED_PROCESSES);
+		npd.setVisible(true);
+		if (RETURNED_VALUES.SUCCESS.equals(npd.returnedValue())) {
+			GENERATED_PROCESSES++;
+			Process p = new Process(npd.getProcessName());
+			ProcessGenerator.randomizeProcess(p, npd.configuredValues());
+			
+			processesList.storeNewProcess(GENERATED_PROCESSES, p.getName(), generateProcessSubtitle(p), p);
 		}
 	}
 	
-	private String getProcessSecondLine(Process p) {
+	/**
+	 * This method is used to display a specific process model
+	 * 
+	 * @param process the process model to visualize
+	 */
+	public void visualizeProcess(Process process) {
+		if (process == null) {
+			singleProcessVisualizer.generateProcessPlaceholder();
+			Logger.instance().info("No process to show");
+		} else {
+			singleProcessVisualizer.visualizeNewProcess(process);
+			Logger.instance().info("Selected process \"" + process.getName() + "\"");
+		}
+	}
+	
+	/**
+	 * This method generates the "sutitle" of a process
+	 * 
+	 * @param p
+	 * @return
+	 */
+	private String generateProcessSubtitle(Process p) {
 		String sLine = "";
 		sLine += p.getTasks().size() + " ";
 		sLine += (p.getTasks().size() > 1)? "activities" : "activity";
