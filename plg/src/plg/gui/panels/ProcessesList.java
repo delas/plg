@@ -91,7 +91,7 @@ public class ProcessesList extends MainWindowPanel {
 								list.setSelectedIndex(index - 1);
 							}
 						}
-						Logger.instance().debug("Removed process with id " + entry.getId());
+						Logger.instance().info("Removed process with id " + entry.getId());
 					}
 				}
 			}

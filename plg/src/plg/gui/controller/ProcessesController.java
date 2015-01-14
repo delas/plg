@@ -42,9 +42,10 @@ public class ProcessesController {
 	public void visualizeProcess(Process p) {
 		if (p == null) {
 			singleProcessVisualizer.generateProcessPlaceholder();
+			Logger.instance().info("No process to show");
 		} else {
 			singleProcessVisualizer.visualizeNewProcess(p);
-			Logger.instance().debug("Selected process \"" + p.getName() + "\"");
+			Logger.instance().info("Selected process \"" + p.getName() + "\"");
 		}
 	}
 	
