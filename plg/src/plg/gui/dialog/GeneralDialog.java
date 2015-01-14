@@ -21,10 +21,18 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.SpringLayout;
 
+import plg.gui.config.ConfigurationSet;
 import plg.gui.util.SpringUtilities;
 
 /**
+ * This abstract class describes a general dialog in PLG. The dialog created
+ * extending this class can be used, for example, to insert 
+ * parameters.
  * 
+ * <p><strong>Attention:</strong> classes extending this type are required to
+ * configure the {@link #returnedValue} variable, in order to properly let the
+ * framework identify the value prompted by the user. The default value for such
+ * variable is set to <tt>CANCEL</tt>.
  *
  * @author Andrea Burattin
  */
@@ -35,37 +43,54 @@ public abstract class GeneralDialog extends JDialog {
 	protected static int WIDTH = 615;
 	protected static int HEIGHT = 500;
 	
-	private JPanel bodyPanelContainer;
+	protected ConfigurationSet configuration = null;
+	protected RETURNED_VALUES returnedValue = RETURNED_VALUES.CANCEL;
+	
 	protected JPanel titlePanel;
 	protected JPanel bodyPanel;
+	protected JPanel bodyPanelContainer;
 	protected JPanel footerPanel;
 	protected JPanel footerButtonsPanel;
 	protected JButton cancelButton;
-	
 	protected String title;
 	protected String help;
 	
 	/**
-	 * 
-	 * @param owner
-	 * @param title
-	 * @param help
+	 * This enumeration describes the possible values that a dialog is allowed
+	 * to return. The default value is <tt>CANCEL</tt>,
+	 *
+	 * @author Andrea Burattin
 	 */
-	public GeneralDialog(JFrame owner, String title, String help) {
+	public enum RETURNED_VALUES {
+		CANCEL,
+		SUCCESS
+	};
+	
+	/**
+	 * Dialog constructor
+	 * 
+	 * @param owner the owner of the dialog
+	 * @param title the title of the dialog
+	 * @param help a short text describing the dialog content
+	 * @param configuration the configuration set to use for the dialog
+	 */
+	public GeneralDialog(JFrame owner, String title, String help, ConfigurationSet configuration) {
 		super(owner);
 		
 		this.title = title;
 		this.help = help;
+		this.configuration = configuration;
 		
 		setTitle(title);
 		setSize(WIDTH, HEIGHT);
 		setLocationRelativeTo(owner);
+		setModal(true);
 		
 		placeComponents();
 	}
 	
 	/**
-	 * 
+	 * This method configures the graphical components of the dialog
 	 */
 	protected void placeComponents() {
 		// title
@@ -139,6 +164,7 @@ public abstract class GeneralDialog extends JDialog {
 	}
 	
 	/**
+	 * This utility method generates a new label for the "form" of the body
 	 * 
 	 * @param text
 	 * @return
@@ -149,6 +175,11 @@ public abstract class GeneralDialog extends JDialog {
 		return l;
 	}
 	
+	/**
+	 * This method automatically inserts a vertical separator into the body
+	 * 
+	 * @param height the height of the separator
+	 */
 	protected void insertBodySeparator(int height) {
 		bodyPanel.add(prepareFieldLabel(""));
 		bodyPanel.add(Box.createVerticalStrut(height));
@@ -168,9 +199,11 @@ public abstract class GeneralDialog extends JDialog {
 	}
 	
 	/**
+	 * This method inserts a new button into the dialog footer
 	 * 
-	 * @param button
-	 * @param isDefault
+	 * @param button the button to insert
+	 * @param isDefault whether the provided button is supposed to be the
+	 * default for the dialog
 	 */
 	protected void addFooterButton(JButton button, boolean isDefault) {
 		footerButtonsPanel.add(Box.createHorizontalStrut(10));
@@ -180,5 +213,14 @@ public abstract class GeneralDialog extends JDialog {
 			button.requestFocus();
 			getRootPane().setDefaultButton(button);
 		}
+	}
+	
+	/**
+	 * This method returns the values "returned" by the current dialog
+	 * 
+	 * @return the value returned by this dialog
+	 */
+	public RETURNED_VALUES returnedValue() {
+		return returnedValue;
 	}
 }
