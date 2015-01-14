@@ -106,6 +106,7 @@ public abstract class GeneralDialog extends JDialog {
 		c.weighty = 1;
 		c.anchor = GridBagConstraints.NORTHWEST;
 		c.fill = GridBagConstraints.HORIZONTAL;
+		c.insets = new Insets(15, 5, 15, 5);
 		bodyPanelContainer.add(bodyPanel, c);
 		
 		// footer
