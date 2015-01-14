@@ -21,6 +21,8 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.SpringLayout;
 
+import plg.gui.util.SpringUtilities;
+
 /**
  * 
  *
@@ -134,6 +136,35 @@ public abstract class GeneralDialog extends JDialog {
 		add(titlePanel, BorderLayout.NORTH);
 		add(bodyPanelContainer, BorderLayout.CENTER);
 		add(footerPanel, BorderLayout.SOUTH);
+	}
+	
+	/**
+	 * 
+	 * @param text
+	 * @return
+	 */
+	protected JLabel prepareFieldLabel(String text) {
+		JLabel l = new JLabel(text, JLabel.TRAILING);
+		l.setFont(l.getFont().deriveFont(Font.PLAIN));
+		return l;
+	}
+	
+	protected void insertBodySeparator(int height) {
+		bodyPanel.add(prepareFieldLabel(""));
+		bodyPanel.add(Box.createVerticalStrut(height));
+	}
+	
+	/**
+	 * This method configures the spring layout of the body panel with all the
+	 * configuration widgets. To be called after all widgets have been added to
+	 * the panel.
+	 */
+	protected void layoutBody() {
+		// lay out the panel
+		SpringUtilities.makeCompactGrid(bodyPanel,
+				(bodyPanel.getComponentCount() / 2), 2, // rows, cols
+				0, 0, // initX, initY
+				5, 10); //xPad, yPad
 	}
 	
 	/**
