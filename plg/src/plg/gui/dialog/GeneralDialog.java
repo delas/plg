@@ -18,6 +18,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.SpringLayout;
 
@@ -136,6 +137,9 @@ public abstract class GeneralDialog extends JDialog {
 		c.insets = new Insets(15, 5, 15, 5);
 		bodyPanelContainer.add(bodyPanel, c);
 		
+		JScrollPane bodyPanelScroller = new JScrollPane(bodyPanelContainer);
+		bodyPanelScroller.setBorder(BorderFactory.createEmptyBorder());
+		
 		// footer
 		cancelButton = new JButton("Cancel");
 		cancelButton.addActionListener(new ActionListener() {
@@ -159,7 +163,7 @@ public abstract class GeneralDialog extends JDialog {
 		// add everything
 		setLayout(new BorderLayout());
 		add(titlePanel, BorderLayout.NORTH);
-		add(bodyPanelContainer, BorderLayout.CENTER);
+		add(bodyPanelScroller, BorderLayout.CENTER);
 		add(footerPanel, BorderLayout.SOUTH);
 	}
 	
