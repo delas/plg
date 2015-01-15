@@ -153,7 +153,7 @@ public class RuntimeUtils {
 	 */
 	public static String getSupportFolder() {
 		String homedir = System.getProperty("user.home");
-		String dirName = "PLG";
+		String dirName = "ProcessesLogsGenerator";
 		if(isRunningWindows()) {
 			// any windows flavor
 			(new File(homedir + "\\" + dirName)).mkdirs(); // create directories if necessary

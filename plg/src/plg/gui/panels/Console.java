@@ -57,6 +57,6 @@ public class Console extends MainWindowPanel  {
 	 * This method reset to the proper position the caret of the console.
 	 */
 	public void resetCaret() {
-		console.setCaretPosition(console.getText().length());
+		console.setCaretPosition(log.getLength());
 	}
 }
