@@ -2,14 +2,17 @@ package plg.gui.window;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
 import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
 import plg.gui.config.ConfigurationSet;
@@ -73,6 +76,12 @@ public class MainFrame extends JFrame {
 				saveWindowState();
 			}
 		});
+		
+		// set the application icon
+		try {
+			Image curImage = ImageIO.read(new File("resources/icons/application-icon.png"));
+			setIconImage(curImage);
+		} catch (IOException e) { }
 		
 		// restore window position and size
 		restoreWindowState();
