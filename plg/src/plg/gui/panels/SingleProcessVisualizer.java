@@ -6,6 +6,7 @@ import java.awt.Font;
 
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 
 import plg.gui.config.ConfigurationSet;
@@ -15,7 +16,7 @@ import plg.visualizer.BPMNVisualizer;
 public class SingleProcessVisualizer extends MainWindowPanel {
 
 	private static final long serialVersionUID = -4811133888838143863L;
-	private Process process = null;
+	private Process currentlyVisualizedProcess = null;
 	private BPMNVisualizer visualizer = null;
 
 	public SingleProcessVisualizer(ConfigurationSet conf) {
@@ -27,7 +28,7 @@ public class SingleProcessVisualizer extends MainWindowPanel {
 	}
 	
 	public void visualizeNewProcess(Process process) {
-		this.process = process;
+		this.currentlyVisualizedProcess = process;
 		this.visualizer = new BPMNVisualizer(process);
 		
 		removeAll();

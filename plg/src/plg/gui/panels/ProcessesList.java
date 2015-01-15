@@ -104,6 +104,7 @@ public class ProcessesList extends MainWindowPanel {
 		});
 		
 		setPreferredSize(new Dimension(WIDTH, 0));
+		setMinimumSize(new Dimension(WIDTH, 0));
 		setLayout(new BorderLayout());
 		
 		JScrollPane scrollPane = new JScrollPane(list);

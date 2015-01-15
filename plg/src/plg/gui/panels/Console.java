@@ -37,6 +37,7 @@ public class Console extends MainWindowPanel  {
 		this.console.setBackground(Color.black);
 		
 		setPreferredSize(new Dimension(0, HEIGHT));
+		setMinimumSize(new Dimension(0, HEIGHT));
 		setBackground(Color.black);
 		
 		setLayout(new BorderLayout());
