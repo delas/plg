@@ -120,7 +120,7 @@ public class BPMNVisualizer extends JPanel {
 				components.put(fo, obj);
 			}
 			for (Gateway fo : process.getGateways()) {
-				String label = "×";
+				String label = "x";
 				if (fo instanceof ParallelGateway) {
 					label = "+";
 				}
