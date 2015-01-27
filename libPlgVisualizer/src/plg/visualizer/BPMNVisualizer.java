@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 
+import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
@@ -52,6 +53,7 @@ public class BPMNVisualizer extends JPanel {
 		
 		setupMxGraph();
 		mxGraphComponent graphComponent = updateGraph();
+		graphComponent.setBorder(BorderFactory.createEmptyBorder());
 		
 		setLayout(new BorderLayout());
 		add(graphComponent, BorderLayout.CENTER);
