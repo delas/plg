@@ -14,6 +14,7 @@ import org.jdom2.input.SAXBuilder;
 
 import com.google.common.base.CharMatcher;
 
+import plg.annotations.Importer;
 import plg.generator.scriptexecuter.IntegerScriptExecutor;
 import plg.generator.scriptexecuter.StringScriptExecutor;
 import plg.model.Component;
@@ -45,6 +46,10 @@ import plg.model.sequence.Sequence;
  * 
  * @author Andrea Burattin
  */
+@Importer(
+	name = "Signavio BPMN files",
+	fileExtension = "bpmn"
+)
 public class SignavioBPMNImporter implements FileImporter {
 
 	private static final Namespace ns = Namespace.getNamespace("http://www.omg.org/spec/BPMN/20100524/MODEL");
