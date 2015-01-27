@@ -4,9 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 
-import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 
 import plg.gui.config.ConfigurationSet;
@@ -37,10 +35,13 @@ public class SingleProcessVisualizer extends MainWindowPanel {
 	}
 	
 	public void generateProcessPlaceholder() {
-		JLabel noProcess = new JLabel("No process to display");
+		JLabel noProcess = new JLabel("<html><div style=\"text-align: center;\">"
+				+ "<span style=\"font-size: 30px\"><i>No process to display</i></span><br/><br/>"
+				+ "<span style=\"font-size: 14px\">Start by creating a new process or importing an existing one.</span>"
+				+ "</div></html>");
 		noProcess.setHorizontalAlignment(SwingConstants.CENTER);
 		noProcess.setForeground(Color.lightGray);
-		noProcess.setFont(noProcess.getFont().deriveFont(40f).deriveFont(Font.ITALIC));
+		noProcess.setFont(noProcess.getFont().deriveFont(Font.PLAIN));
 		
 		removeAll();
 		add(noProcess, BorderLayout.CENTER);
