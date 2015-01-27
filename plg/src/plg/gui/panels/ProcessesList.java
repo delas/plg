@@ -56,7 +56,7 @@ public class ProcessesList extends MainWindowPanel {
 		
 		this.dlm = new DefaultListModel<MultilineImageListEntry>();
 		this.list = new JList<MultilineImageListEntry>(dlm);
-		this.list.setCellRenderer(new MultilineImageListEntryRenderer<>(ITEM_SELECTED_BACKGROUND, ITEM_SELECTED_BORDER, ITEM_BORDER));
+		this.list.setCellRenderer(new MultilineImageListEntryRenderer<>());
 		this.list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		
 		this.list.addListSelectionListener(new ListSelectionListener() {
