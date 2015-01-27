@@ -2,21 +2,19 @@ package plg.gui.window;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.File;
 import java.io.IOException;
 
-import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
 import plg.gui.config.ConfigurationSet;
 import plg.gui.controller.ApplicationController;
+import plg.gui.util.ImagesCollection;
 
 /**
  * This class contains the main frame of PLG
@@ -78,10 +76,7 @@ public class MainFrame extends JFrame {
 		});
 		
 		// set the application icon
-		try {
-			Image curImage = ImageIO.read(new File("resources/icons/application-icon.png"));
-			setIconImage(curImage);
-		} catch (IOException e) { }
+		setIconImage(ImagesCollection.PLG_ICON_SCALED.getImage());
 		
 		// restore window position and size
 		restoreWindowState();

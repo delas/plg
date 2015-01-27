@@ -8,6 +8,11 @@ import java.awt.RenderingHints;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.PixelGrabber;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 
 /**
  * Collection of utilities methods to work with images.
@@ -15,6 +20,43 @@ import java.awt.image.PixelGrabber;
  * @author Andrea Burattin
  */
 public class ImageUtils {
+	
+	/**
+	 * This method load a resource as an image. The basic utility of this method
+	 * is to wrap the exceptions, so it can be used to load static fields. This
+	 * method also scales the image to the required dimensions
+	 * 
+	 * @param imageFile the resource to load
+	 * @param width the target width
+	 * @param height the target height
+	 * @return the loaded image, or <tt>null</tt> if the resource is not
+	 * available
+	 */
+	public static ImageIcon loadImage(String imageFile, int width, int height) {
+		try {
+			return new ImageIcon(ImageIO.read(new File(imageFile)).getScaledInstance(width, height, BufferedImage.SCALE_FAST));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	/**
+	 * This method load a resource as an image. The basic utility of this method
+	 * is to wrap the exceptions, so it can be used to load static fields.
+	 * 
+	 * @param imageFile the resource to load
+	 * @return the loaded image, or <tt>null</tt> if the resource is not
+	 * available
+	 */
+	public static ImageIcon loadImage(String imageFile) {
+		try {
+			return new ImageIcon(ImageIO.read(new File(imageFile)));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 	
 	/**
 	 * Given an image as input this method will create a buffered image

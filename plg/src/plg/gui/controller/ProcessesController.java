@@ -1,5 +1,7 @@
 package plg.gui.controller;
 
+import javax.swing.JFileChooser;
+
 import plg.generator.process.ProcessGenerator;
 import plg.gui.dialog.GeneralDialog.RETURNED_VALUES;
 import plg.gui.dialog.NewProcessDialog;
@@ -56,6 +58,15 @@ public class ProcessesController {
 		}
 	}
 	
+	public void openProcess() {
+		final JFileChooser fc = new JFileChooser();
+		int returnVal = fc.showOpenDialog(applicationController.getMainFrame());
+		
+		if (returnVal == JFileChooser.APPROVE_OPTION) {
+//			File file = fc.getSelectedFile();
+		}
+	}
+	
 	/**
 	 * This method is used to display a specific process model
 	 * 
@@ -64,11 +75,14 @@ public class ProcessesController {
 	public void visualizeProcess(Process process) {
 		if (process == null) {
 			singleProcessVisualizer.generateProcessPlaceholder();
-			Logger.instance().info("No process to show");
+			Logger.instance().info("No process to display");
 		} else {
 			singleProcessVisualizer.visualizeNewProcess(process);
 			Logger.instance().info("Selected process \"" + process.getName() + "\"");
 		}
+		
+		// update toolbar buttons depending on the selected process or not
+		applicationController.getMainWindow().getToolbar().setProcessSelected((process != null));
 	}
 	
 	/**

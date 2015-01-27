@@ -11,9 +11,26 @@ import plg.gui.config.ConfigurationSet;
 import plg.model.Process;
 import plg.visualizer.BPMNVisualizer;
 
+/**
+ * This class contains the panel responsible of the visualization of a single
+ * process.
+ * 
+ * @author Andrea Burattin
+ */
 public class SingleProcessVisualizer extends MainWindowPanel {
 
 	private static final long serialVersionUID = -4811133888838143863L;
+	private static JLabel noProcess = new JLabel("<html><div style=\"text-align: center;\">"
+			+ "<span style=\"font-size: 30px\">No process to display</span><br/><br/>"
+			+ "<span style=\"font-size: 14px\">Start by creating a new process or importing an existing one</span>"
+			+ "</div></html>");
+	
+	static {
+		noProcess.setHorizontalAlignment(SwingConstants.CENTER);
+		noProcess.setForeground(Color.lightGray);
+		noProcess.setFont(noProcess.getFont().deriveFont(Font.PLAIN));
+	}
+	
 	private Process currentlyVisualizedProcess = null;
 	private BPMNVisualizer visualizer = null;
 
@@ -35,14 +52,6 @@ public class SingleProcessVisualizer extends MainWindowPanel {
 	}
 	
 	public void generateProcessPlaceholder() {
-		JLabel noProcess = new JLabel("<html><div style=\"text-align: center;\">"
-				+ "<span style=\"font-size: 30px\"><i>No process to display</i></span><br/><br/>"
-				+ "<span style=\"font-size: 14px\">Start by creating a new process or importing an existing one.</span>"
-				+ "</div></html>");
-		noProcess.setHorizontalAlignment(SwingConstants.CENTER);
-		noProcess.setForeground(Color.lightGray);
-		noProcess.setFont(noProcess.getFont().deriveFont(Font.PLAIN));
-		
 		removeAll();
 		add(noProcess, BorderLayout.CENTER);
 		updateUI();

@@ -42,7 +42,7 @@ public abstract class GeneralDialog extends JDialog {
 	private static final long serialVersionUID = -3969755125462223910L;
 	
 	protected static int WIDTH = 615;
-	protected static int HEIGHT = 500;
+	protected static int HEIGHT = 550;
 	
 	protected ConfigurationSet configuration = null;
 	protected RETURNED_VALUES returnedValue = RETURNED_VALUES.CANCEL;

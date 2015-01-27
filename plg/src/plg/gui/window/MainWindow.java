@@ -3,6 +3,7 @@ package plg.gui.window;
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 
 import javax.swing.JPanel;
 
@@ -41,18 +42,38 @@ public class MainWindow extends JPanel {
 		placeComponents();
 	}
 	
+	/**
+	 * Method to get the window console
+	 * 
+	 * @return
+	 */
 	public Console getConsole() {
 		return debugConsole;
 	}
 	
+	/**
+	 * Method to get the toolbar
+	 * 
+	 * @return
+	 */
 	public MainToolbar getToolbar() {
 		return mainWindowToolbar;
 	}
 	
+	/**
+	 * Method to get the main process visualizer
+	 * 
+	 * @return
+	 */
 	public SingleProcessVisualizer getSingleProcessVisualizer() {
 		return singleProcessVisualizer;
 	}
 	
+	/**
+	 * Method to get the processes list
+	 * 
+	 * @return
+	 */
 	public ProcessesList getProcessesList() {
 		return generatedProcessesList;
 	}
@@ -85,6 +106,7 @@ public class MainWindow extends JPanel {
 		c.gridy = 0;
 		c.weightx = 1;
 		c.weighty = 1;
+		c.insets = new Insets(3, 0, 3, 3);
 		c.fill = GridBagConstraints.BOTH;
 		mainWindowContainer.add(singleProcessVisualizer, c);
 		

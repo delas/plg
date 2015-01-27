@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 
+import javax.swing.BorderFactory;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.text.StyledDocument;
@@ -42,6 +43,7 @@ public class Console extends MainWindowPanel  {
 		
 		setLayout(new BorderLayout());
 		JScrollPane scrollPane = new JScrollPane(console);
+		scrollPane.setBorder(BorderFactory.createEmptyBorder());
 		add(scrollPane, BorderLayout.CENTER);
 	}
 	
