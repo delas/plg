@@ -8,10 +8,9 @@ import java.awt.Font;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
 import javax.swing.border.Border;
-
-import plg.gui.widgets.RoundedPanel;
 
 /**
  * This class describes the renderer of a {@link MultilineImageListEntry}.
@@ -19,10 +18,14 @@ import plg.gui.widgets.RoundedPanel;
  * @author Andrea Burattin
  */
 public class MultilineImageListEntryRenderer<E>
-	extends RoundedPanel
+	extends JPanel
 	implements ListCellRenderer<E> {
 	
 	private static final long serialVersionUID = -1863880605178129502L;
+	private static Color DEFAULT_HIGHLIGHT_BG = new Color(184, 207, 229);
+	private static Border DEFAULT_HIGHLIGHT_BORDER = BorderFactory.createEmptyBorder(7, 5, 7, 5);
+	private static Border DEFAULT_BORDER = BorderFactory.createEmptyBorder(7, 5, 7, 5);
+	
 	private Color highlightBackground;
 	private Border highlightBorder;
 	private Border normalBorder;
@@ -32,9 +35,7 @@ public class MultilineImageListEntryRenderer<E>
 	 * Default constructor
 	 */
 	public MultilineImageListEntryRenderer() {
-		this(Color.LIGHT_GRAY,
-				BorderFactory.createEmptyBorder(3, 3, 3, 3),
-				BorderFactory.createEmptyBorder(3, 3, 3, 3));
+		this(DEFAULT_HIGHLIGHT_BG, DEFAULT_HIGHLIGHT_BORDER, DEFAULT_BORDER);
 	}
 	
 	/**
@@ -45,7 +46,6 @@ public class MultilineImageListEntryRenderer<E>
 	 * @param normalBorder
 	 */
 	public MultilineImageListEntryRenderer(Color highlightBackground, Border highlightBorder, Border normalBorder) {
-		super(15);
 		
 		this.highlightBackground = highlightBackground;
 		this.highlightBorder = highlightBorder;
@@ -70,8 +70,8 @@ public class MultilineImageListEntryRenderer<E>
 			boolean cellHasFocus) {
 		
 		MultilineImageListEntry entry = (MultilineImageListEntry) value;
-		text.setIcon(entry.getIcon());
 		text.setText("<html><b>" + entry.getFirstLine() + "&nbsp;</b><br>" + entry.getSecondLine() + "&nbsp;</html>");
+		text.setIcon(entry.getIcon());
 		
 		if (isSelected) {
 			setBorder(highlightBorder);
