@@ -25,6 +25,11 @@ import com.mxgraph.util.mxConstants;
 import com.mxgraph.view.mxGraph;
 import com.mxgraph.view.mxStylesheet;
 
+/**
+ * This widget is used to visualize a BPMN model.
+ * 
+ * @author Andrea Burattin
+ */
 public class BPMNVisualizer extends JPanel {
 
 	private static final long serialVersionUID = -8441909033110442685L;
@@ -34,6 +39,11 @@ public class BPMNVisualizer extends JPanel {
 	protected Object parent;
 	protected mxStylesheet stylesheet;
 	
+	/**
+	 * Class constructor
+	 * 
+	 * @param process the process graph to show
+	 */
 	public BPMNVisualizer(Process process) {
 		this.process = process;
 		this.graph = new mxGraph();
@@ -47,6 +57,9 @@ public class BPMNVisualizer extends JPanel {
 		add(graphComponent, BorderLayout.CENTER);
 	}
 	
+	/**
+	 * Method for the configuration of the graph stylesheets.
+	 */
 	private void setupMxGraph() {
 		graph.setAutoSizeCells(true);
 		
@@ -90,16 +103,27 @@ public class BPMNVisualizer extends JPanel {
 		styleGateway.put(mxConstants.STYLE_GRADIENTCOLOR, "#ffffbd");
 		styleGateway.put(mxConstants.STYLE_STROKECOLOR, "#a6a855");
 		styleGateway.put(mxConstants.STYLE_FONTCOLOR, "#708041");
+		styleGateway.put(mxConstants.STYLE_FONTSIZE, "16");
+		styleGateway.put(mxConstants.STYLE_VERTICAL_LABEL_POSITION, mxConstants.ALIGN_MIDDLE);
+		styleGateway.put(mxConstants.STYLE_VERTICAL_ALIGN, mxConstants.ALIGN_MIDDLE);
 		stylesheet.putCellStyle("GATEWAY", styleGateway);
 		
 		Hashtable<String, Object> styleEdges = new Hashtable<String, Object>();
 		styleEdges.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_CONNECTOR);
 		styleEdges.put(mxConstants.STYLE_ENDARROW, mxConstants.ARROW_CLASSIC);
 		styleEdges.put(mxConstants.STYLE_STROKECOLOR, "#5a677b");
-		styleEdges.put(mxConstants.STYLE_EDGE, mxConstants.EDGESTYLE_SEGMENT);
+		styleEdges.put(mxConstants.STYLE_EDGE, mxConstants.EDGESTYLE_ENTITY_RELATION);
+		styleEdges.put(mxConstants.STYLE_ROUNDED, true);
+		styleEdges.put(mxConstants.STYLE_ORTHOGONAL, true);
+		styleEdges.put(mxConstants.STYLE_VERTICAL_ALIGN, mxConstants.ALIGN_MIDDLE);
 		stylesheet.setDefaultEdgeStyle(styleEdges);
 	}
 	
+	/**
+	 * This method updates the visualizer with the process graph provided.
+	 * 
+	 * @return
+	 */
 	private mxGraphComponent updateGraph() {
 		mxGraphLayout layout = new mxHierarchicalLayout(graph, SwingConstants.WEST);
 		
