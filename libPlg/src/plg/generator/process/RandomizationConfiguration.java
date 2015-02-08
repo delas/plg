@@ -392,7 +392,8 @@ public class RandomizationConfiguration {
 	/**
 	 * This method returns a random pattern, selected between the provided ones
 	 * 
-	 * <p> The selection is done according to the given probabilities
+	 * <p>
+	 * The selection is done according to the given probabilities
 	 * 
 	 * @param patterns the patterns to choose from
 	 * @return the random pattern
