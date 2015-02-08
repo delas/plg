@@ -21,7 +21,7 @@ public class NoiseConfiguration {
 	 * 
 	 * <p>
 	 * Reference: <br />
-	 * [Gunter09] Günther, Christian W. (2009). <em>Process mining in Flexible
+	 * [Gunter09] Guenther, Christian W. (2009). <em>Process mining in Flexible
 	 * Environments</em>. PhD Thesis, TU Eindhoven.
 	 */
 	public static enum NOISE_TYPE {
