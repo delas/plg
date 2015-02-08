@@ -69,8 +69,63 @@ public class NoiseConfiguration {
 		TRACE_ALIEN_EVENT
 	}
 	
+	/** This is a test configuration with basic random values */
+	public static final NoiseConfiguration BASIC_VALUES = new NoiseConfiguration(
+			0.1, // integer data noise
+			5, // delta new value
+			0.1, // string data noise
+			0.1, // activity name noise
+			0.01, // trace missing head noise
+			1, // head size
+			0.01, // missing tail noise
+			1, // tail size
+			0.01, // missing episode noise
+			1, // episode size
+			0.01, // perturbed order noise
+			0.01, // double event noise
+			0.01 // alien event noise
+		);
+	
 	/* Class' private fields */
-	private Map<NOISE_TYPE, Pair<Double, ?>> config = new HashMap<NOISE_TYPE, Pair<Double, ?>>();
+	private Map<NOISE_TYPE, Pair<Double, ?>> config;
+	
+	/**
+	 * This constructor builds a parameters configuration all parameters are
+	 * required.
+	 * 
+	 * @param integerDataNoise
+	 * @param deltaNewValue
+	 * @param stringDataNoise
+	 * @param activityNameNoise
+	 * @param traceMissingHeadNoise
+	 * @param headSize
+	 * @param missingTailNoise
+	 * @param tailSize
+	 * @param missingEpisodeNoise
+	 * @param episodeSize
+	 * @param perturbedOrderNoise
+	 * @param doubleEventNoise
+	 * @param alienEventNoise
+	 */
+	public NoiseConfiguration(double integerDataNoise, int deltaNewValue,
+			double stringDataNoise, double activityNameNoise,
+			double traceMissingHeadNoise, int headSize,
+			double missingTailNoise, int tailSize,
+			double missingEpisodeNoise, int episodeSize,
+			double perturbedOrderNoise, double doubleEventNoise,
+			double alienEventNoise) {
+		this.config = new HashMap<NOISE_TYPE, Pair<Double, ?>>();
+		
+		setIntegerDataNoise(integerDataNoise, deltaNewValue);
+		setStringDataNoise(stringDataNoise);
+		setActivityNameNoise(activityNameNoise);
+		setTraceMissingHeadNoise(traceMissingHeadNoise, headSize);
+		setTraceMissingTailNoise(missingTailNoise, tailSize);
+		setTraceMissingEpisodeNoise(missingEpisodeNoise, episodeSize);
+		setPerturbedOrderNoise(perturbedOrderNoise);
+		setDoubleEventNoise(doubleEventNoise);
+		setAlienEventNoise(alienEventNoise);
+	}
 	
 	/**
 	 * Sets the noise for integer data attributes. The modified value will be
@@ -78,28 +133,73 @@ public class NoiseConfiguration {
 	 * deltaNewValue]</tt> (can also be 0).
 	 * 
 	 * @param probability the probability that an integer attribute is noisy
-	 * @param deltaNewValue the 
+	 * @param deltaNewValue the range for the modification of the attribute
+	 * @return the object after the modification
 	 */
-	public void setIntegerDataNoise(double probability, int deltaNewValue) {
-		config.put(NOISE_TYPE.DATA_INTEGER, new Pair<Double, Integer>(probability, deltaNewValue));
+	public NoiseConfiguration setIntegerDataNoise(double probability, int deltaNewValue) {
+		config.put(NOISE_TYPE.DATA_INTEGER, new Pair<Double, Integer>(
+				(probability >= 0 && probability <= 1)?
+						probability :
+						BASIC_VALUES.config.get(NOISE_TYPE.DATA_INTEGER).getFirst(),
+				deltaNewValue));
+		return this;
+	}
+	
+	/**
+	 * Get the current value of the integer data noise parameter
+	 * 
+	 * @return the value of the parameter
+	 */
+	public double getIntegerDataNoiseProbability() {
+		return config.get(NOISE_TYPE.DATA_INTEGER).getFirst();
 	}
 	
 	/**
 	 * Sets the noise for string data attributes.
 	 * 
 	 * @param probability the probability that a string attribute is noisy
+	 * @return the object after the modification
 	 */
-	public void setStringDataNoise(double probability) {
-		config.put(NOISE_TYPE.DATA_STRING, new Pair<Double, Object>(probability, null));
+	public NoiseConfiguration setStringDataNoise(double probability) {
+		config.put(NOISE_TYPE.DATA_STRING, new Pair<Double, Object>(
+				(probability >= 0 && probability <= 1)?
+						probability :
+						BASIC_VALUES.config.get(NOISE_TYPE.DATA_STRING).getFirst(),
+				null));
+		return this;
+	}
+	
+	/**
+	 * Get the current value of the string data noise parameter
+	 * 
+	 * @return the value of the parameter
+	 */
+	public double getStringDataNoiseProbability() {
+		return config.get(NOISE_TYPE.DATA_STRING).getFirst();
 	}
 	
 	/**
 	 * Sets the noise for an activity name.
 	 * 
 	 * @param probability the probability that an activity name is noisy
+	 * @return the object after the modification
 	 */
-	public void setActivityNameNoise(double probability) {
-		config.put(NOISE_TYPE.ACTIVITY_NAME, new Pair<Double, Object>(probability, null));
+	public NoiseConfiguration setActivityNameNoise(double probability) {
+		config.put(NOISE_TYPE.ACTIVITY_NAME, new Pair<Double, Object>(
+				(probability >= 0 && probability <= 1)?
+						probability :
+						BASIC_VALUES.config.get(NOISE_TYPE.ACTIVITY_NAME).getFirst(),
+				null));
+		return this;
+	}
+	
+	/**
+	 * Get the current value of the activity name parameter
+	 * 
+	 * @return the value of the parameter
+	 */
+	public double getActivityNameNoiseProbability() {
+		return config.get(NOISE_TYPE.ACTIVITY_NAME).getFirst();
 	}
 	
 	/**
@@ -107,9 +207,24 @@ public class NoiseConfiguration {
 	 * 
 	 * @param probability the probability that a trace is missing its head
 	 * @param headSize the size of a "trace head"
+	 * @return the object after the modification
 	 */
-	public void setTraceMissingHeadNoise(double probability, int headSize) {
-		config.put(NOISE_TYPE.TRACE_MISSING_HEAD, new Pair<Double, Integer>(probability, headSize));
+	public NoiseConfiguration setTraceMissingHeadNoise(double probability, int headSize) {
+		config.put(NOISE_TYPE.TRACE_MISSING_HEAD, new Pair<Double, Integer>(
+				(probability >= 0 && probability <= 1)?
+						probability :
+						BASIC_VALUES.config.get(NOISE_TYPE.TRACE_MISSING_HEAD).getFirst(),
+				headSize));
+		return this;
+	}
+	
+	/**
+	 * Get the current value of the missing noise parameter
+	 * 
+	 * @return the value of the parameter
+	 */
+	public double getTraceMissingHeadNoiseProbability() {
+		return config.get(NOISE_TYPE.TRACE_MISSING_HEAD).getFirst();
 	}
 	
 	/**
@@ -117,9 +232,24 @@ public class NoiseConfiguration {
 	 * 
 	 * @param probability the probability that a trace is missing its tail
 	 * @param headSize the size of a "trace tail"
+	 * @return the object after the modification
 	 */
-	public void setTraceMissingTailNoise(double probability, int tailSize) {
-		config.put(NOISE_TYPE.TRACE_MISSING_TAIL, new Pair<Double, Integer>(probability, tailSize));
+	public NoiseConfiguration setTraceMissingTailNoise(double probability, int tailSize) {
+		config.put(NOISE_TYPE.TRACE_MISSING_TAIL, new Pair<Double, Integer>(
+				(probability >= 0 && probability <= 1)?
+						probability :
+						BASIC_VALUES.config.get(NOISE_TYPE.TRACE_MISSING_TAIL).getFirst(),
+				tailSize));
+		return this;
+	}
+	
+	/**
+	 * Get the current value of the missing tail parameter
+	 * 
+	 * @return the value of the parameter
+	 */
+	public double getTraceMissingTailNoiseProbability() {
+		return config.get(NOISE_TYPE.TRACE_MISSING_TAIL).getFirst();
 	}
 	
 	/**
@@ -127,9 +257,24 @@ public class NoiseConfiguration {
 	 * 
 	 * @param probability the probability that a trace is missing an episode
 	 * @param headSize the size of a "trace episode"
+	 * @return the object after the modification
 	 */
-	public void setTraceMissingEpisodeNoise(double probability, int episodeSize) {
-		config.put(NOISE_TYPE.TRACE_MISSING_EPISODE, new Pair<Double, Integer>(probability, episodeSize));
+	public NoiseConfiguration setTraceMissingEpisodeNoise(double probability, int episodeSize) {
+		config.put(NOISE_TYPE.TRACE_MISSING_EPISODE, new Pair<Double, Integer>(
+				(probability >= 0 && probability <= 1)?
+						probability :
+						BASIC_VALUES.config.get(NOISE_TYPE.TRACE_MISSING_EPISODE).getFirst(),
+				episodeSize));
+		return this;
+	}
+	
+	/**
+	 * Get the current value of the missing episode parameter
+	 * 
+	 * @return the value of the parameter
+	 */
+	public double getTraceMissingEpisodeNoiseProbability() {
+		return config.get(NOISE_TYPE.TRACE_MISSING_EPISODE).getFirst();
 	}
 	
 	/**
@@ -137,9 +282,24 @@ public class NoiseConfiguration {
 	 * 
 	 * @param probability the probability that a trace contains some perturbed
 	 * events order
+	 * @return the object after the modification
 	 */
-	public void setPerturbedOrderNoise(double probability) {
-		config.put(NOISE_TYPE.TRACE_PERTURBED_ORDER, new Pair<Double, Object>(probability, null));
+	public NoiseConfiguration setPerturbedOrderNoise(double probability) {
+		config.put(NOISE_TYPE.TRACE_PERTURBED_ORDER, new Pair<Double, Object>(
+				(probability >= 0 && probability <= 1)?
+						probability :
+						BASIC_VALUES.config.get(NOISE_TYPE.TRACE_PERTURBED_ORDER).getFirst(),
+				null));
+		return this;
+	}
+	
+	/**
+	 * Get the current value of the perturbed order parameter
+	 * 
+	 * @return the value of the parameter
+	 */
+	public double getPerturbedOrderNoiseProbability() {
+		return config.get(NOISE_TYPE.TRACE_PERTURBED_ORDER).getFirst();
 	}
 	
 	/**
@@ -147,17 +307,47 @@ public class NoiseConfiguration {
 	 * 
 	 * @param probability the probability that an trace contains some doubled
 	 * events
+	 * @return the object after the modification
 	 */
-	public void setDoubleEventNoise(double probability) {
-		config.put(NOISE_TYPE.TRACE_DOUBLE_EVENT, new Pair<Double, Object>(probability, null));
+	public NoiseConfiguration setDoubleEventNoise(double probability) {
+		config.put(NOISE_TYPE.TRACE_DOUBLE_EVENT, new Pair<Double, Object>(
+				(probability >= 0 && probability <= 1)?
+						probability :
+						BASIC_VALUES.config.get(NOISE_TYPE.TRACE_DOUBLE_EVENT).getFirst(),
+				null));
+		return this;
+	}
+	
+	/**
+	 * Get the current value of the double event parameter
+	 * 
+	 * @return the value of the parameter
+	 */
+	public double getDoubleEventNoiseProbability() {
+		return config.get(NOISE_TYPE.TRACE_DOUBLE_EVENT).getFirst();
 	}
 	
 	/**
 	 * Sets the noise for an alien event.
 	 * 
 	 * @param probability the probability that an alien event is inserted
+	 * @return the object after the modification
 	 */
-	public void setAlienEventNoise(double probability) {
-		config.put(NOISE_TYPE.TRACE_ALIEN_EVENT, new Pair<Double, Object>(probability, null));
+	public NoiseConfiguration setAlienEventNoise(double probability) {
+		config.put(NOISE_TYPE.TRACE_ALIEN_EVENT, new Pair<Double, Object>(
+				(probability >= 0 && probability <= 1)?
+						probability :
+						BASIC_VALUES.config.get(NOISE_TYPE.TRACE_ALIEN_EVENT).getFirst(),
+				null));
+		return this;
+	}
+	
+	/**
+	 * Get the current value of the alien event parameter
+	 * 
+	 * @return the value of the parameter
+	 */
+	public double getAlienEventNoiseProbability() {
+		return config.get(NOISE_TYPE.TRACE_ALIEN_EVENT).getFirst();
 	}
 }
