@@ -1,0 +1,13 @@
+language: java
+jdk:
+  - oraclejdk7
+
+install:
+ - # bulding libPlg
+ - cd libPlg
+ - ant
+ - cd ..
+ - # building plg-cli
+ - cp libPlg/dist/libPlg.jar plg-cli/lib/libPlg/
+ - cd plg-cli
+ - ant LogGenerator
