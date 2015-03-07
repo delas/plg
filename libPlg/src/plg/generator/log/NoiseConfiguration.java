@@ -3,6 +3,8 @@ package plg.generator.log;
 import java.util.HashMap;
 import java.util.Map;
 
+import plg.model.data.IntegerDataObject;
+import plg.model.data.StringDataObject;
 import plg.utils.Pair;
 
 /**
@@ -26,11 +28,15 @@ public class NoiseConfiguration {
 	 */
 	public static enum NOISE_TYPE {
 		/**
-		 * This error consists in an integer attribute with an unexpected value
+		 * This error consists in an integer attribute with an unexpected value.
+		 * This noise is applied only to {@link IntegerDataObject} (i.e.,
+		 * generated) attributes.
 		 */
 		DATA_INTEGER,
 		/**
-		 * This error consists in a string attribute with an unexpected value
+		 * This error consists in a string attribute with an unexpected value.
+		 * This noise is applied only to {@link StringDataObject} (i.e.,
+		 * generated) attributes.
 		 */
 		DATA_STRING,
 		/**

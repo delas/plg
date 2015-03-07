@@ -1,4 +1,4 @@
-package plg.importer;
+package plg.io.importer;
 
 import java.io.FileInputStream;
 import java.util.HashMap;
@@ -22,7 +22,7 @@ import plg.model.FlowObject;
 import plg.model.Process;
 import plg.model.activity.Task;
 import plg.model.data.DataObject;
-import plg.model.data.DataObjectOwner;
+import plg.model.data.IDataObjectOwner;
 import plg.model.data.IntegerDataObject;
 import plg.model.data.StringDataObject;
 import plg.model.event.EndEvent;
@@ -50,7 +50,7 @@ import plg.model.sequence.Sequence;
 	name = "Signavio BPMN files",
 	fileExtension = "bpmn"
 )
-public class SignavioBPMNImporter implements FileImporter {
+public class SignavioBPMNImporter implements IFileImporter {
 
 	private static final Namespace ns = Namespace.getNamespace("http://www.omg.org/spec/BPMN/20100524/MODEL");
 	private static final Pattern REGEX_SIMPLE = Pattern.compile("(\\S+)\\s*=\\s*(\\S+)");
@@ -155,7 +155,7 @@ public class SignavioBPMNImporter implements FileImporter {
 	 * @param owner
 	 * @return
 	 */
-	private DataObject parseDataObject(Element dataObjectElement, DataObjectOwner owner, Process process) {
+	private DataObject parseDataObject(Element dataObjectElement, IDataObjectOwner owner, Process process) {
 		DataObject dataObject = null;
 		String name = dataObjectElement.getAttributeValue("name");
 		Matcher matcherSimple = REGEX_SIMPLE.matcher(name);

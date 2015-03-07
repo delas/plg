@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import plg.model.data.DataObject;
-import plg.model.data.DataObjectOwner;
+import plg.model.data.IDataObjectOwner;
 import plg.model.event.EndEvent;
 import plg.model.sequence.Sequence;
 
@@ -18,7 +18,7 @@ import plg.model.sequence.Sequence;
  * 
  * @author Andrea Burattin
  */
-public abstract class FlowObject extends Component implements DataObjectOwner {
+public abstract class FlowObject extends Component implements IDataObjectOwner {
 
 	private Set<DataObject> dataObjects;
 	private Set<FlowObject> incoming;

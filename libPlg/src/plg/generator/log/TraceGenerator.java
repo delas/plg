@@ -7,6 +7,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.deckfour.xes.extension.std.XLifecycleExtension;
+import org.deckfour.xes.extension.std.XLifecycleExtension.StandardModel;
 import org.deckfour.xes.model.XEvent;
 import org.deckfour.xes.model.XTrace;
 
@@ -43,6 +45,7 @@ class TraceGenerator implements Runnable {
 	private Process process;
 	private String caseId;
 	private SimulationConfiguration parameters;
+	private NoiseProcessor noiseProcessor;
 	private XTrace generatedTrace = null;
 	
 	/**
@@ -57,6 +60,7 @@ class TraceGenerator implements Runnable {
 		this.caseId = caseId;
 		this.parameters = parameters;
 		
+		this.noiseProcessor = new NoiseProcessor(parameters.getNoiseConfiguration());
 		this.componentsObservationTime = new HashMap<Component, Long>();
 		this.observationsCounter = new HashMap<Sequence, Integer>();
 		this.tokens = new HashSet<Sequence>();
@@ -90,23 +94,33 @@ class TraceGenerator implements Runnable {
 	 */
 	private XTrace generateProcessInstance() {
 		XTrace trace = XLogHelper.createTrace(caseId);
+		
+		// simulation of the control-flow
 		processFlowObject(null, SetUtils.getRandom(process.getStartEvents()), trace, 0);
 		
+		// event sorting
 		XLogHelper.sort(trace);
 		
+		// data object simulation for the instance
 		for (DataObject dataObj : process.getDataObjects()) {
 			if (dataObj.getObjectOwner() == null) {
 				if (dataObj instanceof IntegerDataObject) {
 					((GeneratedDataObject) dataObj).generateInstance(caseId);
+					noiseProcessor.applyIntegerDataNoise((IntegerDataObject) dataObj);
 					XLogHelper.decorateElement(trace, dataObj.getName(), (Integer) dataObj.getValue());
 				} else if (dataObj instanceof StringDataObject) {
 					((GeneratedDataObject) dataObj).generateInstance(caseId);
+					noiseProcessor.applyStringDataNoise((StringDataObject) dataObj);
 					XLogHelper.decorateElement(trace, dataObj.getName(), (String) dataObj.getValue());
 				} else if (dataObj instanceof DataObject) {
 					XLogHelper.decorateElement(trace, dataObj.getName(), (String) dataObj.getValue());
 				}
 			}
 		}
+		
+		// noise at the trace level
+		noiseProcessor.applyTraceNoise(trace);
+		
 		return trace;
 	}
 	
@@ -173,8 +187,8 @@ class TraceGenerator implements Runnable {
 		} else if (object instanceof ParallelGateway) {
 			
 			// in this case we have to distinguish between an AND split or an
-			// AND join. to do that we count the numbner of incoming and
-			// outgoing edges
+			// AND join. to do that we count the number of incoming and outgoing
+			// edges
 			if (object.getOutgoingObjects().size() > 1) {
 				
 				// we can consume the provided token
@@ -239,14 +253,16 @@ class TraceGenerator implements Runnable {
 		if (object instanceof Task) {
 			String caseId = XLogHelper.getName(trace);
 			Task t = ((Task) object);
-			XEvent event_start = XLogHelper.insertEvent(trace, t.getName(), new Date(traceProgressiveTime));
+			String activityName = noiseProcessor.generateActivityNameNoise(t.getName());
+			
+			XEvent event_start = XLogHelper.insertEvent(trace, activityName, new Date(traceProgressiveTime));
 			XEvent event_complete = null;
 			
 			long duration = t.getDutarion(caseId) * 1000;
 			if (duration > 0) {
-				event_complete = XLogHelper.insertEvent(trace, t.getName(), new Date(traceProgressiveTime + duration));
-				XLogHelper.decorateElement(event_start, "lifecycle:transition", "start");
-				XLogHelper.decorateElement(event_complete, "lifecycle:transition", "complete");
+				event_complete = XLogHelper.insertEvent(trace, activityName, new Date(traceProgressiveTime + duration));
+				XLifecycleExtension.instance().assignStandardTransition(event_start, StandardModel.START);
+				XLifecycleExtension.instance().assignStandardTransition(event_complete, StandardModel.COMPLETE);
 			}
 			
 			recordEventAttributes(trace, object.getDataObjects(), event_start, event_complete);
@@ -268,24 +284,22 @@ class TraceGenerator implements Runnable {
 		for (DataObject dataObj : dataObjects) {
 			if (dataObj instanceof IntegerDataObject) {
 				((GeneratedDataObject) dataObj).generateInstance(caseId);
-				Integer value = (Integer) dataObj.getValue();
 				for (XEvent event : events) {
-					XLogHelper.decorateElement(event, dataObj.getName(), value);
+					noiseProcessor.applyIntegerDataNoise((IntegerDataObject) dataObj);
+					XLogHelper.decorateElement(event, dataObj.getName(), (Integer) dataObj.getValue());
 				}
 			} else if (dataObj instanceof StringDataObject) {
 				((GeneratedDataObject) dataObj).generateInstance(caseId);
-				String value = (String) dataObj.getValue();
 				for (XEvent event : events) {
-					XLogHelper.decorateElement(event, dataObj.getName(), value);
+					noiseProcessor.applyStringDataNoise((StringDataObject) dataObj);
+					XLogHelper.decorateElement(event, dataObj.getName(), (String) dataObj.getValue());
 				}
 			} else if (dataObj instanceof DataObject) {
-				String value = (String) dataObj.getValue();
 				for (XEvent event : events) {
-					XLogHelper.decorateElement(event, dataObj.getName(), value);
+					XLogHelper.decorateElement(event, dataObj.getName(), (String) dataObj.getValue());
 				}
 				
 			}
 		}
 	}
 }
-

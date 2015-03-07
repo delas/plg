@@ -10,9 +10,10 @@ import plg.model.Process;
  * 
  * @author Andrea Burattin
  */
-public abstract class GeneratedDataObject extends DataObject {
+public abstract class GeneratedDataObject extends DataObject implements INoiseSensitiveDataObject {
 
 	protected ScriptExecutor executor;
+	protected Object originalValue = null;
 	
 	/**
 	 * Class constructor that build a new data object associated to the current
@@ -23,7 +24,7 @@ public abstract class GeneratedDataObject extends DataObject {
 	 * @param generateInstance manually decide whether the instance value
 	 * should be generated or not
 	 */
-	protected GeneratedDataObject(Process processOwner, DataObjectOwner objectOwner) {
+	protected GeneratedDataObject(Process processOwner, IDataObjectOwner objectOwner) {
 		super(processOwner, objectOwner);
 	}
 	
@@ -49,9 +50,15 @@ public abstract class GeneratedDataObject extends DataObject {
 	public void generateInstance(String caseId) {
 		try {
 			executor.execute(caseId);
-			setValue(executor.getValue());
+			originalValue = executor.getValue();
+			setValue(originalValue);
 		} catch (InvalidScript e) {
 			e.printStackTrace();
 		}
+	}
+	
+	@Override
+	public Object getOriginalValue() {
+		return originalValue;
 	}
 }

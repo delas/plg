@@ -13,6 +13,7 @@ public class SimulationConfiguration {
 	private String caseIdPattern = "case_%d";
 	private String newLogName = "tmp-log";
 	private int numberOfTraces;
+	private NoiseConfiguration noise;
 	
 	/**
 	 * Basic class constructor. The only required parameter is the number of
@@ -22,7 +23,19 @@ public class SimulationConfiguration {
 	 * @param numberOfTraces the number of traces to simulate
 	 */
 	public SimulationConfiguration(int numberOfTraces) {
+		this(numberOfTraces, NoiseConfiguration.BASIC_VALUES);
+	}
+	
+	/**
+	 * Basic class constructor. It requires the number of traces to simulate and
+	 * the noise configuration.
+	 * 
+	 * @param numberOfTraces the number of traces to simulate
+	 * @param noise the noise configuration for the simulation
+	 */
+	public SimulationConfiguration(int numberOfTraces, NoiseConfiguration noise) {
 		this.numberOfTraces = numberOfTraces;
+		this.noise = noise;
 	}
 	
 	/**
@@ -52,6 +65,15 @@ public class SimulationConfiguration {
 	 */
 	public int getNumberOfTraces() {
 		return numberOfTraces;
+	}
+	
+	/**
+	 * This method returns the noise configuration for this simulation
+	 * 
+	 * @return the noise configuration
+	 */
+	public NoiseConfiguration getNoiseConfiguration() {
+		return noise;
 	}
 	
 	/**
@@ -120,5 +142,14 @@ public class SimulationConfiguration {
 	 */
 	public void setCaseIdPattern(String caseIdPattern) {
 		this.caseIdPattern = caseIdPattern;
+	}
+	
+	/**
+	 * This method sets the noise configuration for the current simulation.
+	 * 
+	 * @param noise the noise configuration
+	 */
+	public void setNoiseConfiguration(NoiseConfiguration noise) {
+		this.noise = noise;
 	}
 }

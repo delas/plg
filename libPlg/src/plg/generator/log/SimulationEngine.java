@@ -22,11 +22,11 @@ public class SimulationEngine {
 	 * @param noOfThreads maximum number of concurrent threads
 	 * @param maxNoOfTasks maximum number of tasks to assign to the engine
 	 */
-	public SimulationEngine(int noOfThreads, int maxNoOfTasks){
+	public SimulationEngine(int noOfThreads, int maxNoOfTasks) {
 		threads = new ArrayList<Work>();
 		taskQueue = new LinkedBlockingQueue<Runnable>(maxNoOfTasks);
 		
-		for(int i = 0; i < noOfThreads; i++){
+		for(int i = 0; i < noOfThreads; i++) {
 			threads.add(new Work(taskQueue));
 		}
 	}
@@ -38,7 +38,7 @@ public class SimulationEngine {
 	 * 
 	 * @param task The task to execute
 	 */
-	public synchronized void enqueue(Runnable task){
+	public synchronized void enqueue(Runnable task) {
 		try {
 			this.taskQueue.put(task);
 		} catch (InterruptedException e) {
@@ -52,11 +52,11 @@ public class SimulationEngine {
 	 * @param tasks The tasks to execute
 	 */
 	public void start() {
-		for(Work thread : threads){
+		for(Work thread : threads) {
 			thread.start();
 		}
 		
-		for(Work thread : threads){
+		for(Work thread : threads) {
 			try {
 				thread.join();
 			} catch (InterruptedException e) {
@@ -78,19 +78,18 @@ public class SimulationEngine {
 		 * Constructor
 		 * @param queue The tasks queue
 		 */
-		public Work(BlockingQueue<Runnable> queue){
+		public Work(BlockingQueue<Runnable> queue) {
 			taskQueue = queue;
 		}
 		
 		public void run(){
-			while(!taskQueue.isEmpty()){
-				try{
+			while(!taskQueue.isEmpty()) {
+				try {
 					Thread t = new Thread(taskQueue.poll());
 					t.start();
 					t.join();
 				} catch(Exception e){
-					//log or otherwise report exception,
-					//but keep pool thread alive.
+					// log or otherwise report exception, but keep pool thread alive
 					e.printStackTrace();
 				}
 			}

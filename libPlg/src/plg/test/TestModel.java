@@ -10,13 +10,13 @@ import javax.xml.transform.TransformerException;
 import plg.exceptions.IllegalSequenceException;
 import plg.exceptions.InvalidDataObject;
 import plg.exceptions.InvalidProcessException;
-import plg.exporter.FileExporter;
-import plg.exporter.GraphvizBPMNExporter;
-import plg.exporter.GraphvizPetriNetExporter;
-import plg.exporter.PNMLExporter;
 import plg.generator.process.ProcessGenerator;
 import plg.generator.process.RandomizationConfiguration;
 import plg.generator.process.petrinet.PetriNet;
+import plg.io.exporter.GraphvizBPMNExporter;
+import plg.io.exporter.GraphvizPetriNetExporter;
+import plg.io.exporter.IFileExporter;
+import plg.io.exporter.PNMLExporter;
 import plg.model.Process;
 
 public class TestModel {
@@ -55,14 +55,14 @@ public class TestModel {
 		
 		// output and pdf visualization
 		File dotFile = File.createTempFile("model", ".dot");
-		FileExporter exporter = new GraphvizBPMNExporter();
+		IFileExporter exporter = new GraphvizBPMNExporter();
 		exporter.exportModel(p, dotFile.getAbsolutePath());
 		File pdfFile = File.createTempFile("model", ".pdf");
 		String[] env = {"PATH=/bin:/usr/bin/"};
 		Runtime.getRuntime().exec("dot -Tpdf "+ dotFile.getAbsolutePath() + " -o " + pdfFile.getAbsolutePath(), env);
 		
 		File dotFile2 = File.createTempFile("model", ".dot");
-		FileExporter exporter2 = new GraphvizPetriNetExporter();
+		IFileExporter exporter2 = new GraphvizPetriNetExporter();
 		exporter2.exportModel(p, dotFile2.getAbsolutePath());
 		File pdfFile2 = File.createTempFile("model", ".pdf");
 		Runtime.getRuntime().exec("dot -Tpdf "+ dotFile2.getAbsolutePath() + " -o " + pdfFile2.getAbsolutePath(), env);

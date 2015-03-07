@@ -8,7 +8,7 @@ import plg.model.Component;
 import plg.model.FlowObject;
 import plg.model.Process;
 import plg.model.data.DataObject;
-import plg.model.data.DataObjectOwner;
+import plg.model.data.IDataObjectOwner;
 import plg.model.event.EndEvent;
 import plg.model.event.StartEvent;
 
@@ -19,7 +19,7 @@ import plg.model.event.StartEvent;
  * <a href="http://www.omg.org/cgi-bin/doc?formal/11-01-03.pdf">BPMN 2.0
  * standard definition</a> for the list of the allowed connection types
  */
-public class Sequence extends Component implements DataObjectOwner {
+public class Sequence extends Component implements IDataObjectOwner {
 
 	private FlowObject source;
 	private FlowObject sink;

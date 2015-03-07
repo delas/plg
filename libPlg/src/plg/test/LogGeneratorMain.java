@@ -12,7 +12,7 @@ import org.deckfour.xes.out.XesXmlSerializer;
 import plg.exceptions.InvalidProcessException;
 import plg.generator.log.LogGenerator;
 import plg.generator.log.SimulationConfiguration;
-import plg.importer.SignavioBPMNImporter;
+import plg.io.importer.SignavioBPMNImporter;
 import plg.model.Process;
 
 public class LogGeneratorMain {

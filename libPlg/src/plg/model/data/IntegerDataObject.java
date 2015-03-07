@@ -18,7 +18,7 @@ public class IntegerDataObject extends GeneratedDataObject {
 	 * @param objectOwner the owner of the data object
 	 * @param executor the integer script executor
 	 */
-	public IntegerDataObject(Process processOwner, DataObjectOwner objectOwner, IntegerScriptExecutor executor) {
+	public IntegerDataObject(Process processOwner, IDataObjectOwner objectOwner, IntegerScriptExecutor executor) {
 		super(processOwner, objectOwner);
 		this.executor = executor;
 	}

@@ -18,7 +18,7 @@ public class StringDataObject extends GeneratedDataObject {
 	 * @param objectOwner the owner of the data object
 	 * @param executor the string script executor
 	 */
-	public StringDataObject(Process processOwner, DataObjectOwner objectOwner, StringScriptExecutor executor) {
+	public StringDataObject(Process processOwner, IDataObjectOwner objectOwner, StringScriptExecutor executor) {
 		super(processOwner, objectOwner);
 		this.executor = executor;
 	}
