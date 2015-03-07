@@ -15,7 +15,7 @@ import org.kohsuke.args4j.Option;
 
 import plg.exceptions.InvalidProcessException;
 import plg.generator.log.SimulationConfiguration;
-import plg.importer.SignavioBPMNImporter;
+import plg.io.importer.SignavioBPMNImporter;
 import plg.model.Process;
 import plg.utils.PlgConstants;
 
