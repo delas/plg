@@ -9,6 +9,9 @@ import org.apache.commons.io.FileUtils;
 import plg.annotations.Exporter;
 import plg.model.Process;
 import plg.model.activity.Task;
+import plg.model.data.DataObject;
+import plg.model.data.IntegerDataObject;
+import plg.model.data.StringDataObject;
 import plg.model.event.EndEvent;
 import plg.model.event.StartEvent;
 import plg.model.gateway.ExclusiveGateway;
@@ -38,7 +41,7 @@ public class GraphvizBPMNExporter implements IFileExporter {
 	 */
 	/**
 digraph G {
-	graph [splines=ortho, nodesep="0.5"];
+	graph [splines=true, nodesep="0.5"];
 	rankdir=LR;
 	
 	// start events
@@ -79,6 +82,20 @@ digraph G {
 		penwidth=1
 	];
 ### ACTIVITIES ###
+
+	// data objects
+	node [
+		shape=note,
+		fontsize="10",
+		width="0.5",
+		height="0.5",
+		style="filled",
+		fillcolor="#ffffff",
+		color="#666666",
+		fontcolor="#666666",
+		fontname="sans-serif"
+	];
+### DATAOBJECTS ###
 	
 	// gateways
 	node [
@@ -95,12 +112,20 @@ digraph G {
 		fontname="sans-serif"
 	];
 ### GATEWAYS ###
-	
+
 	// edges
 	edge[
 		color="#5a677b"
 	];
 ### EDGES ###
+
+	// data object connections
+	edge[
+		color="#666666",
+		style="dotted",
+		arrowhead="open"
+	];
+### DATAOBJECTSCONNECTIONS ###
 }
 */
 	@Multiline
@@ -152,11 +177,24 @@ digraph G {
 			if (e instanceof ParallelGateway) {
 				buffer += "\tc_" + e.getId() + " [label=\"+\"];\n";
 			} else if (e instanceof ExclusiveGateway) {
-				buffer += "\tc_" + e.getId() + " [label=\"×\"];\n";
+				buffer += "\tc_" + e.getId() + " [label=\"x\"];\n";
 			}
 		}
 		basic = basic.replace("### GATEWAYS ###", buffer);
 		
+		// data objects
+		buffer = "";
+		for(DataObject o : model.getDataObjects()) {
+			if (o instanceof StringDataObject) {
+				buffer += "\tc_" + o.getId() + " [label=\"" + o.getName() + " (string)\"];\n";
+			} else if (o instanceof IntegerDataObject) {
+				buffer += "\tc_" + o.getId() + " [label=\"" + o.getName() + " (integer)\"];\n";
+			} else {
+				buffer += "\tc_" + o.getId() + " [label=\"" + o.getName() + " = \\\""+ o.getValue() +"\\\"\"];\n";
+			}
+		}
+		basic = basic.replace("### DATAOBJECTS ###", buffer);
+
 		// edges
 		buffer = "";
 		for(Sequence s : model.getSequences()) {
@@ -166,5 +204,22 @@ digraph G {
 			buffer +=  "\t" + left + " -> " + right + ";\n";
 		}
 		basic = basic.replace("### EDGES ###", buffer);
+		
+		// data object connections
+		buffer = "";
+		for(DataObject o : model.getDataObjects()) {
+			if (o.getProcessOwner() != null) {
+				if (o.getObjectOwner() instanceof Sequence) { 
+					String left = "c_" + o.getId();
+					String right = "c_" + ((Sequence) o.getObjectOwner()).getSink().getId();
+					buffer +=  "\t" + left + " -> " + right + ";\n";
+				} else {
+					String left = "c_" + o.getObjectOwner().getId();
+					String right = "c_" + o.getId();
+					buffer +=  "\t" + left + " -> " + right + ";\n";
+				}
+			}
+		}
+		basic = basic.replace("### DATAOBJECTSCONNECTIONS ###", buffer);
 	}
 }
