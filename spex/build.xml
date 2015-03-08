@@ -1,0 +1,140 @@
+<!--
+ * Spex
+ * 
+ * An efficient API and implementation for the serial processing
+ * and serialization of XML documents.
+ * 
+ * Copyright (c) 2009 Christian W. Guenther (christian@deckfour.org)
+ * 
+ * 
+ * LICENSE:
+ * 
+ * This code is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public License
+ * as published by the Free Software Foundation; either version 3
+ * of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
+ * 
+ * EXEMPTION:
+ * 
+ * The use of this software can also be conditionally licensed for
+ * other programs, which do not satisfy the specified conditions. This
+ * requires an exemption from the general license, which may be
+ * granted on a per-case basis.
+ * 
+ * If you want to license the use of this software with a program
+ * incompatible with the LGPL, please contact the author for an
+ * exemption at the following email address: 
+ * christian@deckfour.org
+ * 
+ -->
+<project name="Spex" default="dist" basedir=".">
+    <description>
+        Build file for the Spex library
+    </description>
+  <!-- set global properties for this build -->
+  <property name="src" location="src"/>
+  <property name="examples" location="examples"/>
+  <property name="build" location="bindist"/>
+  <property name="doc" location="doc"/>
+  <property name="dist"  location="dist"/>
+  <property name="version" value="1.0"/>
+
+  <!-- initialization (create dirs and timestamp) -->
+  <target name="init">
+    <!-- Create the time stamp -->
+    <tstamp/>
+    <!-- Create the build directory structure used by compile -->
+    <mkdir dir="${build}"/>
+    <mkdir dir="${dist}"/>
+  </target>
+	
+  <!-- clean all binaries and distributions -->
+  <target name="clean"
+        description="clean up" >
+    <!-- Delete the ${build} and ${dist} directory trees -->
+    <delete dir="${build}"/>
+    <delete dir="${dist}"/>
+  </target>
+
+  <!-- build all -->
+  <target name="compile" depends="init"
+        description="compile the source " >
+    <!-- Compile the java code from ${src} into ${build} -->
+    <javac srcdir="${src}" destdir="${build}" verbose="no" 
+    	debug="true" debuglevel="lines,vars,source" deprecation="yes">
+    </javac>
+  </target>
+  
+  <!-- package the main distribution -->
+  <target name="dist" depends="compile"
+        description="generate the distribution jar" >
+    <!-- Create the distribution directory -->
+    <!-- Put everything in ${build} into the MyProject-${DSTAMP}.jar file -->
+    <jar jarfile="${dist}/Spex-${version}-${DSTAMP}.jar">
+    	<fileset dir="${build}">
+    		<include name="**"/>
+    	</fileset>
+    	<manifest>
+	      <attribute name="Built-By" value="${user.name}"/>
+	      <attribute name="Specification-Title" value="Spex"/>
+	      <attribute name="Specification-Version" value="${version}"/>
+	      <attribute name="Specification-Vendor" value="code.deckfour.org"/>
+	      <attribute name="Implementation-Title" value="Spex"/>
+	      <attribute name="Implementation-Version" value="${version} ${TODAY}"/> 
+	      <attribute name="Implementation-Vendor" value="code.deckfour.org"/>
+	      <attribute name="Sealed" value="false"/>
+    	</manifest>
+    </jar>
+  	<copy file="${dist}/Spex-${version}-${DSTAMP}.jar" tofile="${dist}/Spex.jar" overwrite="true"/>
+  </target>
+	
+<!-- create the project's javadoc -->
+<target name="javadoc">
+  	<javadoc packagenames="org.deckfour.spex.*"
+           defaultexcludes="yes"
+           destdir="${doc}"
+           author="true"
+           version="true"
+           use="true"
+           windowtitle="Spex">
+  		<link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
+  		<fileset dir="${src}">
+    		<include name="**"/>
+    	</fileset>
+  	</javadoc>
+</target> 
+	
+<!-- export distribution archive -->
+<target name="PackageDistArchive" depends="dist,javadoc">
+	<tar destfile="${dist}/Spex-${version}.tar.gz" compression="gzip">
+		<tarfileset dir="${doc}" prefix="Spex-${version}/doc" mode="755" username="spex" group="spex">
+			<include name="**"/>
+		</tarfileset>
+		<tarfileset dir="${dist}" prefix="Spex-${version}/lib" mode="755" username="spex" group="spex">
+			<include name="Spex.jar"/>
+		</tarfileset>
+		<tarfileset dir="${src}" prefix="Spex-${version}/src" mode="755" username="spex" group="spex">
+			<include name="**"/>
+		</tarfileset>
+		<tarfileset dir="${examples}" prefix="Spex-${version}/examples" mode="755" username="spex" group="spex">
+			<include name="**"/>
+		</tarfileset>
+		<tarfileset dir="." prefix="Spex-${version}" mode="755" username="spex" group="spex">
+			<include name="LICENSE.txt"/>
+			<include name="build.xml"/>
+		</tarfileset>
+	</tar>
+</target>
+		
+		
+		
+</project>
