@@ -34,6 +34,15 @@ public abstract class ScriptExecutor {
 	}
 	
 	/**
+	 * This method returns the actual script
+	 * 
+	 * @return the script
+	 */
+	public String getScript() {
+		return script;
+	}
+	
+	/**
 	 * This method executes the script, without returning any value (see
 	 * {@link #getValue()} for this).
 	 * 

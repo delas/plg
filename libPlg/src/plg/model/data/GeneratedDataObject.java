@@ -57,6 +57,16 @@ public abstract class GeneratedDataObject extends DataObject implements INoiseSe
 		}
 	}
 	
+	/**
+	 * This method returns the script executor associated to the current data
+	 * object
+	 * 
+	 * @return the script executor
+	 */
+	public ScriptExecutor getScriptExecutor() {
+		return executor;
+	}
+	
 	@Override
 	public Object getOriginalValue() {
 		return originalValue;
