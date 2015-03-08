@@ -3,7 +3,6 @@ package org.deckfour.spex;
 import java.io.IOException;
 import java.io.Writer;
 
-import org.deckfour.spex.SXTextNode;
 import org.deckfour.spex.util.SXmlCharacterMethods;
 
 /**
@@ -11,7 +10,7 @@ import org.deckfour.spex.util.SXmlCharacterMethods;
  * 
  * @author Andrea Burattin
  */
-public class SXCDataNode extends SXTextNode {
+public class SXCDataNode extends SXNode {
 
 	/**
 	 * Constructs a new CDATA node.
@@ -22,9 +21,21 @@ public class SXCDataNode extends SXTextNode {
 	 * @param aTabString tabulator encoding string
 	 */
 	public SXCDataNode(String text, Writer aWriter, int aTabLevel, String aTabString) throws IOException {
-		super(text, aWriter, aTabLevel, aTabString);
+		super(aWriter, aTabLevel, aTabString);
+		writer.write("\n");
+		indentLine();
 		writer.write("<![CDATA[");
+		writer.write("\n");
 		writer.write(SXmlCharacterMethods.convertCharsToXml(text));
+		writer.write("\n");
+		indentLine();
 		writer.write("]]>");
+	}
+
+	/* (non-Javadoc)
+	 * @see org.processmining.lib.xml.Node#close()
+	 */
+	public void close() throws IOException {
+		// ignore this event
 	}
 }

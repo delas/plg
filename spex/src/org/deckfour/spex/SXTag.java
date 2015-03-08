@@ -211,7 +211,6 @@ public class SXTag extends SXNode {
 			// close previous sibling and move to new line
 			// FIXME: is this a legal situation, and if: how do we format this issue nicely?
 			lastChildNode.close();
-			writer.write("\n");
 			indentLine();
 		}
 		SXCDataNode cdataNode = new SXCDataNode(cdata, writer, tabLevel, tabString);
