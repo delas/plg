@@ -32,8 +32,22 @@ public abstract class Component {
 	 * 
 	 * @return the component id
 	 */
-	public String getComponentId() {
+	public String getId() {
 		return "" + componentId;
+	}
+	
+	/**
+	 * This method sets the new id of the component.
+	 * 
+	 * <p> <strong>ATTENTION:</strong> use this method only if you are
+	 * <strong>absolutely aware</strong> of the possible consequences! Setting
+	 * the wrong component id can break everything! In most cases, automatically
+	 * assigned component ids are fine.
+	 * 
+	 * @param componentId the new component id
+	 */
+	public void setComponentId(int componentId) {
+		this.componentId = componentId;
 	}
 	
 	/**
@@ -55,7 +69,7 @@ public abstract class Component {
 	
 	@Override
 	public String toString() {
-		return "Component " + getComponentId() + " (type: " + getComponentName() + ")";
+		return "Component " + getId() + " (type: " + getComponentName() + ")";
 	}
 	
 	@Override

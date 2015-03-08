@@ -62,6 +62,20 @@ public class Process {
 	}
 	
 	/**
+	 * Method to set the process id.
+	 * 
+	 * <p> <strong>ATTENTION:</strong> use this method only if you are
+	 * <strong>absolutely aware</strong> of the possible consequences! Setting
+	 * the wrong id can break everything! In most cases, automatically assigned
+	 * id is fine.
+	 * 
+	 * @param id the id of the process
+	 */
+	public void setId(String id) {
+		this.id = id;
+	}
+	
+	/**
 	 * Method to set the process name
 	 * 
 	 * @param name the name of the process
@@ -183,6 +197,23 @@ public class Process {
 		} else if (component instanceof DataObject) {
 			dataObjects.add((DataObject) component);
 		}
+	}
+	
+	/**
+	 * This method searches a component registered into the current process with
+	 * the provided component id. If no component is found, <tt>null</tt> is
+	 * returned.
+	 * 
+	 * @param id the id of the component to be retrieved
+	 * @return the searched component, or <tt>null</tt> if no component is found
+	 */
+	public Component searchComponent(String id) {
+		for (Component c : components) {
+			if (c.getId().equals(id)) {
+				return c;
+			}
+		}
+		return null;
 	}
 	
 	/**

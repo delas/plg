@@ -115,20 +115,20 @@ public class PetriNet {
 		// add places for start events
 		for(StartEvent e : originalProcess.getStartEvents()) {
 			Logger.instance().debug("Adding place for " + e);
-			Place p = newPlace(e.getComponentId());
+			Place p = newPlace(e.getId());
 			p.setTokens(1);
 		}
 		
 		// add places for end events
 		for(EndEvent e : originalProcess.getEndEvents()) {
 			Logger.instance().debug("Adding place for " + e);
-			newPlace(e.getComponentId());
+			newPlace(e.getId());
 		}
 		
 		// add all activities
 		for(Task t : originalProcess.getTasks()) {
 			Logger.instance().debug("Adding transition for " + t);
-			Transition trans = newTransition(t.getComponentId());
+			Transition trans = newTransition(t.getId());
 			trans.setSilent(false);
 			trans.setLabel(t.getName());
 		}
@@ -137,11 +137,11 @@ public class PetriNet {
 		for(Gateway g : originalProcess.getGateways()) {
 			if (g instanceof ParallelGateway) {
 				Logger.instance().debug("Adding silent transition for " + g);
-				Transition trans = newTransition(g.getComponentId());
+				Transition trans = newTransition(g.getId());
 				trans.setSilent(true);
 			} else {
 				Logger.instance().debug("Adding place for " + g);
-				newPlace(g.getComponentId());
+				newPlace(g.getId());
 			}
 		}
 		
@@ -153,42 +153,42 @@ public class PetriNet {
 			
 			if (source instanceof Task && sink instanceof Task) {
 				// task -> task
-				Place connector = newPlace("undef_" + source.getComponentId() + "-" + sink.getComponentId());
-				connect(getComponent(source.getComponentId()), connector);
-				connect(connector, getComponent(sink.getComponentId()));
+				Place connector = newPlace("undef_" + source.getId() + "-" + sink.getId());
+				connect(getComponent(source.getId()), connector);
+				connect(connector, getComponent(sink.getId()));
 				
 			} else if (source instanceof Task && sink instanceof Gateway) {
 				// task -> gateway
 				Gateway g = (Gateway) sink;
 				if (g instanceof ParallelGateway) {
-					Place p = newPlace("undef_" + source.getComponentId() + "-" + sink.getComponentId());
-					connect(getComponent(source.getComponentId()), p);
-					connect(p, getComponent(sink.getComponentId()));
+					Place p = newPlace("undef_" + source.getId() + "-" + sink.getId());
+					connect(getComponent(source.getId()), p);
+					connect(p, getComponent(sink.getId()));
 					
 				} else if (g instanceof ExclusiveGateway) {
-					connect(getComponent(source.getComponentId()), getComponent(sink.getComponentId()));
+					connect(getComponent(source.getId()), getComponent(sink.getId()));
 				}
 				
 			} else if (source instanceof Gateway && sink instanceof Task) {
 				// gateway -> task
 				Gateway g = (Gateway) source;
 				if (g instanceof ParallelGateway) {
-					Place p = newPlace("undef_" + source.getComponentId() + "-" + sink.getComponentId());
-					connect(getComponent(g.getComponentId()), p);
-					connect(p, getComponent(sink.getComponentId()));
+					Place p = newPlace("undef_" + source.getId() + "-" + sink.getId());
+					connect(getComponent(g.getId()), p);
+					connect(p, getComponent(sink.getId()));
 					
 				} else if (g instanceof ExclusiveGateway) {
-					connect(getComponent(source.getComponentId()), getComponent(sink.getComponentId()));
+					connect(getComponent(source.getId()), getComponent(sink.getId()));
 				}
 				
 			} else if (source instanceof StartEvent) {
 				// start -> ?
-				connect(getComponent(source.getComponentId()), getComponent(sink.getComponentId()));
+				connect(getComponent(source.getId()), getComponent(sink.getId()));
 				
 				
 			} else if (sink instanceof EndEvent) {
 				// ? -> end
-				connect(getComponent(source.getComponentId()), getComponent(sink.getComponentId()));
+				connect(getComponent(source.getId()), getComponent(sink.getId()));
 				
 			}
 		}

@@ -97,12 +97,22 @@ public class Task extends Activity {
 		} catch (InvalidScript e) { }
 		return 3600;
 	}
+	
+	/**
+	 * This method returns the activity script associated to the current task.
+	 * This script is used to compute time statistics.
+	 * 
+	 * @return the activity script
+	 */
+	public IntegerScriptExecutor getActivityScript() {
+		return activityScript;
+	}
 
 	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Task `").append(getName()).append("'");
-		buffer.append(" (id: ").append(getComponentId()).append(") ");
+		buffer.append(" (id: ").append(getId()).append(") ");
 //		buffer.append(" -- incoming: ");
 //		for(FlowObject fo : getIncomingObjects()) {
 //			buffer.append(fo.getComponentId()).append(" ");

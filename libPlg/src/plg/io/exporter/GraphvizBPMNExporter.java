@@ -128,21 +128,21 @@ digraph G {
 		// start events
 		String buffer = "";
 		for(StartEvent e : model.getStartEvents()) {
-			buffer += "\tc_" + e.getComponentId() + ";\n";
+			buffer += "\tc_" + e.getId() + ";\n";
 		}
 		basic = basic.replace("### START EVENTS ###", buffer);
 
 		// end events
 		buffer = "";
 		for(EndEvent e : model.getEndEvents()) {
-			buffer += "\tc_" + e.getComponentId() + ";\n";
+			buffer += "\tc_" + e.getId() + ";\n";
 		}
 		basic = basic.replace("### END EVENTS ###", buffer);
 		
 		// activities
 		buffer = "";
 		for(Task e : model.getTasks()) {
-			buffer += "\tc_" + e.getComponentId() + " [label=\"" + e.getName() + "\"];\n";
+			buffer += "\tc_" + e.getId() + " [label=\"" + e.getName() + "\"];\n";
 		}
 		basic = basic.replace("### ACTIVITIES ###", buffer);
 
@@ -150,9 +150,9 @@ digraph G {
 		buffer = "";
 		for(Gateway e : model.getGateways()) {
 			if (e instanceof ParallelGateway) {
-				buffer += "\tc_" + e.getComponentId() + " [label=\"+\"];\n";
+				buffer += "\tc_" + e.getId() + " [label=\"+\"];\n";
 			} else if (e instanceof ExclusiveGateway) {
-				buffer += "\tc_" + e.getComponentId() + " [label=\"×\"];\n";
+				buffer += "\tc_" + e.getId() + " [label=\"×\"];\n";
 			}
 		}
 		basic = basic.replace("### GATEWAYS ###", buffer);
@@ -160,8 +160,8 @@ digraph G {
 		// edges
 		buffer = "";
 		for(Sequence s : model.getSequences()) {
-			String left = "c_" + s.getSource().getComponentId();
-			String right = "c_" + s.getSink().getComponentId();
+			String left = "c_" + s.getSource().getId();
+			String right = "c_" + s.getSink().getId();
 			
 			buffer +=  "\t" + left + " -> " + right + ";\n";
 		}

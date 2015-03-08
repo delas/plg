@@ -124,7 +124,7 @@ public class Sequence extends Component implements IDataObjectOwner {
 	
 	@Override
 	public String toString() {
-		return super.toString() + " - " + source.getComponentId() + " -> " + sink.getComponentId();
+		return super.toString() + " - " + source.getId() + " -> " + sink.getId();
 	}
 	
 	@Override

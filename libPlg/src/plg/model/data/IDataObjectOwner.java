@@ -9,6 +9,14 @@ import java.util.Set;
  */
 public interface IDataObjectOwner {
 
+
+	/**
+	 * This method returns the id of the current object owner
+	 * 
+	 * @return the id of the current owner
+	 */
+	public String getId();
+	
 	/**
 	 * This method to add a new data object to the current flow object
 	 * 
