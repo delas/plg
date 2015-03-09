@@ -28,7 +28,7 @@ import plg.utils.Logger;
  * @see http://www.graphviz.org/content/dot-language
  */
 @Exporter(
-	name = "Graphviz exporter for a BPMN version of the process",
+	name = "BPMN Model as Graphviz Dot",
 	fileExtension = "dot"
 )
 public class GraphvizBPMNExporter implements IFileExporter {
@@ -41,7 +41,7 @@ public class GraphvizBPMNExporter implements IFileExporter {
 	 */
 	/**
 digraph G {
-	graph [splines=true, nodesep="0.5"];
+	graph [splines=ortho, nodesep="0.5"];
 	rankdir=LR;
 	
 	// start events

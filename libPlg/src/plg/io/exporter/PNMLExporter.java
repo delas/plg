@@ -24,7 +24,7 @@ import plg.utils.PlgConstants;
  * @see http://www.pnml.org/
  */
 @Exporter(
-	name = "Petri net version of the process as PNML file",
+	name = "Petri net as PNML file",
 	fileExtension = "pnml"
 )
 public class PNMLExporter implements IFileExporter {

@@ -23,7 +23,7 @@ import plg.utils.Pair;
  * @see http://www.graphviz.org/content/dot-language
  */
 @Exporter(
-	name = "Graphviz exporter for a Petri net version of the process",
+	name = "Petri net as Graphviz Dot",
 	fileExtension = "dot"
 )
 public class GraphvizPetriNetExporter implements IFileExporter {
