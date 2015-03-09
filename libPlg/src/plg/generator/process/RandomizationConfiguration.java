@@ -30,7 +30,7 @@ public class RandomizationConfiguration {
 			0.3, // AND weight
 			0.3, // XOR weight
 			3, // maximum depth
-			0.01 // data object probability
+			0.1 // data object probability
 		);
 	
 	/**
