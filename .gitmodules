@@ -1,0 +1,3 @@
+[submodule "spex"]
+	path = spex
+	url = https://github.com/delas/spex.git
