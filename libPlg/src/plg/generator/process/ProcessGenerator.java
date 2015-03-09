@@ -1,11 +1,17 @@
 package plg.generator.process;
 
+import java.math.BigInteger;
+import java.util.Random;
+
 import plg.generator.process.RandomizationConfiguration.RANDOMIZATION_PATTERN;
 import plg.model.Process;
+import plg.model.activity.Task;
+import plg.model.data.DataObject;
 import plg.model.event.EndEvent;
 import plg.model.event.Event;
 import plg.model.event.StartEvent;
 import plg.model.gateway.Gateway;
+import plg.model.sequence.Sequence;
 import plg.utils.Logger;
 
 /**
@@ -23,9 +29,17 @@ public class ProcessGenerator {
 	 */
 	protected static final String ACTIVITY_NAME_PATTERN = "Activity %s";
 	
+	/**
+	 * This string contains the pattern for the generation of data objects. The
+	 * pattern requires one parameter, which will be replaced with a progressive
+	 * letter, such as "A", ..., "Z", "AA", "AB", ...
+	 */
+	protected static final String DATA_OBJECT_NAME_PATTERN = "variable_%s";
+	
 	private Process process;
 	private RandomizationConfiguration parameters;
 	private int generatedActivities = 0;
+	private int generatedDataObjects = 0;
 	
 	/**
 	 * This public static method is the main interface for the process
@@ -126,9 +140,26 @@ public class ProcessGenerator {
 	 * @return the frame containing the generated pattern
 	 */
 	protected PatternFrame newActivity() {
-		String activityName = askNewName();
+		String activityName = askNewActivityName();
 		Logger.instance().debug("New activity created (`" + activityName + "')");
-		return new PatternFrame(process.newTask(activityName));
+		Task t = process.newTask(activityName);
+		if (parameters.generateDataObject()) {
+			newDataObject().setObjectOwner(t);
+		}
+		return new PatternFrame(t);
+	}
+	
+	/**
+	 * This method generates a new data object and returns it.
+	 * 
+	 * @return the new data object generated
+	 */
+	protected DataObject newDataObject() {
+		DataObject d = new DataObject(process);
+		d.setName(askNewDataObjectName());
+		d.setValue(new BigInteger(65, new Random()).toString(32));
+		Logger.instance().debug("New data object created (`" + d.getName() + "' = `" + d.getValue() + "')");
+		return d;
 	}
 	
 	/**
@@ -193,6 +224,9 @@ public class ProcessGenerator {
 		for(int i = 0; i < branchesToGenerate; i++) {
 			PatternFrame p = newInternalPattern(currentDepth, loopAllowed, canSkip);
 			PatternFrame.connect(split, p).connect(join);
+			if (parameters.generateDataObject()) {
+				newDataObject().setObjectOwner(process.getSequence(split, p.getLeftBound()));
+			}
 		}
 		
 		PatternFrame.connect(beforeSplit, split);
@@ -233,10 +267,32 @@ public class ProcessGenerator {
 	 * @return a new name for an activity
 	 * @see ProcessGenerator#ACTIVITY_NAME_PATTERN
 	 */
-	protected String askNewName() {
+	protected String askNewActivityName() {
 		generatedActivities++;
+		return String.format(ACTIVITY_NAME_PATTERN, numberToAlpha(generatedActivities));
+	}
+	
+	/**
+	 * This method returns a new data object name, based on a progressive
+	 * pattern.
+	 * 
+	 * @return a new name for a data object
+	 * @see ProcessGenerator#DATA_OBJECT_NAME_PATTERN
+	 */
+	protected String askNewDataObjectName() {
+		generatedDataObjects++;
+		return String.format(DATA_OBJECT_NAME_PATTERN, numberToAlpha(generatedDataObjects).toLowerCase());
+	}
+	
+	/**
+	 * This method converts a number into a string representation
+	 * 
+	 * @param num the number to convert
+	 * @return a string equivalent to the number, e.g., 1 becomes "A", 2 becomes
+	 * "B", etc.
+	 */
+	protected String numberToAlpha(int num) {
 		String result = "";
-		int num = generatedActivities;
 		while (num > 0) {
 			num--;
 			int remainder = num % 26;
@@ -244,6 +300,6 @@ public class ProcessGenerator {
 			result = digit + result;
 			num = (num - remainder) / 26;
 		}
-		return String.format(ACTIVITY_NAME_PATTERN, result);
+		return result;
 	}
 }

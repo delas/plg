@@ -29,16 +29,25 @@ public class RandomizationConfiguration {
 			0.7, // sequence weight
 			0.3, // AND weight
 			0.3, // XOR weight
-			3 // maximum depth
+			3, // maximum depth
+			0.01 // data object probability
 		);
 	
-	/** The maximum number of XOR branches (if wrong value is provided) */
+	/**
+	 * The maximum number of XOR branches (if wrong value is provided)
+	 */
 	public static final int MAX_XOR_BRANCHES = 4;
-	/** The maximum number of AND branches (if wrong value is provided) */
+	/**
+	 * The maximum number of AND branches (if wrong value is provided)
+	 */
 	public static final int MAX_AND_BRANCHES = 4;
-	/** The minimum number of XOR branches */
+	/**
+	 * The minimum number of XOR branches
+	 */
 	public static final int MIN_XOR_BRANCHES = 2;
-	/** The minimum number of AND branches */
+	/**
+	 * The minimum number of AND branches
+	 */
 	public static final int MIN_AND_BRANCHES = 2;
 	
 	/* Class' private fields */
@@ -46,22 +55,35 @@ public class RandomizationConfiguration {
 	private int XORBranches;
 	private Map<RANDOMIZATION_PATTERN, Double> weights;
 	private int maxDepth;
+	private double dataObjectProbability;
 	
 	/**
 	 * This enumeration describes the set of all possible patterns
 	 */
 	public static enum RANDOMIZATION_PATTERN {
-		/** Single activity pattern */
+		/**
+		 * Single activity pattern
+		 */
 		SINGLE_ACTIVITY,
-		/** Sequence activities pattern */
+		/**
+		 * Sequence activities pattern
+		 */
 		SEQUENCE,
-		/** AND pattern */
+		/**
+		 * AND pattern
+		 */
 		PARALLEL_EXECUTION,
-		/** XOR pattern */
+		/**
+		 * XOR pattern
+		 */
 		MUTUAL_EXCLUSION,
-		/** XOR pattern */
+		/**
+		 * XOR pattern
+		 */
 		LOOP,
-		/** Empty: no activity pattern */
+		/**
+		 * Empty: no activity pattern
+		 */
 		SKIP
 	}
 	
@@ -108,11 +130,13 @@ public class RandomizationConfiguration {
 	 * @param emptyPercent the weight of an empty pattern (must be in
 	 * <tt>[0,1]</tt>)
 	 * @param maxDepth the maximum network deep
+	 * @param dataObjectProbability probability to generate data objects
+	 * associated to sequences and events
 	 */
 	public RandomizationConfiguration(int ANDBranches, int XORBranches,
 			double loopWeight, double singleActivityWeight, double skipWeight,
 			double sequenceWeight, double ANDWeight, double XORWeight,
-			int maxDepth) {
+			int maxDepth, double dataObjectProbability) {
 		this.weights = new HashMap<RandomizationConfiguration.RANDOMIZATION_PATTERN, Double>();
 		
 		setAndBranches(ANDBranches);
@@ -124,6 +148,7 @@ public class RandomizationConfiguration {
 		setANDWeight(ANDWeight);
 		setXORWeight(XORWeight);
 		setDepth(maxDepth);
+		setDataObjectProbability(dataObjectProbability);
 	}
 	
 	/**
@@ -317,6 +342,27 @@ public class RandomizationConfiguration {
 	}
 	
 	/**
+	 * Set the probability to generate data objects
+	 * 
+	 * @param dataObjectProbability
+	 * @return the object after the modification
+	 */
+	public RandomizationConfiguration setDataObjectProbability(double dataObjectProbability) {
+		this.dataObjectProbability = (dataObjectProbability <= 1 || dataObjectProbability >= 0)?
+				dataObjectProbability : BASIC_VALUES.dataObjectProbability;
+		return this;
+	}
+	
+	/**
+	 * Get the current value of the data object probability
+	 * 
+	 * @return the value of the parameter
+	 */
+	public double getDataObjectProbability() {
+		return dataObjectProbability;
+	}
+	
+	/**
 	 * Get the current value of the maximum depth parameter
 	 * 
 	 * @return the value of the parameter
@@ -335,7 +381,6 @@ public class RandomizationConfiguration {
 		return nextInt(MIN_AND_BRANCHES, getAndBranches() - 1);
 	}
 	
-	
 	/**
 	 * This method return the number of XOR branches to generate, according to
 	 * the given weight
@@ -345,7 +390,6 @@ public class RandomizationConfiguration {
 	public int getRandomXORBranches() {
 		return nextInt(MIN_XOR_BRANCHES, getXorBranches() - 1);
 	}
-	
 	
 	/**
 	 * This method is used for the definition of the presence of a loop
@@ -406,6 +450,18 @@ public class RandomizationConfiguration {
 		return SetUtils.getRandomWeighted(options);
 	}
 	
+	/**
+	 * This method tells the requester whether it is necessary to generate a
+	 * data object, according to the value set for the
+	 * {@link #dataObjectProbability} variable.
+	 * 
+	 * @return <tt>true</tt> if a data object needs to be created,
+	 * <tt>false</tt> otherwise
+	 */
+	public boolean generateDataObject() {
+		return randomFromWeight(dataObjectProbability);
+	}
+	
 	@Override
 	public String toString() {
 		String toRet = "";
@@ -418,6 +474,7 @@ public class RandomizationConfiguration {
 		toRet += "AND Weight = " + getANDWeight() + "\n";
 		toRet += "XOR Weight = " + getXORWeight() + "\n";
 		toRet += "Maximum Depth = " + getMaximumDepth() + "\n";
+		toRet += "Data Object Probability = " + getDataObjectProbability() + "\n";
 		return toRet;
 	}
 }
