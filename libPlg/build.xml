@@ -9,7 +9,7 @@
 	<property name="lib" location="lib" />
 	<property name="dist" location="dist" />
 	<property name="release" location="latestrelease" />
-	<property name="version" value="1.0.0-alpha" />
+	<property name="version" value="2.0.0-alpha" />
 	<property name="project" value="libPlg" />
 	<property name="javaVersion" value="1.7" />
 
