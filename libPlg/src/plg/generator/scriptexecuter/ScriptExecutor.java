@@ -30,7 +30,7 @@ public abstract class ScriptExecutor {
 	 * 
 	 */
 	public ScriptExecutor(String script) {
-		this.script = script;
+		this.script = script.replaceAll("\\xa0", " ");
 	}
 	
 	/**
