@@ -7,6 +7,7 @@ import plg.gui.dialog.GeneralDialog.RETURNED_VALUES;
 import plg.gui.dialog.NewProcessDialog;
 import plg.gui.panels.ProcessesList;
 import plg.gui.panels.SingleProcessVisualizer;
+import plg.gui.util.FileFilterHelper;
 import plg.model.Process;
 import plg.utils.Logger;
 
@@ -58,9 +59,27 @@ public class ProcessesController {
 		}
 	}
 	
+	/**
+	 * This method causes the system to open a new file and show the process
+	 * contained
+	 */
 	public void openProcess() {
 		final JFileChooser fc = new JFileChooser();
+		FileFilterHelper.assignImportFileFilters(fc);
 		int returnVal = fc.showOpenDialog(applicationController.getMainFrame());
+		
+		if (returnVal == JFileChooser.APPROVE_OPTION) {
+//			File file = fc.getSelectedFile();
+		}
+	}
+	
+	/**
+	 * This method causes the system to save the process into a file
+	 */
+	public void saveProcess() {
+		final JFileChooser fc = new JFileChooser();
+		FileFilterHelper.assignExportFileFilters(fc);
+		int returnVal = fc.showSaveDialog(applicationController.getMainFrame());
 		
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 //			File file = fc.getSelectedFile();

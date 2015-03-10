@@ -78,6 +78,13 @@ public class MainToolbar extends JToolBar {
 			}
 		});
 		
+		saveProcess.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				ApplicationController.instance().processes().saveProcess();
+			}
+		});
+		
 		showConsole.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
