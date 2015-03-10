@@ -31,6 +31,7 @@ public class NewProcessDialog extends GeneralDialog {
 	protected static final String KEY_LOOP_WEIGHT = "LOOP_WEIGHT";
 	protected static final String KEY_AND_BRANCHES = "AND_BRANCHES";
 	protected static final String KEY_XOR_BRANCHES = "XOR_BRANCHES";
+	protected static final String KEY_DATA_OBJECTS = "DATA_OBJECTS";
 	
 	private static final RandomizationConfiguration DEFAULTS = RandomizationConfiguration.BASIC_VALUES;
 	private RandomizationConfiguration userConfiguration = null;
@@ -43,6 +44,7 @@ public class NewProcessDialog extends GeneralDialog {
 	protected JSlider andWeightSlider = null;
 	protected JSlider xorWeightSlider = null;
 	protected JSlider loopWeightSlider = null;
+	protected JSlider dataObjectsSlider = null;
 	protected JSpinner andBranchesSpinner = null;
 	protected JSpinner xorBranchesSpinner = null;
 	protected JButton okButton = null;
@@ -75,6 +77,8 @@ public class NewProcessDialog extends GeneralDialog {
 				(int) (configuration.getDouble(KEY_XOR_WEIGHT, DEFAULTS.getXORWeight()) * 100));
 		loopWeightSlider = new JSlider(0, 100,
 				(int) (configuration.getDouble(KEY_LOOP_WEIGHT, DEFAULTS.getLoopWeight()) * 100));
+		dataObjectsSlider = new JSlider(0, 100,
+				(int) (configuration.getDouble(KEY_DATA_OBJECTS, DEFAULTS.getDataObjectProbability()) * 100));
 		andBranchesSpinner = new JSpinner(new SpinnerNumberModel(
 				configuration.getInteger(KEY_AND_BRANCHES, DEFAULTS.getAndBranches()), 2, 10, 1));
 		xorBranchesSpinner = new JSpinner(new SpinnerNumberModel(
@@ -106,7 +110,8 @@ public class NewProcessDialog extends GeneralDialog {
 						(double)(sequenceWeightSlider.getValue() / 100d),
 						(double)(andWeightSlider.getValue() / 100d),
 						(double)(xorWeightSlider.getValue() / 100d),
-						Integer.parseInt(depthSpinner.getValue().toString()));
+						Integer.parseInt(depthSpinner.getValue().toString()),
+						(double)(dataObjectsSlider.getValue() / 100d));
 				returnedValue = RETURNED_VALUES.SUCCESS;
 				NewProcessDialog.this.dispose();
 			}
@@ -142,6 +147,11 @@ public class NewProcessDialog extends GeneralDialog {
 		bodyPanel.add(xorWeightSlider);
 		bodyPanel.add(prepareFieldLabel("Loop weight"));
 		bodyPanel.add(loopWeightSlider);
+		insertBodySeparator(10);
+		
+		// data objects
+		bodyPanel.add(prepareFieldLabel("Data objects probability"));
+		bodyPanel.add(dataObjectsSlider);
 		
 		// layout everything
 		layoutBody();
