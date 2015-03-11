@@ -1,6 +1,7 @@
 package plg.gui.controller;
 
 import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import plg.generator.process.ProcessGenerator;
 import plg.gui.dialog.GeneralDialog.RETURNED_VALUES;
@@ -8,6 +9,8 @@ import plg.gui.dialog.NewProcessDialog;
 import plg.gui.panels.ProcessesList;
 import plg.gui.panels.SingleProcessVisualizer;
 import plg.gui.util.FileFilterHelper;
+import plg.io.exporter.IFileExporter;
+import plg.io.importer.IFileImporter;
 import plg.model.Process;
 import plg.utils.Logger;
 
@@ -69,7 +72,12 @@ public class ProcessesController {
 		int returnVal = fc.showOpenDialog(applicationController.getMainFrame());
 		
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
-//			File file = fc.getSelectedFile();
+			String fileName = fc.getSelectedFile().getAbsolutePath();
+			IFileImporter importer = FileFilterHelper.getImporterFromFileName((FileNameExtensionFilter) fc.getFileFilter());
+			Process p = importer.importModel(fileName);
+			
+			GENERATED_PROCESSES++;
+			processesList.storeNewProcess(GENERATED_PROCESSES, p.getName(), generateProcessSubtitle(p), p);
 		}
 	}
 	
@@ -82,7 +90,10 @@ public class ProcessesController {
 		int returnVal = fc.showSaveDialog(applicationController.getMainFrame());
 		
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
-//			File file = fc.getSelectedFile();
+			String fileName = fc.getSelectedFile().getAbsolutePath();
+			String file = FileFilterHelper.fixFileName(fileName, (FileNameExtensionFilter) fc.getFileFilter());
+			IFileExporter exporter = FileFilterHelper.getExporterFromFileName((FileNameExtensionFilter) fc.getFileFilter());
+			exporter.exportModel(singleProcessVisualizer.getCurrentlyVisualizedProcess(), file);
 		}
 	}
 	

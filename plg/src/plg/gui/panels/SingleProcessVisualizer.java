@@ -51,6 +51,10 @@ public class SingleProcessVisualizer extends MainWindowPanel {
 		updateUI();
 	}
 	
+	public Process getCurrentlyVisualizedProcess() {
+		return currentlyVisualizedProcess;
+	}
+	
 	public void generateProcessPlaceholder() {
 		removeAll();
 		add(noProcess, BorderLayout.CENTER);
