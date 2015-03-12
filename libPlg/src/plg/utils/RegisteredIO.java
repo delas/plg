@@ -1,6 +1,9 @@
 package plg.utils;
 
-import java.util.Set;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.reflections.Reflections;
 
@@ -21,9 +24,18 @@ public class RegisteredIO {
 	 * 
 	 * @return a set of importers
 	 */
-	public static Set<Class<?>> getAllImporters() {
+	public static List<Class<?>> getAllImporters() {
 		Reflections reflections = new Reflections("plg");
-		return reflections.getTypesAnnotatedWith(Importer.class);
+		List<Class<?>> importers = new LinkedList<Class<?>>(reflections.getTypesAnnotatedWith(Importer.class));
+		Collections.sort(importers, new Comparator<Class<?>>() {
+			@Override
+			public int compare(Class<?> o1, Class<?> o2) {
+				String s1 = o1.getAnnotation(Importer.class).name();
+				String s2 = o2.getAnnotation(Importer.class).name();
+				return s1.compareTo(s2);
+			}
+		});
+		return importers;
 	}
 	
 	/**
@@ -32,9 +44,17 @@ public class RegisteredIO {
 	 * 
 	 * @return a set of exporters
 	 */
-	public static Set<Class<?>> getAllExporters() {
+	public static List<Class<?>> getAllExporters() {
 		Reflections reflections = new Reflections("plg");
-		Set<Class<?>> exporters = reflections.getTypesAnnotatedWith(Exporter.class);
+		List<Class<?>> exporters = new LinkedList<Class<?>>(reflections.getTypesAnnotatedWith(Exporter.class));
+		Collections.sort(exporters, new Comparator<Class<?>>() {
+			@Override
+			public int compare(Class<?> o1, Class<?> o2) {
+				String s1 = o1.getAnnotation(Exporter.class).name();
+				String s2 = o2.getAnnotation(Exporter.class).name();
+				return s1.compareTo(s2);
+			}
+		});
 		return exporters;
 	}
 }
