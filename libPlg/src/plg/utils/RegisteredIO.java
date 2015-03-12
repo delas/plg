@@ -18,6 +18,12 @@ import plg.annotations.Importer;
  */
 public class RegisteredIO {
 
+	static {
+		// although this approach is actually quite rude, it successes in
+		// turning off logging... :)
+		Reflections.log = null;
+	}
+	
 	/**
 	 * This method returns all the registered importers (i.e., classes annotated
 	 * as {@link Importer})
