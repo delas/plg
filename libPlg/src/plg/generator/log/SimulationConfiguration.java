@@ -1,5 +1,7 @@
 package plg.generator.log;
 
+import plg.generator.log.noise.NoiseConfiguration;
+
 /**
  * This class describes the parameters of the process simulation. With this
  * class the user can control the process simulation.

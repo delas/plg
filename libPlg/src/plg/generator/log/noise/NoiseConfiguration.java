@@ -1,4 +1,4 @@
-package plg.generator.log;
+package plg.generator.log.noise;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -6,6 +6,7 @@ import java.util.Map;
 import plg.model.data.IntegerDataObject;
 import plg.model.data.StringDataObject;
 import plg.utils.Pair;
+import plg.utils.Random;
 
 /**
  * This class describes the parameters of the noise generator. With this class
@@ -355,5 +356,14 @@ public class NoiseConfiguration {
 	 */
 	public double getAlienEventNoiseProbability() {
 		return config.get(NOISE_TYPE.TRACE_ALIEN_EVENT).getFirst();
+	}
+	
+	/**
+	 * 
+	 * @param type
+	 * @return
+	 */
+	public boolean generateNoise(NOISE_TYPE type) {
+		return Random.randomFromWeight(config.get(type).getFirst());
 	}
 }

@@ -1,8 +1,11 @@
-package plg.generator.log;
+package plg.generator.log.noise;
+
+import java.math.BigInteger;
+import java.util.Random;
 
 import org.deckfour.xes.model.XTrace;
 
-import plg.generator.log.NoiseConfiguration.NOISE_TYPE;
+import plg.generator.log.noise.NoiseConfiguration.NOISE_TYPE;
 import plg.model.data.INoiseSensitiveDataObject;
 import plg.model.data.IntegerDataObject;
 import plg.model.data.StringDataObject;
@@ -65,7 +68,10 @@ public class NoiseProcessor {
 	 * @param dataObj the data object subject of the noise
 	 */
 	public void applyStringDataNoise(StringDataObject dataObj) {
-		String orginalValue = (String) dataObj.getOriginalValue();
+		// String orginalValue = (String) dataObj.getOriginalValue();
+		if (noise.generateNoise(NOISE_TYPE.DATA_STRING)) {
+			dataObj.setValue(new BigInteger(65, new Random()).toString(32));
+		}
 	}
 
 	/**

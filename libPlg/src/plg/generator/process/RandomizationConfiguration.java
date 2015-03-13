@@ -6,8 +6,8 @@ import java.util.Map;
 import java.util.Set;
 
 import plg.utils.Pair;
+import plg.utils.Random;
 import plg.utils.SetUtils;
-import cern.jet.random.engine.RandomEngine;
 
 /**
  * This class describes the parameters of the process generator. With this class
@@ -17,8 +17,6 @@ import cern.jet.random.engine.RandomEngine;
  */
 public class RandomizationConfiguration {
 
-	/** This is a random number generator */
-	public static final RandomEngine RANDOM_GENERATOR = RandomEngine.makeDefault();
 	/** This is a test configuration with basic random values */
 	public static final RandomizationConfiguration BASIC_VALUES = new RandomizationConfiguration(
 			5, // max AND branches
@@ -85,32 +83,6 @@ public class RandomizationConfiguration {
 		 * Empty: no activity pattern
 		 */
 		SKIP
-	}
-	
-	/**
-	 * This method generates boolean values with respect to the given
-	 * weight.
-	 * 
-	 * @param successWeight the weight of success
-	 * @return <tt>true</tt> with weight <tt>successPercent/100</tt>, <tt>false</tt> otherwise
-	 */
-	public static boolean randomFromWeight(double successWeight) {
-		return (successWeight > RANDOM_GENERATOR.nextDouble());
-	}
-	
-	/**
-	 * This method generates a new random number with respect to the current
-	 * weight distribution and in a particular range.
-	 *
-	 * @param min the minimal value (excluded)
-	 * @param max the maximal value (excluded)
-	 * @return the random integer
-	 */
-	public static Integer nextInt(int min, int max) {
-		Float v = RANDOM_GENERATOR.nextFloat();
-		int range = max - min;
-		range = Math.round(range * v) + min;
-		return range;
 	}
 	
 	/**
@@ -378,7 +350,7 @@ public class RandomizationConfiguration {
 	 * @return the number of AND branches to generate
 	 */
 	public int getRandomANDBranches() {
-		return nextInt(MIN_AND_BRANCHES, getAndBranches() - 1);
+		return Random.nextInt(MIN_AND_BRANCHES, getAndBranches() - 1);
 	}
 	
 	/**
@@ -388,7 +360,7 @@ public class RandomizationConfiguration {
 	 * @return the number of XOR branches to generate
 	 */
 	public int getRandomXORBranches() {
-		return nextInt(MIN_XOR_BRANCHES, getXorBranches() - 1);
+		return Random.nextInt(MIN_XOR_BRANCHES, getXorBranches() - 1);
 	}
 	
 	/**
@@ -397,7 +369,7 @@ public class RandomizationConfiguration {
 	 * @return true if a loop must be inserted, false otherwise
 	 */
 	public boolean getLoopPresence() {
-		return randomFromWeight(getLoopWeight());
+		return Random.randomFromWeight(getLoopWeight());
 	}
 	
 	/**
@@ -459,7 +431,7 @@ public class RandomizationConfiguration {
 	 * <tt>false</tt> otherwise
 	 */
 	public boolean generateDataObject() {
-		return randomFromWeight(dataObjectProbability);
+		return Random.randomFromWeight(dataObjectProbability);
 	}
 	
 	@Override

@@ -12,6 +12,7 @@ import org.deckfour.xes.extension.std.XLifecycleExtension.StandardModel;
 import org.deckfour.xes.model.XEvent;
 import org.deckfour.xes.model.XTrace;
 
+import plg.generator.log.noise.NoiseProcessor;
 import plg.model.Component;
 import plg.model.FlowObject;
 import plg.model.Process;
