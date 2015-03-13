@@ -1,7 +1,6 @@
 package plg.generator.log.noise;
 
 import java.math.BigInteger;
-import java.util.Random;
 
 import org.deckfour.xes.model.XTrace;
 
@@ -9,6 +8,7 @@ import plg.generator.log.noise.NoiseConfiguration.NOISE_TYPE;
 import plg.model.data.INoiseSensitiveDataObject;
 import plg.model.data.IntegerDataObject;
 import plg.model.data.StringDataObject;
+import plg.utils.Random;
 
 /**
  * This class contains the noise processor. The noise processor is in charge of
@@ -70,7 +70,7 @@ public class NoiseProcessor {
 	public void applyStringDataNoise(StringDataObject dataObj) {
 		// String orginalValue = (String) dataObj.getOriginalValue();
 		if (noise.generateNoise(NOISE_TYPE.DATA_STRING)) {
-			dataObj.setValue(new BigInteger(65, new Random()).toString(32));
+			dataObj.setValue(new BigInteger(65, Random.RANDOM).toString(32));
 		}
 	}
 
@@ -89,6 +89,10 @@ public class NoiseProcessor {
 	 */
 	public void applyIntegerDataNoise(IntegerDataObject dataObj) {
 		Integer originalValue = (Integer) dataObj.getOriginalValue();
+		if (noise.generateNoise(NOISE_TYPE.DATA_STRING)) {
+			int delta = noise.getIntegerDataNoiseDelta();
+			dataObj.setValue(originalValue + Random.nextInt(-delta, delta));
+		}
 	}
 
 	/**
@@ -100,6 +104,9 @@ public class NoiseProcessor {
 	 * @return the noised activity name
 	 */
 	public String generateActivityNameNoise(String name) {
+		if (noise.generateNoise(NOISE_TYPE.ACTIVITY_NAME)) {
+			return new BigInteger(65, Random.RANDOM).toString(32);
+		}
 		return name;
 	}
 }

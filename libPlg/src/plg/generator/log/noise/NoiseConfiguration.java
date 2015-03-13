@@ -162,6 +162,15 @@ public class NoiseConfiguration {
 	}
 	
 	/**
+	 * Get the current value of the range for the modification of the attribute.
+	 * 
+	 * @return the value of the delta
+	 */
+	public int getIntegerDataNoiseDelta() {
+		return (int) config.get(NOISE_TYPE.DATA_INTEGER).getSecond();
+	}
+	
+	/**
 	 * Sets the noise for string data attributes.
 	 * 
 	 * @param probability the probability that a string attribute is noisy
