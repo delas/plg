@@ -86,6 +86,15 @@ public class NewProcessDialog extends GeneralDialog {
 		
 		okButton = new JButton("OK");
 		
+		// style widgets
+		sequenceWeightSlider.setPaintTicks(true);
+		singleWeightSlider.setPaintTicks(true);
+		skipWeightSlider.setPaintTicks(true);
+		andWeightSlider.setPaintTicks(true);
+		xorWeightSlider.setPaintTicks(true);
+		loopWeightSlider.setPaintTicks(true);
+		dataObjectsSlider.setPaintTicks(true);
+		
 		// insert "ok" button
 		addFooterButton(okButton, true);
 		okButton.addActionListener(new ActionListener() {

@@ -47,7 +47,7 @@ public abstract class GeneralDialog extends JDialog {
 	private static final long serialVersionUID = -3969755125462223910L;
 	
 	protected static int WIDTH = 615;
-	protected static int HEIGHT = 580;
+	protected static int HEIGHT = 500;
 	
 	protected ConfigurationSet configuration = null;
 	protected RETURNED_VALUES returnedValue = RETURNED_VALUES.CANCEL;
@@ -120,7 +120,7 @@ public abstract class GeneralDialog extends JDialog {
 		
 		titlePanel = new JPanel(new GridBagLayout());
 		titlePanel.setBorder(BorderFactory.createEmptyBorder());
-		titlePanel.setPreferredSize(new Dimension(500, 70));
+		titlePanel.setPreferredSize(new Dimension(500, 60));
 		titlePanel.setBackground(Color.white);
 		GridBagConstraints c = new GridBagConstraints();
 		c.gridx = 0;
@@ -172,7 +172,7 @@ public abstract class GeneralDialog extends JDialog {
 		footerButtonsPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10));
 		
 		footerPanel = new JPanel(new BorderLayout());
-		footerPanel.setPreferredSize(new Dimension(500, 60));
+		footerPanel.setPreferredSize(new Dimension(500, 40));
 		footerPanel.add(new JSeparator(JSeparator.HORIZONTAL), BorderLayout.NORTH);
 		footerPanel.add(footerButtonsPanel, BorderLayout.EAST);
 		
