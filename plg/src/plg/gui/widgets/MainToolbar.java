@@ -23,8 +23,10 @@ public class MainToolbar extends JToolBar {
 
 	private JButton newProcess = new JButton("New Process", ImagesCollection.ICON_NEW);
 	private JButton openProcess = new JButton("Open", ImagesCollection.ICON_OPEN);
-	private JButton saveProcess = new JButton("Save", ImagesCollection.ICON_SAVE);
-	private JToggleButton showConsole = new JToggleButton("Show Console", ImagesCollection.ICON_CONSOLE);
+	private JButton saveProcess = new JButton("Save As...", ImagesCollection.ICON_SAVE);
+	private JButton generateLog = new JButton("Generate Log", ImagesCollection.ICON_LOG);
+	private JButton generateStream = new JButton("Stream", ImagesCollection.ICON_STREAM);
+	private JToggleButton showConsole = new JToggleButton("", ImagesCollection.ICON_CONSOLE);
 	
 	public MainToolbar() {
 		setFloatable(false);
@@ -33,7 +35,12 @@ public class MainToolbar extends JToolBar {
 		add(newProcess);
 		add(openProcess);
 		add(saveProcess);
+//		add(Box.createHorizontalStrut(50));
 		add(Box.createHorizontalGlue());
+		add(generateLog);
+		add(generateStream);
+//		add(Box.createHorizontalGlue());
+		add(Box.createHorizontalStrut(20));
 		add(showConsole);
 		
 		registerListeners();
