@@ -40,10 +40,12 @@ public class ProcessesController {
 			ApplicationController applicationController,
 			ProcessesList processesList,
 			SingleProcessVisualizer singleProcessVisualizer) {
+		
 		this.applicationController = applicationController;
 		this.processesList = processesList;
 		this.singleProcessVisualizer = singleProcessVisualizer;
 		
+		visualizeProcess(null);
 	}
 	
 	/**
@@ -105,9 +107,11 @@ public class ProcessesController {
 	public void visualizeProcess(Process process) {
 		if (process == null) {
 			singleProcessVisualizer.generateProcessPlaceholder();
+			processesList.setVisible(false);
 			Logger.instance().info("No process to display");
 		} else {
 			singleProcessVisualizer.visualizeNewProcess(process);
+			processesList.setVisible(true);
 			Logger.instance().info("Selected process \"" + process.getName() + "\"");
 		}
 		
