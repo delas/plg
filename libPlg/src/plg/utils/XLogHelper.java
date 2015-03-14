@@ -413,4 +413,21 @@ public class XLogHelper {
 			}
 		});
 	}
+	
+	/**
+	 * This method clones an event and returns a new with exactly the same
+	 * attributes of the provided one
+	 * 
+	 * @param event the event to clone
+	 * @return the cloned event
+	 */
+	public static XEvent clone(XEvent event) {
+		XEvent e = xesFactory.createEvent();
+		XAttributeMap am = event.getAttributes();
+		XAttributeMap newAm = xesFactory.createAttributeMap();
+		for (String key : am.keySet()) {
+			newAm.put(key, am.get(key));
+		}
+		return e;
+	}
 }
