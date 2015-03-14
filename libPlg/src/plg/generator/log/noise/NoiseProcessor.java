@@ -2,6 +2,8 @@ package plg.generator.log.noise;
 
 import java.math.BigInteger;
 
+import org.deckfour.xes.model.XAttributeTimestamp;
+import org.deckfour.xes.model.XEvent;
 import org.deckfour.xes.model.XTrace;
 
 import plg.generator.log.noise.NoiseConfiguration.NOISE_TYPE;
@@ -9,6 +11,7 @@ import plg.model.data.INoiseSensitiveDataObject;
 import plg.model.data.IntegerDataObject;
 import plg.model.data.StringDataObject;
 import plg.utils.Random;
+import plg.utils.XLogHelper;
 
 /**
  * This class contains the noise processor. The noise processor is in charge of
@@ -46,12 +49,26 @@ public class NoiseProcessor {
 	 * 	<li>{@link NOISE_TYPE#TRACE_MISSING_TAIL}</li>
 	 * 	<li>{@link NOISE_TYPE#TRACE_PERTURBED_ORDER}</li>
 	 * </ul>
+	 * <strong>Attention:</strong> only one of these possible noise types could
+	 * be applied on the same trace.
 	 * 
 	 * @param trace the trace where the noise will be applied.
 	 * <strong>Warning:</strong> this method modifies the provided trace.
 	 */
 	public void applyTraceNoise(XTrace trace) {
-		
+		if (noise.generateNoise(NOISE_TYPE.TRACE_ALIEN_EVENT)) {
+			generateTraceAlientEventNoise(trace);
+		} else if (noise.generateNoise(NOISE_TYPE.TRACE_DOUBLE_EVENT)) {
+			generateTraceDoubleEventNoise(trace);
+		} else if (noise.generateNoise(NOISE_TYPE.TRACE_MISSING_EPISODE)) {
+			generateTraceMissingEpisodeNoise(trace);
+		} else if (noise.generateNoise(NOISE_TYPE.TRACE_MISSING_HEAD)) {
+			generateTraceMissingHeadNoise(trace);
+		} else if (noise.generateNoise(NOISE_TYPE.TRACE_MISSING_TAIL)) {
+			generateTraceMissingTailNoise(trace);
+		} else if (noise.generateNoise(NOISE_TYPE.TRACE_PERTURBED_ORDER)) {
+			generateTracePerturbedOrderNoise(trace);
+		}
 	}
 
 	/**
@@ -108,5 +125,100 @@ public class NoiseProcessor {
 			return new BigInteger(65, Random.RANDOM).toString(32);
 		}
 		return name;
+	}
+	
+	/**
+	 * This method is responsible to generate the noise for
+	 * {@link NOISE_TYPE#TRACE_ALIEN_EVENT}.
+	 * 
+	 * @param trace the trace that undergo the noise
+	 */
+	protected void generateTraceAlientEventNoise(XTrace trace) {
+		if (trace.size() == 0) {
+			XLogHelper.insertEvent(trace, new BigInteger(65, Random.RANDOM).toString(32));
+		} else {
+			XAttributeTimestamp t = (XAttributeTimestamp) trace.get(0).getAttributes().get("time:timestamp");
+			XLogHelper.insertEvent(trace, new BigInteger(65, Random.RANDOM).toString(32), t.getValue());
+		}
+	}
+	
+	/**
+	 * This method is responsible to generate the noise for
+	 * {@link NOISE_TYPE#TRACE_DOUBLE_EVENT}.
+	 * 
+	 * @param trace the trace that undergo the noise
+	 */
+	protected void generateTraceDoubleEventNoise(XTrace trace) {
+		if (trace.size() > 0) {
+			int indexToDouble = Random.nextInt(0, trace.size() - 1);
+			XEvent e = XLogHelper.clone(trace.get(indexToDouble));
+			trace.add(e);
+		}
+	}
+	
+	/**
+	 * This method is responsible to generate the noise for
+	 * {@link NOISE_TYPE#TRACE_MISSING_EPISODE}.
+	 * 
+	 * @param trace the trace that undergo the noise
+	 */
+	protected void generateTraceMissingEpisodeNoise(XTrace trace) {
+		if (trace.size() > 0) {
+			int firstPosition = Random.nextInt(0, trace.size() - 1);
+			int episodeSize = Random.nextInt(1, Math.min(noise.getTraceMissingEpisodeSize(), trace.size() - firstPosition));
+			for (int i = 0; i < episodeSize; i++) {
+				trace.remove(firstPosition);
+			}
+		}
+	}
+	
+	/**
+	 * This method is responsible to generate the noise for
+	 * {@link NOISE_TYPE#TRACE_MISSING_HEAD}.
+	 * 
+	 * @param trace the trace that undergo the noise
+	 */
+	protected void generateTraceMissingHeadNoise(XTrace trace) {
+		if (trace.size() > 0) {
+			int headSize = Random.nextInt(1, Math.min(noise.getTraceMissingHeadSize(), trace.size()));
+			for (int i = 0; i < headSize; i++) {
+				trace.remove(0);
+			}
+		}
+	}
+	
+	/**
+	 * This method is responsible to generate the noise for
+	 * {@link NOISE_TYPE#TRACE_MISSING_TAIL}.
+	 * 
+	 * @param trace the trace that undergo the noise
+	 */
+	protected void generateTraceMissingTailNoise(XTrace trace) {
+		if (trace.size() > 0) {
+			int tailSize = Random.nextInt(1, Math.min(noise.getTraceMissingTailSize(), trace.size()));
+			for (int i = 0; i < tailSize; i++) {
+				trace.remove(trace.size() - 1);
+			}
+		}
+	}
+	
+	/**
+	 * This method is responsible to generate the noise for
+	 * {@link NOISE_TYPE#TRACE_PERTURBED_ORDER}.
+	 * 
+	 * @param trace the trace that undergo the noise
+	 */
+	protected void generateTracePerturbedOrderNoise(XTrace trace) {
+		if (trace.size() > 1) {
+			int firstIndex = Random.nextInt(0, trace.size() - 2);
+			int secondIndex = Random.nextInt(0, trace.size() - 1);
+			while (firstIndex == secondIndex) {
+				secondIndex = Random.nextInt(0, trace.size() - 1);
+			}
+			XEvent e1 = trace.get(firstIndex);
+			XEvent e2 = trace.get(secondIndex);
+			trace.set(firstIndex, e2);
+			trace.set(secondIndex, e1);
+		}
 	}
 }

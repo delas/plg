@@ -235,12 +235,21 @@ public class NoiseConfiguration {
 	}
 	
 	/**
-	 * Get the current value of the missing noise parameter
+	 * Get the current value of the missing head parameter
 	 * 
 	 * @return the value of the parameter
 	 */
 	public double getTraceMissingHeadNoiseProbability() {
 		return config.get(NOISE_TYPE.TRACE_MISSING_HEAD).getFirst();
+	}
+	
+	/**
+	 * Get the current value of the missing head size
+	 * 
+	 * @return the head size
+	 */
+	public int getTraceMissingHeadSize() {
+		return (int) config.get(NOISE_TYPE.TRACE_MISSING_HEAD).getSecond();
 	}
 	
 	/**
@@ -269,6 +278,15 @@ public class NoiseConfiguration {
 	}
 	
 	/**
+	 * Get the current value of the missing tail size
+	 * 
+	 * @return the tail size
+	 */
+	public int getTraceMissingTailSize() {
+		return (int) config.get(NOISE_TYPE.TRACE_MISSING_TAIL).getSecond();
+	}
+	
+	/**
 	 * Sets the noise for a trace missing an episode.
 	 * 
 	 * @param probability the probability that a trace is missing an episode
@@ -291,6 +309,15 @@ public class NoiseConfiguration {
 	 */
 	public double getTraceMissingEpisodeNoiseProbability() {
 		return config.get(NOISE_TYPE.TRACE_MISSING_EPISODE).getFirst();
+	}
+	
+	/**
+	 * Get the current value of the missing episode size
+	 * 
+	 * @return the episode size
+	 */
+	public int getTraceMissingEpisodeSize() {
+		return (int) config.get(NOISE_TYPE.TRACE_MISSING_EPISODE).getSecond();
 	}
 	
 	/**
@@ -368,9 +395,11 @@ public class NoiseConfiguration {
 	}
 	
 	/**
+	 * Returns whether it is necessary to generate the provided noise type
 	 * 
-	 * @param type
-	 * @return
+	 * @param type the type of noise to generate
+	 * @return <tt>true</tt> if it is necessary to generate the noise,
+	 * <tt>false</tt> otherwise
 	 */
 	public boolean generateNoise(NOISE_TYPE type) {
 		return Random.randomFromWeight(config.get(type).getFirst());
