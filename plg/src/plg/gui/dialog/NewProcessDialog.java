@@ -48,6 +48,7 @@ public class NewProcessDialog extends GeneralDialog {
 	protected JSpinner andBranchesSpinner = null;
 	protected JSpinner xorBranchesSpinner = null;
 	protected JButton okButton = null;
+	protected JButton resetButton = null;
 
 	/**
 	 * Dialog constructor
@@ -85,6 +86,7 @@ public class NewProcessDialog extends GeneralDialog {
 				configuration.getInteger(KEY_XOR_BRANCHES, DEFAULTS.getXorBranches()), 2, 10, 1));
 		
 		okButton = new JButton("OK");
+		resetButton = new JButton("Reset values");
 		
 		// style widgets
 		sequenceWeightSlider.setPaintTicks(true);
@@ -95,8 +97,7 @@ public class NewProcessDialog extends GeneralDialog {
 		loopWeightSlider.setPaintTicks(true);
 		dataObjectsSlider.setPaintTicks(true);
 		
-		// insert "ok" button
-		addFooterButton(okButton, true);
+		// insert footer buttons
 		okButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -125,6 +126,25 @@ public class NewProcessDialog extends GeneralDialog {
 				NewProcessDialog.this.dispose();
 			}
 		});
+		resetButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				RandomizationConfiguration v = RandomizationConfiguration.BASIC_VALUES;
+				andBranchesSpinner.setValue(v.getAndBranches());
+				xorBranchesSpinner.setValue(v.getXorBranches());
+				loopWeightSlider.setValue((int) (v.getLoopWeight() * 100));
+				singleWeightSlider.setValue((int) (v.getSingleActivityWeight() * 100));
+				skipWeightSlider.setValue((int) (v.getSkipWeight() * 100));
+				sequenceWeightSlider.setValue((int) (v.getSequenceWeight() * 100));
+				andWeightSlider.setValue((int) (v.getANDWeight() * 100));
+				xorWeightSlider.setValue((int) (v.getXORWeight() * 100));
+				depthSpinner.setValue(v.getMaximumDepth());
+				dataObjectsSlider.setValue((int) (v.getDataObjectProbability() * 100));
+			}
+		});
+		
+		addFooterButton(resetButton, false);
+		addFooterButton(okButton, true);
 		
 		// new process name
 		nameField.setText(candidateName);
