@@ -37,8 +37,8 @@ public class ProcessGenerator {
 	
 	private Process process;
 	private RandomizationConfiguration parameters;
-	private int generatedActivities = 0;
-	private int generatedDataObjects = 0;
+	protected int generatedActivities = 0;
+	protected int generatedDataObjects = 0;
 	
 	/**
 	 * This public static method is the main interface for the process

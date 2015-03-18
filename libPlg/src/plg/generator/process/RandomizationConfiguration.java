@@ -17,7 +17,9 @@ import plg.utils.SetUtils;
  */
 public class RandomizationConfiguration {
 
-	/** This is a test configuration with basic random values */
+	/**
+	 * This is a test configuration with basic random values
+	 */
 	public static final RandomizationConfiguration BASIC_VALUES = new RandomizationConfiguration(
 			5, // max AND branches
 			5, // max XOR branches
@@ -28,6 +30,21 @@ public class RandomizationConfiguration {
 			0.3, // AND weight
 			0.3, // XOR weight
 			3, // maximum depth
+			0.1 // data object probability
+		);
+	/**
+	 * This is a test configuration with basic random values for a process evolution
+	 */
+	public static final RandomizationConfiguration BASIC_VALUES_EVOLUTION = new RandomizationConfiguration(
+			3, // max AND branches
+			3, // max XOR branches
+			0.1, // loop weight
+			0.5, // single activity weight
+			0.1, // skip weight
+			0.6, // sequence weight
+			0.2, // AND weight
+			0.2, // XOR weight
+			2, // maximum depth
 			0.1 // data object probability
 		);
 	
