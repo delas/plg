@@ -11,6 +11,7 @@ import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 
 import plg.generator.process.RandomizationConfiguration;
+import plg.gui.config.ConfigurationSet;
 import plg.gui.controller.ApplicationController;
 
 /**
@@ -33,7 +34,7 @@ public class NewProcessDialog extends GeneralDialog {
 	protected static final String KEY_XOR_BRANCHES = "XOR_BRANCHES";
 	protected static final String KEY_DATA_OBJECTS = "DATA_OBJECTS";
 	
-	private static final RandomizationConfiguration DEFAULTS = RandomizationConfiguration.BASIC_VALUES;
+	protected final RandomizationConfiguration DEFAULTS = RandomizationConfiguration.BASIC_VALUES;
 	private RandomizationConfiguration userConfiguration = null;
 	
 	protected JTextField nameField = null;
@@ -51,16 +52,16 @@ public class NewProcessDialog extends GeneralDialog {
 	protected JButton resetButton = null;
 
 	/**
-	 * Dialog constructor
+	 * This constructor can be used to subclass the dialog
 	 * 
-	 * @param owner the frame owning the dialog
-	 * @param candidateName the candidate name for the new process
+	 * @param candidateProcessName the candidate process name
+	 * @param owner the owner of the dialog
+	 * @param title the title of the dialog
+	 * @param help a short text describing the dialog content
+	 * @param configuration the configuration set to use for the dialog
 	 */
-	public NewProcessDialog(JFrame owner, String candidateName) {
-		super(owner,
-			"New Random Process Configuration",
-			"Use this dialog to set the new process parameters.",
-			ApplicationController.instance().getConfiguration(NewProcessDialog.class.getCanonicalName()));
+	protected NewProcessDialog(String candidateProcessName, JFrame owner, String title, String help, final ConfigurationSet configuration) {
+		super(owner,title, help, configuration);
 		
 		// creates widgets
 		nameField = new JTextField();
@@ -147,7 +148,7 @@ public class NewProcessDialog extends GeneralDialog {
 		addFooterButton(okButton, true);
 		
 		// new process name
-		nameField.setText(candidateName);
+		nameField.setText(candidateProcessName);
 		bodyPanel.add(prepareFieldLabel("New process name"));
 		bodyPanel.add(nameField);
 		insertBodySeparator(10);
@@ -184,6 +185,19 @@ public class NewProcessDialog extends GeneralDialog {
 		
 		// layout everything
 		layoutBody();
+	}
+	
+	/**
+	 * Dialog constructor
+	 * 
+	 * @param owner the frame owning the dialog
+	 * @param candidateName the candidate name for the new process
+	 */
+	public NewProcessDialog(JFrame owner, String candidateName) {
+		this(candidateName, owner,
+			"New Random Process Configuration",
+			"Use this dialog to set the new process parameters.",
+			ApplicationController.instance().getConfiguration(NewProcessDialog.class.getCanonicalName()));
 	}
 	
 	/**

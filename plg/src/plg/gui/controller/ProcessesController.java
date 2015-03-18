@@ -3,7 +3,9 @@ package plg.gui.controller;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import plg.generator.process.EvolutionGenerator;
 import plg.generator.process.ProcessGenerator;
+import plg.gui.dialog.EvolutionDialog;
 import plg.gui.dialog.GeneralDialog.RETURNED_VALUES;
 import plg.gui.dialog.NewProcessDialog;
 import plg.gui.panels.ProcessesList;
@@ -96,6 +98,21 @@ public class ProcessesController {
 			String file = FileFilterHelper.fixFileName(fileName, (FileNameExtensionFilter) fc.getFileFilter());
 			IFileExporter exporter = FileFilterHelper.getExporterFromFileName((FileNameExtensionFilter) fc.getFileFilter());
 			exporter.exportModel(singleProcessVisualizer.getCurrentlyVisualizedProcess(), file);
+		}
+	}
+	
+	/**
+	 * This method evolves the currently selected process
+	 */
+	public void evolveProcess() {
+		Process p = singleProcessVisualizer.getCurrentlyVisualizedProcess();
+		EvolutionDialog ed = new EvolutionDialog(applicationController.getMainFrame(), "Evolution of " + p.getName());
+		ed.setVisible(true);
+		
+		if (RETURNED_VALUES.SUCCESS.equals(ed.returnedValue())) {
+			GENERATED_PROCESSES++;
+			Process evolution = EvolutionGenerator.evolveProcess(p, ed.getConfiguredValues());
+			processesList.storeNewProcess(GENERATED_PROCESSES, evolution.getName(), generateProcessSubtitle(evolution), evolution);
 		}
 	}
 	
