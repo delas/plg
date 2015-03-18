@@ -47,7 +47,9 @@ public abstract class Component {
 	 * @param componentId the new component id
 	 */
 	public void setComponentId(int componentId) {
+		this.owner.removeComponent(this);
 		this.componentId = componentId;
+		this.owner.registerComponent(this);
 	}
 	
 	/**

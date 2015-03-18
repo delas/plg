@@ -7,8 +7,12 @@ import java.util.Set;
 
 import plg.exceptions.IllegalSequenceException;
 import plg.exceptions.InvalidProcessException;
+import plg.generator.scriptexecuter.IntegerScriptExecutor;
+import plg.generator.scriptexecuter.StringScriptExecutor;
 import plg.model.activity.Task;
 import plg.model.data.DataObject;
+import plg.model.data.IntegerDataObject;
+import plg.model.data.StringDataObject;
 import plg.model.event.EndEvent;
 import plg.model.event.StartEvent;
 import plg.model.gateway.ExclusiveGateway;
@@ -48,8 +52,8 @@ public class Process {
 		this.endEvents = new HashSet<EndEvent>();
 		this.tasks = new HashSet<Task>();
 		this.gateways = new HashSet<Gateway>();
-		this.sequences = new HashSet<Sequence>();
 		this.dataObjects = new HashSet<DataObject>();
+		this.sequences = new HashSet<Sequence>();
 	}
 	
 	/**
@@ -153,6 +157,7 @@ public class Process {
 		return true;
 	}
 	
+	
 	/**
 	 * This method can be used to get the cached value returned by the
 	 * {@link #check()} method.
@@ -243,6 +248,9 @@ public class Process {
 			valid = false;
 		} else if (component instanceof Sequence) {
 			sequences.remove((Sequence) component);
+			valid = false;
+		} else if (component instanceof Gateway) {
+			gateways.remove((Gateway) component);
 			valid = false;
 		}
 	}
@@ -455,5 +463,75 @@ public class Process {
 			buffer.append(s.toString() + "\n");
 		}
 		return buffer.toString();
+	}
+	
+	@Override
+	public Object clone() {
+		Process p = new Process(name);
+		for (StartEvent e : getStartEvents()) {
+			p.newStartEvent().setComponentId(e.componentId);
+		}
+		for (EndEvent e : getEndEvents()) {
+			p.newEndEvent().setComponentId(e.componentId);
+		}
+		for (Gateway g : getGateways()) {
+			if (g instanceof ParallelGateway) {
+				p.newParallelGateway().setComponentId(g.componentId);
+			} else if (g instanceof ExclusiveGateway) {
+				p.newExclusiveGateway().setComponentId(g.componentId);
+			}
+		}
+		for (Task t : getTasks()) {
+			Task c = p.newTask(t.getName());
+			c.setComponentId(t.componentId);
+			if (t.getActivityScript() != null) {
+				c.setActivityScript(new IntegerScriptExecutor(t.getActivityScript().getScript()));
+			}
+			for (DataObject d : t.getDataObjects()) {
+				DataObject newDataObject = null;
+				if (d instanceof IntegerDataObject) {
+					newDataObject = new IntegerDataObject(p, new IntegerScriptExecutor(((IntegerDataObject) d).getScriptExecutor().getScript()));
+				} else if (d instanceof StringDataObject) {
+					newDataObject = new StringDataObject(p, new StringScriptExecutor(((StringDataObject) d).getScriptExecutor().getScript()));
+				} else {
+					newDataObject = new DataObject(p);
+				}
+				newDataObject.setComponentId(d.componentId);
+				newDataObject.setName(d.getName());
+				newDataObject.setValue(d.getValue());
+				newDataObject.setObjectOwner(c);
+			}
+		}
+		for (Sequence s : getSequences()) {
+			try {
+				FlowObject newSource = (FlowObject) p.searchComponent(s.getSource().getId());
+				FlowObject newSink = (FlowObject) p.searchComponent(s.getSink().getId());
+				Sequence newSequence = p.newSequence(newSource, newSink);
+				newSequence.setComponentId(s.componentId);
+				
+				for (DataObject d : s.getDataObjects()) {
+					DataObject newDataObject = null;
+					if (d instanceof IntegerDataObject) {
+						newDataObject = new IntegerDataObject(p, new IntegerScriptExecutor(((IntegerDataObject) d).getScriptExecutor().getScript()));
+					} else if (d instanceof StringDataObject) {
+						newDataObject = new StringDataObject(p, new StringScriptExecutor(((StringDataObject) d).getScriptExecutor().getScript()));
+					} else {
+						newDataObject = new DataObject(p);
+					}
+					newDataObject.setComponentId(d.componentId);
+					newDataObject.setName(d.getName());
+					newDataObject.setValue(d.getValue());
+					newDataObject.setObjectOwner(newSequence);
+				}
+			} catch (IllegalSequenceException e) {
+				e.printStackTrace();
+			}
+		}
+		try {
+			p.check();
+		} catch (InvalidProcessException e1) {
+			e1.printStackTrace();
+		}
+		return p;
 	}
 }
