@@ -52,7 +52,11 @@ digraph G {
 		style=filled,
 		fillcolor="#5dbd5a:#bafcc2",
 		gradientangle=270,
-		color="#20962f"
+		color="#20962f",
+		fontcolor="#20962f",
+		fontname="sans-serif",
+		fontsize="12.0",
+		penwidth=2
 	];
 ### START EVENTS ###
 	
@@ -65,6 +69,9 @@ digraph G {
 		fillcolor="#e46e60:#ffc5c1",
 		gradientangle=270,
 		color="#630000",
+		fontcolor="#630000",
+		fontname="sans-serif",
+		fontsize="12.0",
 		penwidth=2
 	];
 ### END EVENTS ###
@@ -79,6 +86,7 @@ digraph G {
 		width="0.5",
 		fontcolor="#5a677b",
 		fontname="sans-serif",
+		fontsize="14.0",
 		penwidth=1
 	];
 ### ACTIVITIES ###
@@ -153,14 +161,14 @@ digraph G {
 		// start events
 		String buffer = "";
 		for(StartEvent e : model.getStartEvents()) {
-			buffer += "\tc_" + e.getId() + ";\n";
+			buffer += "\tc_" + e.getId() + " [xlabel=\"Start\"];\n";
 		}
 		basic = basic.replace("### START EVENTS ###", buffer);
 
 		// end events
 		buffer = "";
 		for(EndEvent e : model.getEndEvents()) {
-			buffer += "\tc_" + e.getId() + ";\n";
+			buffer += "\tc_" + e.getId() + " [xlabel=\"End\"];\n";
 		}
 		basic = basic.replace("### END EVENTS ###", buffer);
 		
@@ -177,7 +185,7 @@ digraph G {
 			if (e instanceof ParallelGateway) {
 				buffer += "\tc_" + e.getId() + " [label=\"+\"];\n";
 			} else if (e instanceof ExclusiveGateway) {
-				buffer += "\tc_" + e.getId() + " [label=\"x\"];\n";
+				buffer += "\tc_" + e.getId() + " [label=\"&times;\"];\n";
 			}
 		}
 		basic = basic.replace("### GATEWAYS ###", buffer);
