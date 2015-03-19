@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import plg.generator.IProgressVisualizer;
+
 /**
  * Class which represents a queue of concurrent threads.
  * 
@@ -14,6 +16,7 @@ public class SimulationEngine {
 
 	private BlockingQueue<Runnable> taskQueue = null;
 	private ArrayList<Work> threads = null;
+	private IProgressVisualizer progress;
 	
 	/**
 	 * Creates a new queue with a maximum number of concurrent threads
@@ -22,9 +25,10 @@ public class SimulationEngine {
 	 * @param noOfThreads maximum number of concurrent threads
 	 * @param maxNoOfTasks maximum number of tasks to assign to the engine
 	 */
-	public SimulationEngine(int noOfThreads, int maxNoOfTasks) {
-		threads = new ArrayList<Work>();
-		taskQueue = new LinkedBlockingQueue<Runnable>(maxNoOfTasks);
+	public SimulationEngine(int noOfThreads, int maxNoOfTasks, IProgressVisualizer progress) {
+		this.threads = new ArrayList<Work>();
+		this.taskQueue = new LinkedBlockingQueue<Runnable>(maxNoOfTasks);
+		this.progress = progress;
 		
 		for(int i = 0; i < noOfThreads; i++) {
 			threads.add(new Work(taskQueue));
@@ -88,6 +92,7 @@ public class SimulationEngine {
 					Thread t = new Thread(taskQueue.poll());
 					t.start();
 					t.join();
+					progress.inc();
 				} catch(Exception e){
 					// log or otherwise report exception, but keep pool thread alive
 					e.printStackTrace();
