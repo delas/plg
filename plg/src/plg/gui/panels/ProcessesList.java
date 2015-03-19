@@ -14,6 +14,7 @@ import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
@@ -104,8 +105,8 @@ public class ProcessesList extends MainWindowPanel {
 						}
 					});
 					
-					menu.add(itemDelete);
 					menu.add(itemEvolve);
+					menu.add(itemDelete);
 					menu.show(list, e.getX(), e.getY());
 				}
 			}
@@ -129,6 +130,14 @@ public class ProcessesList extends MainWindowPanel {
 	public void deleteProcess(int index) {
 		if (index >= 0) {
 			MultilineImageListEntry entry = dlm.get(index);
+			
+			if (JOptionPane.showConfirmDialog(ApplicationController.instance().getMainFrame(),
+					"Are you sure to delete the selected process?",
+					"Confirm deletion",
+					JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) {
+				return;
+			}
+			
 			dlm.remove(index);
 			Logger.instance().info("Removed process with id " + entry.getId());
 			
