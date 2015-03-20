@@ -216,7 +216,7 @@ digraph G {
 		// data object connections
 		buffer = "";
 		for(DataObject o : model.getDataObjects()) {
-			if (o.getProcessOwner() != null) {
+			if (o.getObjectOwner() != null) {
 				if (o.getObjectOwner() instanceof Sequence) { 
 					String left = "c_" + o.getId();
 					String right = "c_" + ((Sequence) o.getObjectOwner()).getSink().getId();
