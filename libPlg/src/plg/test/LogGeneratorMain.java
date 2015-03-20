@@ -10,6 +10,7 @@ import org.deckfour.xes.out.XSerializer;
 import org.deckfour.xes.out.XesXmlSerializer;
 
 import plg.exceptions.InvalidProcessException;
+import plg.generator.ProgressAdapter;
 import plg.generator.log.LogGenerator;
 import plg.generator.log.SimulationConfiguration;
 import plg.io.importer.SignavioBPMNImporter;
@@ -44,7 +45,7 @@ public class LogGeneratorMain {
 		
 		System.out.print("3. Generating log... ");
 		SimulationConfiguration sc = new SimulationConfiguration(noTraces);
-		LogGenerator generator = new LogGenerator(p, sc);
+		LogGenerator generator = new LogGenerator(p, sc, new ProgressAdapter());
 		XLog log = generator.generateLog();
 		System.out.println("done!");
 		

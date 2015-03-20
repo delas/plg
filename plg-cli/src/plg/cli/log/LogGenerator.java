@@ -14,6 +14,7 @@ import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 
 import plg.exceptions.InvalidProcessException;
+import plg.generator.ProgressAdapter;
 import plg.generator.log.SimulationConfiguration;
 import plg.io.importer.SignavioBPMNImporter;
 import plg.model.Process;
@@ -120,7 +121,7 @@ public class LogGenerator {
 		// log generations
 		System.out.print("3. Generating log... ");
 		SimulationConfiguration sc = new SimulationConfiguration(parameters.noTraces);
-		plg.generator.log.LogGenerator generator = new plg.generator.log.LogGenerator(p, sc);
+		plg.generator.log.LogGenerator generator = new plg.generator.log.LogGenerator(p, sc, new ProgressAdapter());
 		XLog log = generator.generateLog();
 		System.out.println("done!");
 		

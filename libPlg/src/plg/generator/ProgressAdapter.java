@@ -15,4 +15,16 @@ public class ProgressAdapter implements IProgressVisualizer {
 
 	@Override
 	public void inc() { }
+
+	@Override
+	public void setIndeterminate(boolean indeterminate) { }
+
+	@Override
+	public void finished() { }
+
+	@Override
+	public void setText(String status) { }
+
+	@Override
+	public void start() { }
 }

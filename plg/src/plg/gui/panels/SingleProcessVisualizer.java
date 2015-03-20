@@ -8,6 +8,7 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
 import plg.gui.config.ConfigurationSet;
+import plg.gui.dialog.Progress;
 import plg.model.Process;
 import plg.visualizer.BPMNVisualizer;
 
@@ -33,6 +34,7 @@ public class SingleProcessVisualizer extends MainWindowPanel {
 	
 	private Process currentlyVisualizedProcess = null;
 	private BPMNVisualizer visualizer = null;
+	private Progress progress = new Progress();
 
 	public SingleProcessVisualizer(ConfigurationSet conf) {
 		super(conf);
@@ -47,12 +49,17 @@ public class SingleProcessVisualizer extends MainWindowPanel {
 		this.visualizer = new BPMNVisualizer(process);
 		
 		removeAll();
+		add(progress, BorderLayout.NORTH);
 		add(visualizer, BorderLayout.CENTER);
 		updateUI();
 	}
 	
 	public Process getCurrentlyVisualizedProcess() {
 		return currentlyVisualizedProcess;
+	}
+	
+	public Progress getCurrentProgress() {
+		return progress;
 	}
 	
 	public void generateProcessPlaceholder() {

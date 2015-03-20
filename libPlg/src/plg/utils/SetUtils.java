@@ -2,6 +2,7 @@ package plg.utils;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -15,6 +16,21 @@ public class SetUtils {
 
 	private static Random randomGenerator = new Random();
 
+	/**
+	 * This method returns a random object form an array.
+	 * 
+	 * @param array the given array
+	 * @return a random object contained in the array, or <tt>null</tt> if the
+	 * array is empty or a <tt>null</tt> object
+	 */
+	public static <E> E getRandom(E[] array) {
+		Set<E> set = new HashSet<E>();
+		for (E e : array) {
+			set.add(e);
+		}
+		return getRandom(set);
+	}
+	
 	/**
 	 * This method returns a random object form a set.
 	 * 

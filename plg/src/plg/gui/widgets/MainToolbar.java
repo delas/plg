@@ -35,11 +35,9 @@ public class MainToolbar extends JToolBar {
 		add(newProcess);
 		add(openProcess);
 		add(saveProcess);
-//		add(Box.createHorizontalStrut(50));
 		add(Box.createHorizontalGlue());
 		add(generateLog);
 		add(generateStream);
-//		add(Box.createHorizontalGlue());
 		add(Box.createHorizontalStrut(20));
 		add(showConsole);
 		
@@ -65,6 +63,8 @@ public class MainToolbar extends JToolBar {
 	 */
 	public void setProcessSelected(boolean processVisualized) {
 		saveProcess.setEnabled(processVisualized);
+		generateLog.setEnabled(processVisualized);
+		generateStream.setEnabled(processVisualized);
 	}
 	
 	/**
@@ -89,6 +89,13 @@ public class MainToolbar extends JToolBar {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				ApplicationController.instance().processes().saveProcess();
+			}
+		});
+		
+		generateLog.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				ApplicationController.instance().log().generateLog();
 			}
 		});
 		

@@ -23,6 +23,7 @@ public class ApplicationController {
 	
 	private ConsoleController consoleController;
 	private ProcessesController processesController;
+	private LogController logController;
 	
 	/**
 	 * This method returns the available instance of the application controller.
@@ -52,6 +53,9 @@ public class ApplicationController {
 				this,
 				mainWindow.getProcessesList(),
 				mainWindow.getSingleProcessVisualizer());
+		logController = new LogController(
+				this,
+				mainWindow.getSingleProcessVisualizer());
 	}
 	
 	/**
@@ -70,6 +74,15 @@ public class ApplicationController {
 	 */
 	public ProcessesController processes() {
 		return processesController;
+	}
+	
+	/**
+	 * This method returns the log controller
+	 * 
+	 * @return the log controller
+	 */
+	public LogController log() {
+		return logController;
 	}
 	
 	/**
