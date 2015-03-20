@@ -10,5 +10,6 @@
 			<attribute name="javadoc_location" value="jar:platform:/resource/libPlg/lib/OpenXES/doc.zip!/doc"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry combineaccessrules="false" kind="src" path="/plg-resources"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
