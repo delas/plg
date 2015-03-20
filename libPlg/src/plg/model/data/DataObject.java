@@ -1,7 +1,6 @@
 package plg.model.data;
 
 import plg.model.Component;
-import plg.model.FlowObject;
 import plg.model.Process;
 
 /**
@@ -21,20 +20,6 @@ public class DataObject extends Component implements IDataObject {
 	 * process.
 	 * 
 	 * @param processOwner the process owner of this data object
-	 * @param objectOwner the flow object owner of this data object
-	 */
-	public DataObject(Process processOwner, IDataObjectOwner objectOwner) {
-		super(processOwner);
-		if (objectOwner != null) {
-			setObjectOwner(objectOwner);
-		}
-	}
-	
-	/**
-	 * Class constructor that build a new data object associated to the current
-	 * process.
-	 * 
-	 * @param processOwner the process owner of this data object
 	 */
 	public DataObject(Process processOwner) {
 		this(processOwner, null);
@@ -44,10 +29,14 @@ public class DataObject extends Component implements IDataObject {
 	 * Class constructor that build a new data object associated to the current
 	 * process.
 	 * 
-	 * @param objectOwner the flow object owner owner of this data object
+	 * @param processOwner the process owner of this data object
+	 * @param objectOwner the flow object owner of this data object
 	 */
-	public DataObject(FlowObject objectOwner) {
-		this(objectOwner.getOwner(), objectOwner);
+	public DataObject(Process processOwner, IDataObjectOwner objectOwner) {
+		super(processOwner);
+		if (objectOwner != null) {
+			setObjectOwner(objectOwner);
+		}
 	}
 	
 	/**
