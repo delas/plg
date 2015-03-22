@@ -36,7 +36,7 @@ public class LogGeneratorMain {
 		
 		System.out.print("1. Importing model... ");
 		SignavioBPMNImporter importer = new SignavioBPMNImporter();
-		Process p = importer.importModel(modelFile);
+		Process p = importer.importModel(modelFile, new ProgressAdapter());
 		System.out.println("done!");
 		
 		System.out.print("2. Model checking... ");

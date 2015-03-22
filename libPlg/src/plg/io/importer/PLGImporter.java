@@ -12,6 +12,7 @@ import org.jdom2.input.SAXBuilder;
 import plg.annotations.Importer;
 import plg.exceptions.IllegalSequenceException;
 import plg.exceptions.UnsupportedPLGFileFormat;
+import plg.generator.IProgressVisualizer;
 import plg.generator.scriptexecuter.IntegerScriptExecutor;
 import plg.generator.scriptexecuter.StringScriptExecutor;
 import plg.io.exporter.PLGExporter;
@@ -39,21 +40,29 @@ import plg.utils.ZipHelper;
 	name = "PLG file",
 	fileExtension = "plg"
 )
-public class PLGImporter implements IFileImporter {
+public class PLGImporter extends FileImporter {
 
 	@Override
-	public Process importModel(String filename) {
+	public Process importModel(String filename, IProgressVisualizer progress) {
+		progress.setIndeterminate(true);
+		progress.setText("Importing PLG file...");
+		progress.start();
 		Logger.instance().info("Starting process import");
 		try {
 			if (ZipHelper.isValid(new File(filename))) {
-				return importFromPlg1(filename);
+				Process p = importFromPlg1(filename);
+				progress.finished();
+				return p;
 			} else {
-				return importFromPlg2(filename);
+				Process p = importFromPlg2(filename);
+				progress.finished();
+				return p;
 			}
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
 		Logger.instance().info("Process import complete");
+		progress.finished();
 		return null;
 	}
 	
@@ -98,11 +107,10 @@ public class PLGImporter implements IFileImporter {
 		Process p = new Process(meta.getChildText("name"));
 		p.setId(meta.getChildText("id"));
 
-
 		// data objects
 		for (Element ss : elements.getChildren("dataObject")) {
-			DataObject d = null;
 			String type = ss.getAttributeValue("type");
+			DataObject d = null;
 			if (type.equals("DataObject")) {
 				d = new DataObject(p);
 				d.setValue(ss.getAttributeValue("value"));
@@ -124,6 +132,14 @@ public class PLGImporter implements IFileImporter {
 			s.setComponentId(ss.getAttribute("id").getIntValue());
 			for (Element dos : ss.getChildren("dataObject")) {
 				s.addDataObject((DataObject) p.searchComponent(dos.getAttributeValue("id")));
+			}
+		}
+		// end events
+		for (Element ss : elements.getChildren("endEvent")) {
+			EndEvent e = p.newEndEvent();
+			e.setComponentId(ss.getAttribute("id").getIntValue());
+			for (Element dos : ss.getChildren("dataObject")) {
+				e.addDataObject((DataObject) p.searchComponent(dos.getAttributeValue("id")));
 			}
 		}
 		// tasks
@@ -150,14 +166,6 @@ public class PLGImporter implements IFileImporter {
 				g.addDataObject((DataObject) p.searchComponent(dos.getAttributeValue("id")));
 			}
 		}
-		// end events
-		for (Element ss : elements.getChildren("endEvent")) {
-			EndEvent e = p.newEndEvent();
-			e.setComponentId(ss.getAttribute("id").getIntValue());
-			for (Element dos : ss.getChildren("dataObject")) {
-				e.addDataObject((DataObject) p.searchComponent(dos.getAttributeValue("id")));
-			}
-		}
 		// sequences
 		for (Element ss : elements.getChildren("sequenceFlow")) {
 			try {
@@ -172,11 +180,13 @@ public class PLGImporter implements IFileImporter {
 				e.printStackTrace();
 			}
 		}
-		
 		// data objects owner
 		for (Element ss : elements.getChildren("dataObject")) {
 			DataObject d = (DataObject) p.searchComponent(ss.getAttributeValue("id"));
-			d.setObjectOwner((IDataObjectOwner) p.searchComponent(ss.getAttributeValue("owner")));
+			String owner = ss.getAttributeValue("owner");
+			if (owner != null) {
+				d.setObjectOwner((IDataObjectOwner) p.searchComponent(owner));
+			}
 		}
 	
 		return p;

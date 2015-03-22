@@ -1,4 +1,4 @@
-package plg.gui.dialog;
+package plg.gui.panels;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -24,6 +24,7 @@ import plg.utils.SetUtils;
 public class Progress extends JPanel implements IProgressVisualizer {
 
 	private static final long serialVersionUID = 2964186837553703486L;
+	private static final int UPDATE_PROGRESS_INTERVAL = 1000;
 	
 	protected JProgressBar progress = new JProgressBar();
 	protected JLabel progressLabel = new JLabel("Please wait...");
@@ -36,7 +37,11 @@ public class Progress extends JPanel implements IProgressVisualizer {
 	protected long startTime = 0;
 	protected Timer etaUpdater;
 	
-	public Progress() {
+	/**
+	 * Protected constructor. The standard way to get a progress is via the
+	 * {@link ProgressStack#askForNewProgress()} method.
+	 */
+	protected Progress() {
 		ETALabel.setHorizontalAlignment(SwingConstants.RIGHT);
 		
 		setLayout(new GridBagLayout());
@@ -115,7 +120,7 @@ public class Progress extends JPanel implements IProgressVisualizer {
 					ETALabel.setText(SetUtils.getRandom(waitingSentences));
 				}
 			}
-		}, 0, 1500);
+		}, 0, UPDATE_PROGRESS_INTERVAL);
 		setVisible(true);
 	}
 	

@@ -50,6 +50,7 @@ public abstract class Component {
 		this.owner.removeComponent(this);
 		this.componentId = componentId;
 		this.owner.registerComponent(this);
+		componentIdProgress = Math.max(componentIdProgress, componentId) + 1;
 	}
 	
 	/**

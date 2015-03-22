@@ -152,7 +152,7 @@ public class RuntimeUtils {
 	 * support folder.
 	 */
 	public static String getSupportFolder() {
-		String homedir = System.getProperty("user.home");
+		String homedir = getHomeFolder();
 		String dirName = "ProcessesLogsGenerator";
 		if(isRunningWindows()) {
 			// any windows flavor
@@ -167,5 +167,14 @@ public class RuntimeUtils {
 			(new File(homedir + "/." + dirName)).mkdirs(); // create directories if necessary
 			return homedir + "/." + dirName + "/";
 		}
+	}
+	
+	/**
+	 * This method returns the path to the home folder
+	 * 
+	 * @return the string representation of the path to the home folder
+	 */
+	public static String getHomeFolder() {
+		return System.getProperty("user.home");
 	}
 }

@@ -7,6 +7,7 @@ import org.adrianwalker.multilinestring.Multiline;
 import org.apache.commons.io.FileUtils;
 
 import plg.annotations.Exporter;
+import plg.generator.IProgressVisualizer;
 import plg.generator.process.petrinet.Node;
 import plg.generator.process.petrinet.PetriNet;
 import plg.generator.process.petrinet.Place;
@@ -26,7 +27,7 @@ import plg.utils.Pair;
 	name = "Petri net as Graphviz Dot",
 	fileExtension = "dot"
 )
-public class GraphvizPetriNetExporter implements IFileExporter {
+public class GraphvizPetriNetExporter extends FileExporter {
 
 	/**
 	 * The following comment contains the basic string with the Graphviz Dot
@@ -57,7 +58,10 @@ digraph G {
 	private String basic;
 	
 	@Override
-	public void exportModel(Process model, String filename) {
+	public void exportModel(Process model, String filename, IProgressVisualizer progress) {
+		progress.setIndeterminate(true);
+		progress.setText("Exporting Graphviz Petri net file...");
+		progress.start();
 		Logger.instance().info("Starting process exportation");
 		preprocessString(model);
 		try {
@@ -66,6 +70,7 @@ digraph G {
 			e.printStackTrace();
 		}
 		Logger.instance().info("Process exportation complete");
+		progress.finished();
 	}
 	
 	/**

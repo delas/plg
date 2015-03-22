@@ -8,7 +8,6 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
 import plg.gui.config.ConfigurationSet;
-import plg.gui.dialog.Progress;
 import plg.model.Process;
 import plg.visualizer.BPMNVisualizer;
 

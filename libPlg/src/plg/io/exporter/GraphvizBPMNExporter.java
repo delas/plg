@@ -7,6 +7,7 @@ import org.adrianwalker.multilinestring.Multiline;
 import org.apache.commons.io.FileUtils;
 
 import plg.annotations.Exporter;
+import plg.generator.IProgressVisualizer;
 import plg.model.Process;
 import plg.model.activity.Task;
 import plg.model.data.DataObject;
@@ -31,7 +32,7 @@ import plg.utils.Logger;
 	name = "BPMN Model as Graphviz Dot",
 	fileExtension = "dot"
 )
-public class GraphvizBPMNExporter implements IFileExporter {
+public class GraphvizBPMNExporter extends FileExporter {
 
 	/**
 	 * The following comment contains the basic string with the Graphviz Dot
@@ -140,7 +141,10 @@ digraph G {
 	private String basic;
 	
 	@Override
-	public void exportModel(Process model, String filename) {
+	public void exportModel(Process model, String filename, IProgressVisualizer progress) {
+		progress.setIndeterminate(true);
+		progress.setText("Exporting Graphviz BPMN file...");
+		progress.start();
 		Logger.instance().info("Starting process exportation");
 		preprocessString(model);
 		try {
@@ -149,6 +153,7 @@ digraph G {
 			e.printStackTrace();
 		}
 		Logger.instance().info("Process exportation complete");
+		progress.finished();
 	}
 	
 	/**

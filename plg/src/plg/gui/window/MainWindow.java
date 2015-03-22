@@ -12,6 +12,7 @@ import plg.gui.controller.ApplicationController;
 import plg.gui.panels.Console;
 import plg.gui.panels.ProcessesList;
 import plg.gui.panels.SingleProcessVisualizer;
+import plg.gui.panels.ProgressStack;
 import plg.gui.widgets.MainToolbar;
 
 /**
@@ -30,6 +31,7 @@ public class MainWindow extends JPanel {
 	private MainToolbar mainWindowToolbar = null;
 	private ProcessesList generatedProcessesList = null;
 	private SingleProcessVisualizer singleProcessVisualizer = null;
+	private ProgressStack progressStack = null;
 	private Console debugConsole = null;
 
 	/**
@@ -49,6 +51,15 @@ public class MainWindow extends JPanel {
 	 */
 	public Console getConsole() {
 		return debugConsole;
+	}
+	
+	/**
+	 * Method to get the stacked progress notifications area
+	 * 
+	 * @return
+	 */
+	public ProgressStack getProgressStack() {
+		return progressStack;
 	}
 	
 	/**
@@ -110,14 +121,18 @@ public class MainWindow extends JPanel {
 		c.fill = GridBagConstraints.BOTH;
 		mainWindowContainer.add(singleProcessVisualizer, c);
 		
-		// add the debug console
+		// add the notifications and debug console
+		progressStack = new ProgressStack(conf.getChild(ProgressStack.class.getCanonicalName()));
 		debugConsole = new Console(conf.getChild(Console.class.getCanonicalName()));
+		JPanel south = new JPanel(new BorderLayout());
+		south.add(progressStack, BorderLayout.NORTH);
+		south.add(debugConsole, BorderLayout.SOUTH);
 		c = new GridBagConstraints();
 		c.gridx = 1;
 		c.gridy = 1;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.anchor = GridBagConstraints.SOUTH;
-		mainWindowContainer.add(debugConsole, c);
+		mainWindowContainer.add(south, c);
 		
 		// insert the toolbar
 		mainWindowToolbar = new MainToolbar();

@@ -7,6 +7,7 @@ import org.deckfour.spex.SXDocument;
 import org.deckfour.spex.SXTag;
 
 import plg.annotations.Exporter;
+import plg.generator.IProgressVisualizer;
 import plg.io.importer.PLGImporter;
 import plg.model.Process;
 import plg.model.activity.Task;
@@ -33,10 +34,13 @@ import plg.utils.PlgConstants;
 	name = "PLG 2 file",
 	fileExtension = "plg"
 )
-public class PLGExporter implements IFileExporter {
+public class PLGExporter extends FileExporter {
 
 	@Override
-	public void exportModel(Process model, String filename) {
+	public void exportModel(Process model, String filename, IProgressVisualizer progress) {
+		progress.setIndeterminate(true);
+		progress.setText("Exporting PLG file...");
+		progress.start();
 		Logger.instance().info("Starting process exportation");
 		try {
 			File file = new File(filename);
@@ -133,5 +137,6 @@ public class PLGExporter implements IFileExporter {
 			e.printStackTrace();
 		}
 		Logger.instance().info("Process exportation complete");
+		progress.finished();
 	}
 }

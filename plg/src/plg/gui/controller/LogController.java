@@ -14,10 +14,12 @@ import org.deckfour.xes.out.XesXmlGZIPSerializer;
 import org.deckfour.xes.out.XesXmlSerializer;
 
 import plg.generator.log.LogGenerator;
+import plg.gui.config.ConfigurationSet;
 import plg.gui.dialog.GeneralDialog.RETURNED_VALUES;
 import plg.gui.dialog.NewLogDialog;
 import plg.gui.panels.SingleProcessVisualizer;
 import plg.gui.util.FileFilterHelper;
+import plg.gui.util.RuntimeUtils;
 import plg.model.Process;
 
 /**
@@ -26,8 +28,11 @@ import plg.model.Process;
  */
 public class LogController {
 
+	private static final String KEY_LOG_LOCATION = "LOG_LOCATION";
+	
 	private ApplicationController applicationController;
 	private SingleProcessVisualizer singleProcessVisualizer;
+	private ConfigurationSet configuration;
 
 	/**
 	 * Controller constructor
@@ -42,6 +47,7 @@ public class LogController {
 			SingleProcessVisualizer singleProcessVisualizer) {
 		this.applicationController = applicationController;
 		this.singleProcessVisualizer = singleProcessVisualizer;
+		this.configuration = applicationController.getConfiguration(LogController.class.getCanonicalName());
 	}
 	
 	/**
@@ -52,7 +58,7 @@ public class LogController {
 				"Log for " + singleProcessVisualizer.getCurrentlyVisualizedProcess().getName());
 		nld.setVisible(true);
 		if (RETURNED_VALUES.SUCCESS.equals(nld.returnedValue())) {
-			final JFileChooser fc = new JFileChooser();
+			final JFileChooser fc = new JFileChooser(new File(configuration.get(KEY_LOG_LOCATION, RuntimeUtils.getHomeFolder())));
 
 			fc.setAcceptAllFileFilterUsed(false);
 			fc.addChoosableFileFilter(new FileNameExtensionFilter("Compressed XES file (*.xes.gz)", "xes.gz"));
@@ -67,12 +73,13 @@ public class LogController {
 				FileNameExtensionFilter selectedFilter = (FileNameExtensionFilter) fc.getFileFilter();
 				final String extension = selectedFilter.getExtensions()[0];
 				final String file = FileFilterHelper.fixFileName(fileName, (FileNameExtensionFilter) selectedFilter);
+				configuration.set(KEY_LOG_LOCATION, fileName.substring(0, fileName.lastIndexOf(File.separator)));
 				
 				Process process = singleProcessVisualizer.getCurrentlyVisualizedProcess();
 				final LogGenerator lg = new LogGenerator(
 						process,
 						nld.getConfiguredValues(),
-						singleProcessVisualizer.getCurrentProgress());
+						applicationController.getMainWindow().getProgressStack().askForNewProgress());
 				
 				SwingWorker<XLog, Void> worker = new SwingWorker<XLog, Void>() {
 					@Override

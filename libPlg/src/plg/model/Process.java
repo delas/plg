@@ -184,6 +184,7 @@ public class Process {
 	 */
 	public void registerComponent(Component component) {
 		components.add(component);
+		
 		if (component instanceof StartEvent) {
 			startEvents.add((StartEvent) component);
 			valid = false;
@@ -230,8 +231,7 @@ public class Process {
 	public void removeComponent(Component component) {
 		if (component instanceof FlowObject) {
 			for(Sequence s : sequences) {
-				if(s.getSource().equals(component) ||
-						s.getSink().equals(component)) {
+				if(s.getSource().equals(component) || s.getSink().equals(component)) {
 					removeComponent(s);
 				}
 			}
@@ -251,6 +251,9 @@ public class Process {
 			valid = false;
 		} else if (component instanceof Gateway) {
 			gateways.remove((Gateway) component);
+			valid = false;
+		} else if (component instanceof DataObject) {
+			dataObjects.remove((DataObject) component);
 			valid = false;
 		}
 	}

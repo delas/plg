@@ -15,6 +15,7 @@ import org.jdom2.input.SAXBuilder;
 import com.google.common.base.CharMatcher;
 
 import plg.annotations.Importer;
+import plg.generator.IProgressVisualizer;
 import plg.generator.scriptexecuter.IntegerScriptExecutor;
 import plg.generator.scriptexecuter.StringScriptExecutor;
 import plg.model.Component;
@@ -50,7 +51,7 @@ import plg.model.sequence.Sequence;
 	name = "Signavio BPMN files",
 	fileExtension = "bpmn"
 )
-public class SignavioBPMNImporter implements IFileImporter {
+public class SignavioBPMNImporter extends FileImporter {
 
 	private static final Namespace ns = Namespace.getNamespace("http://www.omg.org/spec/BPMN/20100524/MODEL");
 	private static final Pattern REGEX_SIMPLE = Pattern.compile("(\\S+)\\s*=\\s*(\\S+)");
@@ -58,7 +59,12 @@ public class SignavioBPMNImporter implements IFileImporter {
 	private static final Pattern REGEX_STRING_SCRIPT = Pattern.compile("(?i)\\s*(\\S+)\\s*\\(\\s*String\\s*\\)\\s*");
 	
 	@Override
-	public Process importModel(String filename) {
+	public Process importModel(String filename, IProgressVisualizer progress) {
+		progress.setText("Importing Signavio BPMN file...");
+		progress.setMinimum(0);
+		progress.setMaximum(7);
+		progress.start();
+		
 		HashMap<String, Component> inverseKey = new HashMap<String, Component>();
 		HashMap<String, Set<Task>> taskToDataObject = new HashMap<String, Set<Task>>();
 		HashMap<String, Set<Task>> dataObjectToTask = new HashMap<String, Set<Task>>();
@@ -78,10 +84,12 @@ public class SignavioBPMNImporter implements IFileImporter {
 				StartEvent s = new StartEvent(p);
 				inverseKey.put(ss.getAttributeValue("id"), s);
 			}
+			progress.inc();
 			for (Element es : process.getChildren("endEvent", ns)) {
 				EndEvent e = new EndEvent(p);
 				inverseKey.put(es.getAttributeValue("id"), e);
 			}
+			progress.inc();
 			// Tasks
 			for (Element ts : process.getChildren("task", ns)) {
 				Task t = new Task(p, ts.getAttributeValue("name"));
@@ -107,21 +115,25 @@ public class SignavioBPMNImporter implements IFileImporter {
 					dataObjectToTask.put(doa.getChildText("sourceRef", ns), s);
 				}
 			}
+			progress.inc();
 			// Gateways
 			for (Element gs : process.getChildren("exclusiveGateway", ns)) {
 				ExclusiveGateway g = new ExclusiveGateway(p);
 				inverseKey.put(gs.getAttributeValue("id"), g);
 			}
+			progress.inc();
 			for (Element gs : process.getChildren("parallelGateway", ns)) {
 				ParallelGateway g = new ParallelGateway(p);
 				inverseKey.put(gs.getAttributeValue("id"), g);
 			}
+			progress.inc();
 			// Sequences
 			for (Element ss : process.getChildren("sequenceFlow", ns)) {
 				FlowObject source = (FlowObject) inverseKey.get(ss.getAttributeValue("sourceRef"));
 				FlowObject sink = (FlowObject) inverseKey.get(ss.getAttributeValue("targetRef"));
 				new Sequence(p, source, sink);
 			}
+			progress.inc();
 			// Data Objects
 			for (Element ds : process.getChildren("dataObjectReference", ns)) {
 				String doId = ds.getAttributeValue("id");
@@ -140,10 +152,13 @@ public class SignavioBPMNImporter implements IFileImporter {
 					parseDataObject(ds, null, p);
 				}
 			}
+			progress.inc();
 			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+		progress.finished();
 		return p;
 	}
 	

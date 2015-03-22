@@ -6,8 +6,9 @@ import java.io.IOException;
 import org.deckfour.spex.SXDocument;
 import org.deckfour.spex.SXTag;
 
+import plg.generator.IProgressVisualizer;
+import plg.io.exporter.FileExporter;
 import plg.io.exporter.IFileExporter;
-import plg.model.Component;
 import plg.model.Process;
 import plg.model.activity.Task;
 import plg.model.data.DataObject;
@@ -18,10 +19,10 @@ import plg.model.event.StartEvent;
 import plg.model.sequence.Sequence;
 import plg.utils.PlgConstants;
 
-public class SignavioBPMNExporter implements IFileExporter {
+public class SignavioBPMNExporter extends FileExporter {
 
 	@Override
-	public void exportModel(Process model, String filename) {
+	public void exportModel(Process model, String filename, IProgressVisualizer progress) {
 		try {
 			File file = new File(filename);
 			SXDocument doc = new SXDocument(file);

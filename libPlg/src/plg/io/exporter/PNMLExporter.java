@@ -7,6 +7,7 @@ import org.deckfour.spex.SXDocument;
 import org.deckfour.spex.SXTag;
 
 import plg.annotations.Exporter;
+import plg.generator.IProgressVisualizer;
 import plg.generator.process.petrinet.Node;
 import plg.generator.process.petrinet.PetriNet;
 import plg.generator.process.petrinet.Place;
@@ -27,12 +28,16 @@ import plg.utils.PlgConstants;
 	name = "Petri net as PNML file",
 	fileExtension = "pnml"
 )
-public class PNMLExporter implements IFileExporter {
+public class PNMLExporter extends FileExporter {
 
 	int progress = 1;
 	
 	@Override
-	public void exportModel(Process model, String filename) {
+	public void exportModel(Process model, String filename, IProgressVisualizer progressVisualizer) {
+		progressVisualizer.setIndeterminate(true);
+		progressVisualizer.setText("Exporting PNML file...");
+		progressVisualizer.start();
+		
 		progress = 1;
 		PetriNet pn = new PetriNet(model);
 		try {
@@ -73,6 +78,8 @@ public class PNMLExporter implements IFileExporter {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
+		progressVisualizer.finished();
 	}
 	
 	/**
