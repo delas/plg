@@ -114,6 +114,7 @@ class TraceGenerator implements Runnable {
 					noiseProcessor.applyStringDataNoise((StringDataObject) dataObj);
 					XLogHelper.decorateElement(trace, dataObj.getName(), (String) dataObj.getValue());
 				} else if (dataObj instanceof DataObject) {
+					noiseProcessor.applyStringDataNoise(dataObj);
 					XLogHelper.decorateElement(trace, dataObj.getName(), (String) dataObj.getValue());
 				}
 			}
@@ -297,6 +298,7 @@ class TraceGenerator implements Runnable {
 				}
 			} else if (dataObj instanceof DataObject) {
 				for (XEvent event : events) {
+					noiseProcessor.applyStringDataNoise(dataObj);
 					XLogHelper.decorateElement(event, dataObj.getName(), (String) dataObj.getValue());
 				}
 				

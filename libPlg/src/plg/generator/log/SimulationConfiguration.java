@@ -25,7 +25,7 @@ public class SimulationConfiguration {
 	 * @param numberOfTraces the number of traces to simulate
 	 */
 	public SimulationConfiguration(int numberOfTraces) {
-		this(numberOfTraces, NoiseConfiguration.BASIC_VALUES);
+		this(numberOfTraces, NoiseConfiguration.ONLY_NAMES_NOISE);
 	}
 	
 	/**
@@ -153,5 +153,16 @@ public class SimulationConfiguration {
 	 */
 	public void setNoiseConfiguration(NoiseConfiguration noise) {
 		this.noise = noise;
+	}
+	
+	@Override
+	public String toString() {
+		return "Simulation configuration:\n" +
+			" - useMultithreading: " + useMultithreading + "\n" +
+			" - maximum loop cycles: " + maximumLoopCycles + "\n" +
+			" - case id pattern: " + caseIdPattern + "\n" +
+			" - new log name: " + newLogName + "\n" +
+			" - number of traces: " + numberOfTraces + "\n" +
+			"Noise configuration:\n" + noise.toString();
 	}
 }

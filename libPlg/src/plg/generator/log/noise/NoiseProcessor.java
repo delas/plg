@@ -7,6 +7,7 @@ import org.deckfour.xes.model.XEvent;
 import org.deckfour.xes.model.XTrace;
 
 import plg.generator.log.noise.NoiseConfiguration.NOISE_TYPE;
+import plg.model.data.DataObject;
 import plg.model.data.INoiseSensitiveDataObject;
 import plg.model.data.IntegerDataObject;
 import plg.model.data.StringDataObject;
@@ -76,18 +77,17 @@ public class NoiseProcessor {
 	 * parameter. This method <strong>modifies</strong> the attribute in order
 	 * to alter its value.
 	 * 
-	 * <p> This method uses the
-	 * {@link INoiseSensitiveDataObject#getOriginalValue()} as starting point
-	 * for the generation of noise. Therefore, several invocation of this method
-	 * could generate different noises.
+	 * <p> Several invocation of this method could generate different noises.
 	 * 
 	 * @see NOISE_TYPE#DATA_STRING
 	 * @param dataObj the data object subject of the noise
 	 */
-	public void applyStringDataNoise(StringDataObject dataObj) {
-		// String orginalValue = (String) dataObj.getOriginalValue();
-		if (noise.generateNoise(NOISE_TYPE.DATA_STRING)) {
-			dataObj.setValue(new BigInteger(65, Random.RANDOM).toString(32));
+	public void applyStringDataNoise(DataObject dataObj) {
+		if ((dataObj instanceof StringDataObject) || !(dataObj instanceof IntegerDataObject)) {
+			// String orginalValue = (String) dataObj.getOriginalValue();
+			if (noise.generateNoise(NOISE_TYPE.DATA_STRING)) {
+				dataObj.setValue(new BigInteger(65, Random.RANDOM).toString(32));
+			}
 		}
 	}
 
@@ -137,7 +137,8 @@ public class NoiseProcessor {
 		if (trace.size() == 0) {
 			XLogHelper.insertEvent(trace, new BigInteger(65, Random.RANDOM).toString(32));
 		} else {
-			XAttributeTimestamp t = (XAttributeTimestamp) trace.get(0).getAttributes().get("time:timestamp");
+			int insertAfterEvent = Random.nextInt(0, trace.size() - 1);
+			XAttributeTimestamp t = (XAttributeTimestamp) trace.get(insertAfterEvent).getAttributes().get("time:timestamp");
 			XLogHelper.insertEvent(trace, new BigInteger(65, Random.RANDOM).toString(32), t.getValue());
 		}
 	}
@@ -152,7 +153,7 @@ public class NoiseProcessor {
 		if (trace.size() > 0) {
 			int indexToDouble = Random.nextInt(0, trace.size() - 1);
 			XEvent e = XLogHelper.clone(trace.get(indexToDouble));
-			trace.add(e);
+			trace.insertOrdered(e);
 		}
 	}
 	

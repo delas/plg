@@ -76,12 +76,14 @@ public class NoiseConfiguration {
 		TRACE_ALIEN_EVENT
 	}
 	
-	/** This is a test configuration with basic random values */
-	public static final NoiseConfiguration BASIC_VALUES = new NoiseConfiguration(
-			0.1, // integer data noise
+	/**
+	 * This is a test configuration with complete noise values
+	 */
+	public static final NoiseConfiguration COMPLETE_NOISE = new NoiseConfiguration(
+			0.01, // integer data noise
 			5, // delta new value
-			0.1, // string data noise
-			0.1, // activity name noise
+			0.01, // string data noise
+			0.01, // activity name noise
 			0.01, // trace missing head noise
 			1, // head size
 			0.01, // missing tail noise
@@ -91,6 +93,78 @@ public class NoiseConfiguration {
 			0.01, // perturbed order noise
 			0.01, // double event noise
 			0.01 // alien event noise
+		);
+	/**
+	 * This is a test configuration to generate no noise
+	 */
+	public static final NoiseConfiguration NO_NOISE = new NoiseConfiguration(
+			0.0, // integer data noise
+			1, // delta new value
+			0.0, // string data noise
+			0.0, // activity name noise
+			0.0, // trace missing head noise
+			1, // head size
+			0.0, // missing tail noise
+			1, // tail size
+			0.0, // missing episode noise
+			1, // episode size
+			0.0, // perturbed order noise
+			0.0, // double event noise
+			0.0 // alien event noise
+		);
+	/**
+	 * This is a test configuration to generate only data objects noise
+	 */
+	public static final NoiseConfiguration ONLY_DO_NOISE = new NoiseConfiguration(
+			0.01, // integer data noise
+			5, // delta new value
+			0.01, // string data noise
+			0.0, // activity name noise
+			0.0, // trace missing head noise
+			1, // head size
+			0.0, // missing tail noise
+			1, // tail size
+			0.0, // missing episode noise
+			1, // episode size
+			0.0, // perturbed order noise
+			0.0, // double event noise
+			0.0 // alien event noise
+		);
+	/**
+	 * This is a test configuration to generate only noise on the control-flow
+	 */
+	public static final NoiseConfiguration ONLY_CONTROL_FLOW_NOISE = new NoiseConfiguration(
+			0.0, // integer data noise
+			1, // delta new value
+			0.0, // string data noise
+			0.0, // activity name noise
+			0.005, // trace missing head noise
+			2, // head size
+			0.005, // missing tail noise
+			2, // tail size
+			0.005, // missing episode noise
+			2, // episode size
+			0.005, // perturbed order noise
+			0.0, // double event noise
+			0.0 // alien event noise
+		);
+	/**
+	 * This is a test configuration to generate noise only on the activity names
+	 */
+	public static final NoiseConfiguration ONLY_NAMES_NOISE = new NoiseConfiguration(
+			0.0, // integer data noise
+			1, // delta new value
+			0.0, // string data noise
+			0.001, // activity name noise
+			0.0, // trace missing head noise
+			1, // head size
+			0.0, // missing tail noise
+			1, // tail size
+			0.0, // missing episode noise
+			1, // episode size
+			0.0, // perturbed order noise
+			0.001, // double event noise
+			0.001 // alien event noise
 		);
 	
 	/* Class' private fields */
@@ -147,7 +221,7 @@ public class NoiseConfiguration {
 		config.put(NOISE_TYPE.DATA_INTEGER, new Pair<Double, Integer>(
 				(probability >= 0 && probability <= 1)?
 						probability :
-						BASIC_VALUES.config.get(NOISE_TYPE.DATA_INTEGER).getFirst(),
+						ONLY_NAMES_NOISE.config.get(NOISE_TYPE.DATA_INTEGER).getFirst(),
 				deltaNewValue));
 		return this;
 	}
@@ -180,7 +254,7 @@ public class NoiseConfiguration {
 		config.put(NOISE_TYPE.DATA_STRING, new Pair<Double, Object>(
 				(probability >= 0 && probability <= 1)?
 						probability :
-						BASIC_VALUES.config.get(NOISE_TYPE.DATA_STRING).getFirst(),
+						ONLY_NAMES_NOISE.config.get(NOISE_TYPE.DATA_STRING).getFirst(),
 				null));
 		return this;
 	}
@@ -204,7 +278,7 @@ public class NoiseConfiguration {
 		config.put(NOISE_TYPE.ACTIVITY_NAME, new Pair<Double, Object>(
 				(probability >= 0 && probability <= 1)?
 						probability :
-						BASIC_VALUES.config.get(NOISE_TYPE.ACTIVITY_NAME).getFirst(),
+						ONLY_NAMES_NOISE.config.get(NOISE_TYPE.ACTIVITY_NAME).getFirst(),
 				null));
 		return this;
 	}
@@ -229,7 +303,7 @@ public class NoiseConfiguration {
 		config.put(NOISE_TYPE.TRACE_MISSING_HEAD, new Pair<Double, Integer>(
 				(probability >= 0 && probability <= 1)?
 						probability :
-						BASIC_VALUES.config.get(NOISE_TYPE.TRACE_MISSING_HEAD).getFirst(),
+						ONLY_NAMES_NOISE.config.get(NOISE_TYPE.TRACE_MISSING_HEAD).getFirst(),
 				headSize));
 		return this;
 	}
@@ -263,7 +337,7 @@ public class NoiseConfiguration {
 		config.put(NOISE_TYPE.TRACE_MISSING_TAIL, new Pair<Double, Integer>(
 				(probability >= 0 && probability <= 1)?
 						probability :
-						BASIC_VALUES.config.get(NOISE_TYPE.TRACE_MISSING_TAIL).getFirst(),
+						ONLY_NAMES_NOISE.config.get(NOISE_TYPE.TRACE_MISSING_TAIL).getFirst(),
 				tailSize));
 		return this;
 	}
@@ -297,7 +371,7 @@ public class NoiseConfiguration {
 		config.put(NOISE_TYPE.TRACE_MISSING_EPISODE, new Pair<Double, Integer>(
 				(probability >= 0 && probability <= 1)?
 						probability :
-						BASIC_VALUES.config.get(NOISE_TYPE.TRACE_MISSING_EPISODE).getFirst(),
+						ONLY_NAMES_NOISE.config.get(NOISE_TYPE.TRACE_MISSING_EPISODE).getFirst(),
 				episodeSize));
 		return this;
 	}
@@ -331,7 +405,7 @@ public class NoiseConfiguration {
 		config.put(NOISE_TYPE.TRACE_PERTURBED_ORDER, new Pair<Double, Object>(
 				(probability >= 0 && probability <= 1)?
 						probability :
-						BASIC_VALUES.config.get(NOISE_TYPE.TRACE_PERTURBED_ORDER).getFirst(),
+						ONLY_NAMES_NOISE.config.get(NOISE_TYPE.TRACE_PERTURBED_ORDER).getFirst(),
 				null));
 		return this;
 	}
@@ -356,7 +430,7 @@ public class NoiseConfiguration {
 		config.put(NOISE_TYPE.TRACE_DOUBLE_EVENT, new Pair<Double, Object>(
 				(probability >= 0 && probability <= 1)?
 						probability :
-						BASIC_VALUES.config.get(NOISE_TYPE.TRACE_DOUBLE_EVENT).getFirst(),
+						ONLY_NAMES_NOISE.config.get(NOISE_TYPE.TRACE_DOUBLE_EVENT).getFirst(),
 				null));
 		return this;
 	}
@@ -380,7 +454,7 @@ public class NoiseConfiguration {
 		config.put(NOISE_TYPE.TRACE_ALIEN_EVENT, new Pair<Double, Object>(
 				(probability >= 0 && probability <= 1)?
 						probability :
-						BASIC_VALUES.config.get(NOISE_TYPE.TRACE_ALIEN_EVENT).getFirst(),
+						ONLY_NAMES_NOISE.config.get(NOISE_TYPE.TRACE_ALIEN_EVENT).getFirst(),
 				null));
 		return this;
 	}
@@ -403,5 +477,19 @@ public class NoiseConfiguration {
 	 */
 	public boolean generateNoise(NOISE_TYPE type) {
 		return Random.randomFromWeight(config.get(type).getFirst());
+	}
+	
+	@Override
+	public String toString() {
+		return
+			" - integer data: " + getIntegerDataNoiseProbability() + ", " + getIntegerDataNoiseDelta() + "\n" +
+			" - string data: " + getStringDataNoiseProbability() + "\n" +
+			" - activity name: " + getActivityNameNoiseProbability() + "\n" +
+			" - trace missing head: " + getTraceMissingHeadNoiseProbability() + ", " + getTraceMissingHeadSize() + "\n" +
+			" - trace missing tail: " + getTraceMissingTailNoiseProbability() + ", " + getTraceMissingTailSize() + "\n" +
+			" - trace missing episode: " + getTraceMissingEpisodeNoiseProbability() + ", " + getTraceMissingEpisodeSize() + "\n" +
+			" - perturbed order: " + getPerturbedOrderNoiseProbability() + "\n" +
+			" - doubled event: " + getDoubleEventNoiseProbability() + "\n" +
+			" - alien event: " + getAlienEventNoiseProbability();
 	}
 }

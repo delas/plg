@@ -141,7 +141,7 @@ public class XLogHelper {
 		XEvent e = xesFactory.createEvent();
 		decorateElement(e, "concept:name", activityName, "Concept");
 		decorateElement(e, "time:timestamp", timestamp, "Time");
-		trace.add(e);
+		trace.insertOrdered(e);
 		return e;
 	}
 	
@@ -428,6 +428,7 @@ public class XLogHelper {
 		for (String key : am.keySet()) {
 			newAm.put(key, am.get(key));
 		}
+		e.setAttributes(newAm);
 		return e;
 	}
 }
