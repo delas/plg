@@ -6,8 +6,6 @@ import javax.swing.JFrame;
 
 import plg.exceptions.IllegalSequenceException;
 import plg.exceptions.InvalidProcessException;
-import plg.generator.process.ProcessGenerator;
-import plg.generator.process.RandomizationConfiguration;
 import plg.model.Process;
 import plg.model.activity.Task;
 import plg.model.data.DataObject;
@@ -15,7 +13,7 @@ import plg.model.event.EndEvent;
 import plg.model.event.StartEvent;
 import plg.model.gateway.Gateway;
 import plg.model.sequence.Sequence;
-import plg.visualizer.BPMNVisualizer2;
+import plg.visualizer.BPMNVisualizer;
 
 public class PlgVisualizerPrototype {
 
@@ -28,7 +26,7 @@ public class PlgVisualizerPrototype {
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		f.setSize(800, 600);
 		f.setLayout(new BorderLayout());
-		f.add(new BPMNVisualizer2(p), BorderLayout.CENTER);
+		f.add(new BPMNVisualizer(p), BorderLayout.CENTER);
 		f.setVisible(true);
 	}
 	
