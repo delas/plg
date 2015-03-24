@@ -13,7 +13,7 @@ import plg.model.event.EndEvent;
 import plg.model.event.StartEvent;
 import plg.model.gateway.Gateway;
 import plg.model.sequence.Sequence;
-import plg.visualizer.BPMNVisualizer;
+import plg.visualizer.listeners.BPMNVisualizer;
 
 public class PlgVisualizerPrototype {
 
