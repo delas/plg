@@ -9,7 +9,7 @@ import javax.swing.SwingConstants;
 
 import plg.gui.config.ConfigurationSet;
 import plg.model.Process;
-import plg.visualizer.listeners.BPMNVisualizer;
+import plg.visualizer.BPMNVisualizer;
 
 /**
  * This class contains the panel responsible of the visualization of a single
