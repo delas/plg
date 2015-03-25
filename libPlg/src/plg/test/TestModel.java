@@ -1,30 +1,16 @@
 package plg.test;
 
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
-import org.deckfour.xes.model.XLog;
-import org.deckfour.xes.out.XesXmlGZIPSerializer;
-
 import plg.exceptions.IllegalSequenceException;
 import plg.exceptions.InvalidDataObject;
 import plg.exceptions.InvalidProcessException;
-import plg.generator.log.LogGenerator;
-import plg.generator.log.SimulationConfiguration;
-import plg.generator.process.ProcessGenerator;
-import plg.generator.process.RandomizationConfiguration;
-import plg.generator.process.petrinet.PetriNet;
 import plg.io.exporter.GraphvizBPMNExporter;
-import plg.io.exporter.GraphvizPetriNetExporter;
-import plg.io.exporter.IFileExporter;
-import plg.io.exporter.PNMLExporter;
 import plg.io.importer.PLGImporter;
-import plg.io.importer.SignavioBPMNImporter;
 import plg.model.Process;
 import plg.model.activity.Task;
 import plg.model.data.DataObject;
@@ -74,6 +60,7 @@ public class TestModel {
 		
 	}
 
+	@SuppressWarnings("unused")
 	private static Process generateProcess() throws IllegalSequenceException,
 			InvalidProcessException {
 		Process p = new Process("test");

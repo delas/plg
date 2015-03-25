@@ -8,7 +8,6 @@ import java.awt.RenderingHints;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.PixelGrabber;
-import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;

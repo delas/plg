@@ -8,7 +8,6 @@ import org.deckfour.spex.SXTag;
 
 import plg.generator.IProgressVisualizer;
 import plg.io.exporter.FileExporter;
-import plg.io.exporter.IFileExporter;
 import plg.model.Process;
 import plg.model.activity.Task;
 import plg.model.data.DataObject;

@@ -16,6 +16,7 @@ import plg.model.event.StartEvent;
 import plg.model.gateway.Gateway;
 
 public class TestModelToYaoqiang {
+	@SuppressWarnings("unused")
 	public static void main(String[] args) throws IllegalSequenceException,
 			InvalidProcessException, InvalidDataObject, FileNotFoundException,
 			IOException, InterruptedException, ParserConfigurationException,
