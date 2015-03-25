@@ -11,6 +11,6 @@ public class ImagesCollection {
 
 	// Popup menu icon
 	public static final ImageIcon ICON_DATA_OBJ = ImageUtils.loadImage("/resources/icons/famfamfam/brick.png");
-	public static final ImageIcon ICON_DURATION = ImageUtils.loadImage("/resources/icons/famfamfam/clock.png");
-	public static final ImageIcon ICON_TIME_AFTER = ImageUtils.loadImage("/resources/icons/famfamfam/hourglass.png");
+	public static final ImageIcon ICON_DURATION = ImageUtils.loadImage("/resources/icons/famfamfam/hourglass.png");
+	public static final ImageIcon ICON_TIME_AFTER = ImageUtils.loadImage("/resources/icons/famfamfam/clock.png");
 }
