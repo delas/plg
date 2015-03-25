@@ -12,6 +12,7 @@ import org.deckfour.xes.extension.std.XLifecycleExtension.StandardModel;
 import org.deckfour.xes.model.XEvent;
 import org.deckfour.xes.model.XTrace;
 
+import plg.exceptions.InvalidScript;
 import plg.generator.log.noise.NoiseProcessor;
 import plg.model.Component;
 import plg.model.FlowObject;
@@ -37,7 +38,7 @@ import plg.utils.XLogHelper;
  * @author Andrea Burattin
  * @see SimulationEngine
  */
-class TraceGenerator implements Runnable {
+class TraceGenerator extends ThreadWithException<XTrace> {
 
 	private Map<Component, Long> componentsObservationTime;
 	private Map<Sequence, Integer> observationsCounter;
@@ -47,7 +48,6 @@ class TraceGenerator implements Runnable {
 	private String caseId;
 	private SimulationConfiguration parameters;
 	private NoiseProcessor noiseProcessor;
-	private XTrace generatedTrace = null;
 	
 	/**
 	 * Basic class constructor
@@ -67,19 +67,16 @@ class TraceGenerator implements Runnable {
 		this.tokens = new HashSet<Sequence>();
 	}
 	
-	@Override
-	public void run() {
-		generatedTrace = generateProcessInstance();
-	}
-	
 	/**
-	 * This method returns the trace that has been generated
+	 * This method returns the trace that has been generated. If the generation
+	 * results in some error, then this method returns <tt>null</tt>. To get
+	 * the thrown exception, use the {@link #getThrownExeption()} method.
 	 * 
 	 * @return the trace that has been created, or <tt>null</tt> if the
 	 * <tt>super.</tt>{@link #run()} method has never been called
 	 */
 	public XTrace getGeneratedTrace() {
-		return generatedTrace;
+		return getComputedValue();
 	}
 	
 	/**
@@ -92,8 +89,10 @@ class TraceGenerator implements Runnable {
 	 * @param log the log container
 	 * @param caseId the case identifier of the new generated trace
 	 * @return the generated trace
+	 * @throws InvalidScript 
 	 */
-	private XTrace generateProcessInstance() {
+	@Override
+	protected XTrace runWithException() throws InvalidScript {
 		XTrace trace = XLogHelper.createTrace(caseId);
 		
 		// simulation of the control-flow
@@ -134,8 +133,9 @@ class TraceGenerator implements Runnable {
 	 * @param object
 	 * @param trace
 	 * @param traceProgressiveTime
+	 * @throws InvalidScript 
 	 */
-	private void processFlowObject(Sequence source, FlowObject object, XTrace trace, long traceProgressiveTime) {
+	private void processFlowObject(Sequence source, FlowObject object, XTrace trace, long traceProgressiveTime) throws InvalidScript {
 		// store the execution time of the current element
 		long executionDuration = recordEventExecution(object, trace, traceProgressiveTime);
 		componentsObservationTime.put(object, traceProgressiveTime + executionDuration);
@@ -250,8 +250,9 @@ class TraceGenerator implements Runnable {
 	 * @param object
 	 * @param trace
 	 * @param traceProgressiveTime
+	 * @throws InvalidScript 
 	 */
-	private long recordEventExecution(FlowObject object, XTrace trace, long traceProgressiveTime) {
+	private long recordEventExecution(FlowObject object, XTrace trace, long traceProgressiveTime) throws InvalidScript {
 		if (object instanceof Task) {
 			String caseId = XLogHelper.getName(trace);
 			Task t = ((Task) object);
@@ -280,8 +281,9 @@ class TraceGenerator implements Runnable {
 	 * @param trace
 	 * @param dataObjects
 	 * @param events
+	 * @throws InvalidScript 
 	 */
-	private void recordEventAttributes(XTrace trace, Set<DataObject> dataObjects, XEvent... events) {
+	private void recordEventAttributes(XTrace trace, Set<DataObject> dataObjects, XEvent... events) throws InvalidScript {
 		String caseId = XLogHelper.getName(trace);
 		for (DataObject dataObj : dataObjects) {
 			if (dataObj instanceof IntegerDataObject) {

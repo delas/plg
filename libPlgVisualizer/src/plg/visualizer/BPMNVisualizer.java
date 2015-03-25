@@ -14,12 +14,14 @@ import java.util.Set;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
 import plg.model.Component;
+import plg.model.FlowObject;
 import plg.model.Process;
 import plg.model.activity.Activity;
 import plg.model.activity.Task;
@@ -33,6 +35,7 @@ import plg.model.gateway.Gateway;
 import plg.model.gateway.ParallelGateway;
 import plg.model.sequence.Sequence;
 import plg.visualizer.listeners.ActivityListener;
+import plg.visualizer.listeners.DataObjectListener;
 import plg.visualizer.util.ImagesCollection;
 
 import com.mxgraph.layout.mxGraphLayout;
@@ -53,7 +56,8 @@ public class BPMNVisualizer extends JPanel {
 
 	private static final long serialVersionUID = -8441909033110442685L;
 	
-	protected Set<ActivityListener> listeners = new HashSet<ActivityListener>();
+	protected Set<ActivityListener> activityListeners = new HashSet<ActivityListener>();
+	protected Set<DataObjectListener> dataObjectListeners = new HashSet<DataObjectListener>();
 	protected Process process;
 	protected Map<mxCell, Component> cellsToComponents;
 	protected mxGraph graph;
@@ -88,45 +92,31 @@ public class BPMNVisualizer extends JPanel {
 					if (cell != null) {
 						final Component component = cellsToComponents.get(cell);
 						if (component != null && component instanceof Activity) {
-							JMenuItem duration = new JMenuItem("Activity duration", ImagesCollection.ICON_DURATION);
-							JMenuItem timeAfter = new JMenuItem("Time after activity", ImagesCollection.ICON_TIME_AFTER);
-							JMenuItem dataObj = new JMenuItem("Data objects", ImagesCollection.ICON_DATA_OBJ);
-							
-							duration.addActionListener(new ActionListener() {
-								@Override
-								public void actionPerformed(ActionEvent e) {
-									for (ActivityListener l : listeners) {
-										l.setActivityDuration((Activity) component);
-									}
-								}
-							});
-							timeAfter.addActionListener(new ActionListener() {
-								@Override
-								public void actionPerformed(ActionEvent e) {
-									for (ActivityListener l : listeners) {
-										l.setTimeAfterActivity((Activity) component);
-									}
-								}
-							});
-							dataObj.addActionListener(new ActionListener() {
-								@Override
-								public void actionPerformed(ActionEvent e) {
-									for (ActivityListener l : listeners) {
-										l.setDataObjects((Activity) component);
-									}
-								}
-							});
-							
-							JPopupMenu menu = new JPopupMenu();
-							menu.add(duration);
-							menu.add(timeAfter);
-							menu.add(dataObj);
+							JPopupMenu menu = generateContextMenu((Activity) component);
 							menu.show(graphComponent.getGraphControl(), e.getX(), e.getY());
 						}
 					}
 				}
 			}
 		});
+	}
+	
+	/**
+	 * This method register the provided {@link ActivityListener}
+	 * 
+	 * @param listener the listener to register
+	 */
+	public void addActivityListener(ActivityListener listener) {
+		activityListeners.add(listener);
+	}
+	
+	/**
+	 * This method register the provided {@link DataObjectListener}
+	 * 
+	 * @param listener the listener to register
+	 */
+	public void addDataObjectListener(DataObjectListener listener) {
+		dataObjectListeners.add(listener);
 	}
 	
 	/**
@@ -284,12 +274,133 @@ public class BPMNVisualizer extends JPanel {
 		return c;
 	}
 	
-	/**
-	 * This method register the provided {@link ActivityListener}
-	 * 
-	 * @param listener the listener to register
-	 */
-	public void addActivityListener(ActivityListener listener) {
-		listeners.add(listener);
+	public JPopupMenu generateContextMenu(final Activity activity) {
+		// time menus
+		JMenuItem duration = new JMenuItem("Activity duration", ImagesCollection.ICON_DURATION);
+		JMenuItem timeAfter = new JMenuItem("Time after activity", ImagesCollection.ICON_TIME_AFTER);
+		
+		// activity data objects
+		JMenu dataObjActivity = new JMenu("Activity Data Object");
+		dataObjActivity.setIcon(ImagesCollection.ICON_DATA_OBJ);
+		boolean added = false;
+		for (final DataObject obj : activity.getDataObjects()) {
+			JMenu objMenu = new JMenu(obj.getName());
+			JMenuItem objMenuEdit = new JMenuItem("Edit", ImagesCollection.ICON_DATA_OBJ_EDIT);
+			JMenuItem objMenuDelete = new JMenuItem("Delete", ImagesCollection.ICON_DATA_OBJ_DELETE);
+			
+			objMenuEdit.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					for (DataObjectListener l : dataObjectListeners) {
+						l.editDataObjects(obj);
+					}
+				}
+			});
+			objMenuDelete.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					for (DataObjectListener l : dataObjectListeners) {
+						l.removeDataObjects(obj);
+					}
+				}
+			});
+			
+			objMenu.add(objMenuEdit);
+			objMenu.add(objMenuDelete);
+			
+			dataObjActivity.add(objMenu);
+			added = true;
+		}
+		JMenuItem addDataObjActivity = new JMenuItem("New...", ImagesCollection.ICON_DATA_OBJ_NEW);
+		addDataObjActivity.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				for (DataObjectListener l : dataObjectListeners) {
+					l.addActivityDataObjects(activity);
+				}
+			}
+		});
+		if (added) {
+			dataObjActivity.addSeparator();
+		}
+		dataObjActivity.add(addDataObjActivity);
+		
+		// incoming data objects
+		JMenu dataObjIncoming = new JMenu("Incoming Data Object");
+		dataObjIncoming.setIcon(ImagesCollection.ICON_DATA_OBJ);
+		added = false;
+		for (FlowObject fo : activity.getIncomingObjects()) {
+			Sequence s = activity.getOwner().getSequence(fo, activity);
+			if (s != null) {
+				for (final DataObject obj : s.getDataObjects()) {
+					JMenu objMenu = new JMenu(obj.getName());
+					JMenuItem objMenuEdit = new JMenuItem("Edit", ImagesCollection.ICON_DATA_OBJ_EDIT);
+					JMenuItem objMenuDelete = new JMenuItem("Delete", ImagesCollection.ICON_DATA_OBJ_DELETE);
+					
+					objMenuEdit.addActionListener(new ActionListener() {
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							for (DataObjectListener l : dataObjectListeners) {
+								l.editDataObjects(obj);
+							}
+						}
+					});
+					objMenuDelete.addActionListener(new ActionListener() {
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							for (DataObjectListener l : dataObjectListeners) {
+								l.removeDataObjects(obj);
+							}
+						}
+					});
+					
+					objMenu.add(objMenuEdit);
+					objMenu.add(objMenuDelete);
+					
+					dataObjIncoming.add(objMenu);
+					added = true;
+				}
+			}
+		}
+		JMenuItem addIncomingDataObjActivity = new JMenuItem("New...", ImagesCollection.ICON_DATA_OBJ_NEW);
+		addIncomingDataObjActivity.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				for (DataObjectListener l : dataObjectListeners) {
+					l.addIncomingDataObjects(activity);
+				}
+			}
+		});
+		if (added) {
+			dataObjIncoming.addSeparator();
+		}
+		dataObjIncoming.add(addIncomingDataObjActivity);
+		
+		
+		duration.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				for (ActivityListener l : activityListeners) {
+					l.setActivityDuration(activity);
+				}
+			}
+		});
+		timeAfter.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				for (ActivityListener l : activityListeners) {
+					l.setTimeAfterActivity(activity);
+				}
+			}
+		});
+		
+		JPopupMenu menu = new JPopupMenu();
+		menu.add(duration);
+		menu.add(timeAfter);
+		menu.addSeparator();
+		menu.add(dataObjActivity);
+		menu.add(dataObjIncoming);
+		
+		return menu;
 	}
 }

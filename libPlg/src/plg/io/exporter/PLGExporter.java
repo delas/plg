@@ -38,7 +38,8 @@ public class PLGExporter extends FileExporter {
 
 	@Override
 	public void exportModel(Process model, String filename, IProgressVisualizer progress) {
-		progress.setIndeterminate(true);
+		progress.setMinimum(0);
+		progress.setMaximum(7);
 		progress.setText("Exporting PLG file...");
 		progress.start();
 		Logger.instance().info("Starting process exportation");
@@ -60,6 +61,8 @@ public class PLGExporter extends FileExporter {
 			meta.addChildNode("libPLG_VERSION").addTextNode(PlgConstants.libPLG_VERSION);
 			meta.addChildNode("name").addTextNode(model.getName());
 			meta.addChildNode("id").addTextNode(model.getId());
+			Logger.instance().debug("Dumped meta info");
+			progress.inc();
 			
 			// process elements
 			process.addComment("This is the list of all actual process elementss");
@@ -72,6 +75,8 @@ public class PLGExporter extends FileExporter {
 					seTag.addChildNode("dataObject").addAttribute("id", d.getId());
 				}
 			}
+			Logger.instance().debug("Dumped start events");
+			progress.inc();
 			for(Task t : model.getTasks()) {
 				SXTag tTag = elements.addChildNode("task");
 				tTag.addAttribute("id", t.getId());
@@ -81,9 +86,12 @@ public class PLGExporter extends FileExporter {
 				}
 				SXTag script = tTag.addChildNode("script");
 				if (t.getActivityScript() != null) {
+					System.out.println(t.getActivityScript().getScript());
 					script.addCDataNode(t.getActivityScript().getScript());
 				}
 			}
+			Logger.instance().debug("Dumped tasks");
+			progress.inc();
 			for(Gateway g : model.getGateways()) {
 				SXTag gTag = elements.addChildNode("gateway");
 				gTag.addAttribute("id", g.getId());
@@ -96,6 +104,8 @@ public class PLGExporter extends FileExporter {
 					gTag.addChildNode("dataObject").addAttribute("id", d.getId());
 				}
 			}
+			Logger.instance().debug("Dumped gateways");
+			progress.inc();
 			for(EndEvent ee : model.getEndEvents()) {
 				SXTag eeTag = elements.addChildNode("endEvent");
 				eeTag.addAttribute("id", ee.getId());
@@ -103,6 +113,8 @@ public class PLGExporter extends FileExporter {
 					eeTag.addChildNode("dataObject").addAttribute("id", d.getId());
 				}
 			}
+			Logger.instance().debug("Dumped end events");
+			progress.inc();
 			for(Sequence s : model.getSequences()) {
 				SXTag sTag = elements.addChildNode("sequenceFlow");
 				sTag.addAttribute("id", s.getId());
@@ -112,6 +124,8 @@ public class PLGExporter extends FileExporter {
 					sTag.addChildNode("dataObject").addAttribute("id", d.getId());
 				}
 			}
+			Logger.instance().debug("Dumped sequences");
+			progress.inc();
 			// data objects
 			for(DataObject dobj : model.getDataObjects()) {
 				SXTag dobjTag = elements.addChildNode("dataObject");
@@ -131,6 +145,8 @@ public class PLGExporter extends FileExporter {
 					dobjTag.addAttribute("type", "DataObject");
 				}
 			}
+			Logger.instance().debug("Dumped data objects");
+			progress.inc();
 			
 			doc.close();
 		} catch (IOException e) {

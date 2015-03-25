@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
-	<classpathentry kind="lib" path="lib/Spex.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.8.0_25"/>
+	<classpathentry kind="lib" path="lib/rsyntaxtextarea-2.5.6/rsyntaxtextarea-2.5.6.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/libPlgVisualizer"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/libPlg"/>
 	<classpathentry kind="lib" path="/libPlg/lib/OpenXES/OpenXES.jar">
@@ -11,5 +11,7 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry combineaccessrules="false" kind="src" path="/plgResources"/>
+	<classpathentry kind="lib" path="/libPlg/lib/multiline-string-0.1.1.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/spex"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -24,6 +24,7 @@ public class ApplicationController {
 	private ConsoleController consoleController;
 	private ProcessesController processesController;
 	private LogController logController;
+	private ComponentsController componenstsController;
 	
 	/**
 	 * This method returns the available instance of the application controller.
@@ -56,6 +57,7 @@ public class ApplicationController {
 		logController = new LogController(
 				this,
 				mainWindow.getSingleProcessVisualizer());
+		componenstsController = new ComponentsController(this);
 	}
 	
 	/**
@@ -83,6 +85,15 @@ public class ApplicationController {
 	 */
 	public LogController log() {
 		return logController;
+	}
+	
+	/**
+	 * This method returns the components controller
+	 * 
+	 * @return the components controller
+	 */
+	public ComponentsController components() {
+		return componenstsController;
 	}
 	
 	/**

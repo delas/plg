@@ -14,7 +14,7 @@ import plg.generator.IProgressVisualizer;
  */
 public class SimulationEngine {
 
-	private BlockingQueue<Runnable> taskQueue = null;
+	private BlockingQueue<ThreadWithException<?>> taskQueue = null;
 	private ArrayList<Work> threads = null;
 	private IProgressVisualizer progress;
 	
@@ -27,7 +27,7 @@ public class SimulationEngine {
 	 */
 	public SimulationEngine(int noOfThreads, int maxNoOfTasks, IProgressVisualizer progress) {
 		this.threads = new ArrayList<Work>();
-		this.taskQueue = new LinkedBlockingQueue<Runnable>(maxNoOfTasks);
+		this.taskQueue = new LinkedBlockingQueue<ThreadWithException<?>>(maxNoOfTasks);
 		this.progress = progress;
 		
 		for(int i = 0; i < noOfThreads; i++) {
@@ -42,7 +42,7 @@ public class SimulationEngine {
 	 * 
 	 * @param task The task to execute
 	 */
-	public synchronized void enqueue(Runnable task) {
+	public synchronized void enqueue(ThreadWithException<?> task) {
 		try {
 			this.taskQueue.put(task);
 		} catch (InterruptedException e) {
@@ -55,16 +55,23 @@ public class SimulationEngine {
 	 * 
 	 * @param tasks The tasks to execute
 	 */
-	public void start() {
+	public void start() throws Exception {
+		// start all the threads
 		for(Work thread : threads) {
 			thread.start();
 		}
-		
+		// wait until all threads are done
 		for(Work thread : threads) {
 			try {
 				thread.join();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
+			}
+		}
+		// check for any exception
+		for(Work thread : threads) {
+			if (thread.getCollectedException() != null) {
+				throw thread.getCollectedException();
 			}
 		}
 	}
@@ -73,23 +80,38 @@ public class SimulationEngine {
 	 * Class which represent e single task
 	 * 
 	 * @author Mirko Polato
+	 * @author Andrea Burattin
 	 */
-	public class Work extends Thread {
+	public class Work extends Thread implements ThreadContainer {
 
-		private BlockingQueue<Runnable> taskQueue = null;
+		private BlockingQueue<ThreadWithException<?>> taskQueue = null;
+		private Exception collectedException = null;
 		
 		/**
 		 * Constructor
+		 * 
 		 * @param queue The tasks queue
 		 */
-		public Work(BlockingQueue<Runnable> queue) {
+		public Work(BlockingQueue<ThreadWithException<?>> queue) {
 			taskQueue = queue;
 		}
 		
-		public void run(){
+		/**
+		 * This method returns the exception captured during the execution
+		 * 
+		 * @return the exception captured, or <tt>null</tt> if no exception has
+		 * been thrown
+		 */
+		public Exception getCollectedException() {
+			return collectedException;
+		}
+		
+		@Override
+		public void run() {
 			while(!taskQueue.isEmpty()) {
 				try {
-					Thread t = new Thread(taskQueue.poll());
+					ThreadWithException<?> t = taskQueue.poll();
+					t.setErrorListener(this);
 					t.start();
 					t.join();
 					progress.inc();
@@ -98,6 +120,12 @@ public class SimulationEngine {
 					e.printStackTrace();
 				}
 			}
+		}
+
+		@Override
+		public void exceptionReceived(Exception e) {
+			taskQueue.clear();
+			collectedException = e;
 		}
 	}
 }

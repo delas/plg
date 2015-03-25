@@ -10,6 +10,7 @@ import org.deckfour.xes.out.XSerializer;
 import org.deckfour.xes.out.XesXmlSerializer;
 
 import plg.exceptions.InvalidProcessException;
+import plg.exceptions.InvalidScript;
 import plg.generator.ProgressAdapter;
 import plg.generator.log.LogGenerator;
 import plg.generator.log.SimulationConfiguration;
@@ -18,7 +19,7 @@ import plg.model.Process;
 
 public class LogGeneratorMain {
 
-	public static void main(String[] args) throws InvalidProcessException, FileNotFoundException, IOException {
+	public static void main(String[] args) throws Exception {
 		if (args.length != 3) {
 			System.err.println("Please use: java -jar LogGenerator.jar MODEL_FILE LOG_DESTINATION NO_TRACES");
 			System.exit(-1);

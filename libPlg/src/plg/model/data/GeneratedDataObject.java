@@ -46,15 +46,12 @@ public abstract class GeneratedDataObject extends DataObject implements INoiseSe
 	 * different values.
 	 * 
 	 * @param caseId the case identifier of the current process instance
+	 * @throws InvalidScript 
 	 */
-	public void generateInstance(String caseId) {
-		try {
-			executor.execute(caseId);
-			originalValue = executor.getValue();
-			setValue(originalValue);
-		} catch (InvalidScript e) {
-			e.printStackTrace();
-		}
+	public void generateInstance(String caseId) throws InvalidScript {
+		executor.execute(caseId);
+		originalValue = executor.getValue();
+		setValue(originalValue);
 	}
 	
 	/**

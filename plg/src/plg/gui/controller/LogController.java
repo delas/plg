@@ -15,6 +15,7 @@ import org.deckfour.xes.out.XesXmlSerializer;
 
 import plg.generator.log.LogGenerator;
 import plg.gui.config.ConfigurationSet;
+import plg.gui.dialog.ErrorDialog;
 import plg.gui.dialog.GeneralDialog.RETURNED_VALUES;
 import plg.gui.dialog.NewLogDialog;
 import plg.gui.panels.SingleProcessVisualizer;
@@ -83,7 +84,7 @@ public class LogController {
 				
 				SwingWorker<XLog, Void> worker = new SwingWorker<XLog, Void>() {
 					@Override
-					protected XLog doInBackground() throws Exception {
+					protected XLog doInBackground() {
 						XSerializer serializer = null;
 						if (extension.equals("xes")) {
 							serializer = new XesXmlSerializer();
@@ -94,7 +95,12 @@ public class LogController {
 						} else if (extension.equals("mxml.gz")) {
 							serializer = new XMxmlGZIPSerializer();
 						}
-						return lg.generateAndSerializeLog(serializer, new File(file));
+						try {
+							return lg.generateAndSerializeLog(serializer, new File(file));
+						} catch (Exception e) {
+							new ErrorDialog(applicationController.getMainFrame(), e).setVisible(true);
+						}
+						return null;
 					}
 				};
 				worker.execute();

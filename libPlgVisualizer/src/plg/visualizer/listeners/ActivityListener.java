@@ -24,12 +24,4 @@ public interface ActivityListener {
 	 * @param activity the activity involved
 	 */
 	public void setTimeAfterActivity(Activity activity);
-	
-	/**
-	 * This method is called every time the visualizer asks to work on the
-	 * activity data objects
-	 * 
-	 * @param activity the activity involved
-	 */
-	public void setDataObjects(Activity activity);
 }

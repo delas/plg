@@ -8,8 +8,11 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
 import plg.gui.config.ConfigurationSet;
+import plg.gui.controller.ApplicationController;
 import plg.model.Process;
+import plg.model.activity.Activity;
 import plg.visualizer.BPMNVisualizer;
+import plg.visualizer.listeners.ActivityListener;
 
 /**
  * This class contains the panel responsible of the visualization of a single
@@ -46,6 +49,18 @@ public class SingleProcessVisualizer extends MainWindowPanel {
 	public void visualizeNewProcess(Process process) {
 		this.currentlyVisualizedProcess = process;
 		this.visualizer = new BPMNVisualizer(process);
+		
+		visualizer.addActivityListener(new ActivityListener() {
+			@Override
+			public void setTimeAfterActivity(Activity activity) {
+				ApplicationController.instance().components().setTimeAfterActivity(activity);
+			}
+			
+			@Override
+			public void setActivityDuration(Activity activity) {
+				ApplicationController.instance().components().setActivityDuration(activity);
+			}
+		});
 		
 		removeAll();
 		add(progress, BorderLayout.NORTH);

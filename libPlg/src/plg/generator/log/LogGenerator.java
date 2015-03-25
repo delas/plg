@@ -2,7 +2,6 @@ package plg.generator.log;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -48,8 +47,9 @@ public class LogGenerator {
 	 * one randomly.
 	 * 
 	 * @return the generated log
+	 * @throws Exception 
 	 */
-	public XLog generateLog() {
+	public XLog generateLog() throws Exception {
 		XLog log = unfinishedLogGeneration();
 		progress.finished();
 		return log;
@@ -63,19 +63,23 @@ public class LogGenerator {
 	 * @param serializer the serializer to use for the log serialization
 	 * @param file the target file
 	 * @return the generated log
+	 * @throws Exception 
 	 */
-	public XLog generateAndSerializeLog(XSerializer serializer, File file) {
-		XLog log = unfinishedLogGeneration();
-		progress.setIndeterminate(true);
-		progress.setText("Saving log to file...");
+	public XLog generateAndSerializeLog(XSerializer serializer, File file) throws Exception {
+		XLog log = null;
 		try {
+			log = unfinishedLogGeneration();
+			progress.setIndeterminate(true);
+			progress.setText("Saving log to file...");
+			
 			FileOutputStream fos = new FileOutputStream(file);
 			serializer.serialize(log, fos);
 			fos.close();
-		} catch(IOException e) {
-			e.printStackTrace();
+		} catch(Exception e) {
+			throw e;
+		} finally {
+			progress.finished();
 		}
-		progress.finished();
 		return log;
 	}
 	
@@ -95,8 +99,9 @@ public class LogGenerator {
 	 * tasks after the simulation.
 	 * 
 	 * @return the generated log
+	 * @throws Exception 
 	 */
-	private XLog unfinishedLogGeneration() {
+	private XLog unfinishedLogGeneration() throws Exception {
 		// configure progress
 		progress.setText("Simulating process...");
 		progress.setIndeterminate(false);

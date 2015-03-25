@@ -52,7 +52,11 @@ public abstract class ScriptExecutor {
 	 * function is not found
 	 */
 	public void execute(String functionName, String arg) throws InvalidScript {
-		interpreter.exec(script);
+		try {
+			interpreter.exec(script);
+		} catch (Exception e) {
+			throw new InvalidScript(e.getMessage());
+		}
 		PyObject generator = interpreter.get(functionName);
 		if (generator == null) {
 			throw new InvalidScript("The script provided does not contain a " +
