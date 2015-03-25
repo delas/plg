@@ -73,7 +73,7 @@ public class BPMNVisualizer extends JPanel {
 		this.stylesheet = graph.getStylesheet();
 		
 		setupMxGraph();
-		mxGraphComponent graphComponent = updateGraph();
+		final mxGraphComponent graphComponent = updateGraph();
 		graphComponent.setBorder(BorderFactory.createEmptyBorder());
 		graphComponent.getViewport().setBackground(Color.WHITE);
 		
@@ -86,7 +86,7 @@ public class BPMNVisualizer extends JPanel {
 				if (SwingUtilities.isRightMouseButton(e)) {
 					mxCell cell = (mxCell) graphComponent.getCellAt(e.getX(), e.getY());
 					if (cell != null) {
-						Component component = cellsToComponents.get(cell);
+						final Component component = cellsToComponents.get(cell);
 						if (component != null && component instanceof Activity) {
 							JMenuItem duration = new JMenuItem("Activity duration", ImagesCollection.ICON_DURATION);
 							JMenuItem timeAfter = new JMenuItem("Time after activity", ImagesCollection.ICON_TIME_AFTER);
