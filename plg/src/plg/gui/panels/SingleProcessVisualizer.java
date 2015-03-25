@@ -10,9 +10,9 @@ import javax.swing.SwingConstants;
 import plg.gui.config.ConfigurationSet;
 import plg.gui.controller.ApplicationController;
 import plg.model.Process;
-import plg.model.activity.Activity;
+import plg.model.activity.Task;
 import plg.visualizer.BPMNVisualizer;
-import plg.visualizer.listeners.ActivityListener;
+import plg.visualizer.listeners.TaskListener;
 
 /**
  * This class contains the panel responsible of the visualization of a single
@@ -50,15 +50,10 @@ public class SingleProcessVisualizer extends MainWindowPanel {
 		this.currentlyVisualizedProcess = process;
 		this.visualizer = new BPMNVisualizer(process);
 		
-		visualizer.addActivityListener(new ActivityListener() {
+		visualizer.addTaskListener(new TaskListener() {
 			@Override
-			public void setTimeAfterActivity(Activity activity) {
-				ApplicationController.instance().components().setTimeAfterActivity(activity);
-			}
-			
-			@Override
-			public void setActivityDuration(Activity activity) {
-				ApplicationController.instance().components().setActivityDuration(activity);
+			public void setTaskTime(Task task) {
+				ApplicationController.instance().components().setTaskTime(task);
 			}
 		});
 		

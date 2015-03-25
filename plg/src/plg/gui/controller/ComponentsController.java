@@ -1,8 +1,9 @@
 package plg.gui.controller;
 
-import plg.gui.dialog.ActivityDuration;
-import plg.gui.dialog.TimeAfterActivity;
-import plg.model.activity.Activity;
+import plg.generator.scriptexecuter.IntegerScriptExecutor;
+import plg.gui.dialog.GeneralDialog.RETURNED_VALUES;
+import plg.gui.dialog.TaskTime;
+import plg.model.activity.Task;
 
 public class ComponentsController {
 
@@ -12,13 +13,14 @@ public class ComponentsController {
 		this.applicationController = applicationController;
 	}
 
-	public void setActivityDuration(Activity activity) {
-		ActivityDuration ad = new ActivityDuration(applicationController.getMainFrame());
+	public void setTaskTime(Task task) {
+		TaskTime ad = new TaskTime(applicationController.getMainFrame());
+		if (task.getActivityScript() != null) {
+			ad.setScript(task.getActivityScript().getScript());
+		}
 		ad.setVisible(true);
-	}
-
-	public void setTimeAfterActivity(Activity activity) {
-		TimeAfterActivity ad = new TimeAfterActivity(applicationController.getMainFrame());
-		ad.setVisible(true);
+		if (ad.returnedValue() == RETURNED_VALUES.SUCCESS) {
+			task.setActivityScript(new IntegerScriptExecutor(ad.getScript()));
+		}
 	}
 }
