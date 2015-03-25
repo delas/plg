@@ -23,7 +23,6 @@ import javax.swing.SwingUtilities;
 import plg.model.Component;
 import plg.model.FlowObject;
 import plg.model.Process;
-import plg.model.activity.Activity;
 import plg.model.activity.Task;
 import plg.model.data.DataObject;
 import plg.model.data.IDataObjectOwner;
@@ -34,8 +33,8 @@ import plg.model.event.StartEvent;
 import plg.model.gateway.Gateway;
 import plg.model.gateway.ParallelGateway;
 import plg.model.sequence.Sequence;
-import plg.visualizer.listeners.ActivityListener;
 import plg.visualizer.listeners.DataObjectListener;
+import plg.visualizer.listeners.TaskListener;
 import plg.visualizer.util.ImagesCollection;
 
 import com.mxgraph.layout.mxGraphLayout;
@@ -56,7 +55,7 @@ public class BPMNVisualizer extends JPanel {
 
 	private static final long serialVersionUID = -8441909033110442685L;
 	
-	protected Set<ActivityListener> activityListeners = new HashSet<ActivityListener>();
+	protected Set<TaskListener> activityListeners = new HashSet<TaskListener>();
 	protected Set<DataObjectListener> dataObjectListeners = new HashSet<DataObjectListener>();
 	protected Process process;
 	protected Map<mxCell, Component> cellsToComponents;
@@ -91,8 +90,8 @@ public class BPMNVisualizer extends JPanel {
 					mxCell cell = (mxCell) graphComponent.getCellAt(e.getX(), e.getY());
 					if (cell != null) {
 						final Component component = cellsToComponents.get(cell);
-						if (component != null && component instanceof Activity) {
-							JPopupMenu menu = generateContextMenu((Activity) component);
+						if (component != null && component instanceof Task) {
+							JPopupMenu menu = generateContextMenu((Task) component);
 							menu.show(graphComponent.getGraphControl(), e.getX(), e.getY());
 						}
 					}
@@ -102,11 +101,11 @@ public class BPMNVisualizer extends JPanel {
 	}
 	
 	/**
-	 * This method register the provided {@link ActivityListener}
+	 * This method register the provided {@link TaskListener}
 	 * 
 	 * @param listener the listener to register
 	 */
-	public void addActivityListener(ActivityListener listener) {
+	public void addTaskListener(TaskListener listener) {
 		activityListeners.add(listener);
 	}
 	
@@ -274,16 +273,12 @@ public class BPMNVisualizer extends JPanel {
 		return c;
 	}
 	
-	public JPopupMenu generateContextMenu(final Activity activity) {
-		// time menus
-		JMenuItem duration = new JMenuItem("Activity duration", ImagesCollection.ICON_DURATION);
-		JMenuItem timeAfter = new JMenuItem("Time after activity", ImagesCollection.ICON_TIME_AFTER);
-		
+	public JPopupMenu generateContextMenu(final Task task) {
 		// activity data objects
 		JMenu dataObjActivity = new JMenu("Activity Data Object");
 		dataObjActivity.setIcon(ImagesCollection.ICON_DATA_OBJ);
 		boolean added = false;
-		for (final DataObject obj : activity.getDataObjects()) {
+		for (final DataObject obj : task.getDataObjects()) {
 			JMenu objMenu = new JMenu(obj.getName());
 			JMenuItem objMenuEdit = new JMenuItem("Edit", ImagesCollection.ICON_DATA_OBJ_EDIT);
 			JMenuItem objMenuDelete = new JMenuItem("Delete", ImagesCollection.ICON_DATA_OBJ_DELETE);
@@ -316,7 +311,7 @@ public class BPMNVisualizer extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				for (DataObjectListener l : dataObjectListeners) {
-					l.addActivityDataObjects(activity);
+					l.addActivityDataObjects(task);
 				}
 			}
 		});
@@ -329,8 +324,8 @@ public class BPMNVisualizer extends JPanel {
 		JMenu dataObjIncoming = new JMenu("Incoming Data Object");
 		dataObjIncoming.setIcon(ImagesCollection.ICON_DATA_OBJ);
 		added = false;
-		for (FlowObject fo : activity.getIncomingObjects()) {
-			Sequence s = activity.getOwner().getSequence(fo, activity);
+		for (FlowObject fo : task.getIncomingObjects()) {
+			Sequence s = task.getOwner().getSequence(fo, task);
 			if (s != null) {
 				for (final DataObject obj : s.getDataObjects()) {
 					JMenu objMenu = new JMenu(obj.getName());
@@ -367,7 +362,7 @@ public class BPMNVisualizer extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				for (DataObjectListener l : dataObjectListeners) {
-					l.addIncomingDataObjects(activity);
+					l.addIncomingDataObjects(task);
 				}
 			}
 		});
@@ -376,27 +371,19 @@ public class BPMNVisualizer extends JPanel {
 		}
 		dataObjIncoming.add(addIncomingDataObjActivity);
 		
-		
+		// time menus
+		JMenuItem duration = new JMenuItem("Activity time", ImagesCollection.ICON_DURATION);
 		duration.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				for (ActivityListener l : activityListeners) {
-					l.setActivityDuration(activity);
-				}
-			}
-		});
-		timeAfter.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				for (ActivityListener l : activityListeners) {
-					l.setTimeAfterActivity(activity);
+				for (TaskListener l : activityListeners) {
+					l.setTaskTime(task);
 				}
 			}
 		});
 		
 		JPopupMenu menu = new JPopupMenu();
 		menu.add(duration);
-		menu.add(timeAfter);
 		menu.addSeparator();
 		menu.add(dataObjActivity);
 		menu.add(dataObjIncoming);
