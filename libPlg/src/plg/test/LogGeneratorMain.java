@@ -1,16 +1,12 @@
 package plg.test;
 
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 
 import org.deckfour.xes.model.XLog;
 import org.deckfour.xes.out.XMxmlSerializer;
 import org.deckfour.xes.out.XSerializer;
 import org.deckfour.xes.out.XesXmlSerializer;
 
-import plg.exceptions.InvalidProcessException;
-import plg.exceptions.InvalidScript;
 import plg.generator.ProgressAdapter;
 import plg.generator.log.LogGenerator;
 import plg.generator.log.SimulationConfiguration;
