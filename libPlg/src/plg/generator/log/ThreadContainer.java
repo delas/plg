@@ -1,6 +1,19 @@
 package plg.generator.log;
 
+/**
+ * A thread container is just a computational container of
+ * {@link ThreadWithException}. The main characteristic of this container is
+ * the possibility to asynchronously receive an exception during computation.
+ * 
+ * @author Andrea Burattin
+ */
 public interface ThreadContainer {
 
-	public void exceptionReceived(Exception e);
+	/**
+	 * This method is invoked by the {@link ThreadWithException} when an
+	 * exception is thrown
+	 * 
+	 * @param exception the thrown exception
+	 */
+	public void exceptionReceived(Exception exception);
 }

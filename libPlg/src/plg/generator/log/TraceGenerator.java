@@ -35,6 +35,12 @@ import plg.utils.XLogHelper;
  * trace. This class is fed to the {@link SimulationEngine} in order to simulate
  * an entire log.
  * 
+ * <p> The most important method is {@link #runWithException()}. It generates a
+ * single process instance and adds the generated trace into the given log.
+ * 
+ * <p> If more than one {@link StartEvent} is available, the simulator picks
+ * one randomly.
+ * 
  * @author Andrea Burattin
  * @see SimulationEngine
  */
@@ -79,18 +85,6 @@ class TraceGenerator extends ThreadWithException<XTrace> {
 		return getComputedValue();
 	}
 	
-	/**
-	 * This method generate a single process instance. This method adds the
-	 * generated trace into the given log.
-	 * 
-	 * <p> If more than one {@link StartEvent} is available, the simulator picks
-	 * one randomly.
-	 * 
-	 * @param log the log container
-	 * @param caseId the case identifier of the new generated trace
-	 * @return the generated trace
-	 * @throws InvalidScript 
-	 */
 	@Override
 	protected XTrace runWithException() throws InvalidScript {
 		XTrace trace = XLogHelper.createTrace(caseId);

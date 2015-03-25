@@ -77,7 +77,8 @@ public class SimulationEngine {
 	}
 	
 	/**
-	 * Class which represent e single task
+	 * Class which represent e single task. This class is actually a
+	 * {@link ThreadContainer}.
 	 * 
 	 * @author Mirko Polato
 	 * @author Andrea Burattin
