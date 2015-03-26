@@ -1,8 +1,8 @@
 from random import randint
 # This Python script is called for the generation of the time related
 # features of the activity. Note that the parameter of these functions
-# is the actual case id  of the ongoing simulation. You can use this
-# value for customize the duration according to the actual instance.
+# is the actual case id  of the ongoing simulation (you can use this
+# value for customize the behavior according to the actual instance).
 
 # The time_lasted(caseid) function returns the number of seconds the
 # activity is supposed to last.
