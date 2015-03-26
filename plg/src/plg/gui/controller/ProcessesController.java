@@ -34,18 +34,21 @@ public class ProcessesController {
 	private static int GENERATED_PROCESSES = 1;
 	private static final String KEY_PROCESS_LOCATION = "PROCESS_LOCATION";
 	
+	private ApplicationController applicationController;
 	private ProcessesList processesList;
 	private SingleProcessVisualizer singleProcessVisualizer;
 	private ConfigurationSet configuration;
 	
 	/**
 	 * Controller constructor
+	 * 
+	 * @param applicationController the main application controller 
 	 */
-	protected ProcessesController() {
-		
-		this.processesList = ApplicationController.instance().getMainWindow().getProcessesList();
-		this.singleProcessVisualizer = ApplicationController.instance().getMainWindow().getSingleProcessVisualizer();
-		this.configuration = ApplicationController.instance().getConfiguration(ProcessesController.class.getCanonicalName());
+	protected ProcessesController(ApplicationController applicationController) {
+		this.applicationController = applicationController;
+		this.processesList = applicationController.getMainWindow().getProcessesList();
+		this.singleProcessVisualizer = applicationController.getMainWindow().getSingleProcessVisualizer();
+		this.configuration = applicationController.getConfiguration(ProcessesController.class.getCanonicalName());
 		
 		visualizeProcess(null);
 	}
@@ -163,7 +166,7 @@ public class ProcessesController {
 		}
 		
 		// update toolbar buttons depending on the selected process or not
-		ApplicationController.instance().getMainWindow().getToolbar().setProcessSelected((process != null));
+		applicationController.getMainWindow().getToolbar().setProcessSelected((process != null));
 	}
 	
 	/**
