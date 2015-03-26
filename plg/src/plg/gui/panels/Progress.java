@@ -3,6 +3,7 @@ package plg.gui.panels;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -10,6 +11,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 
 import plg.generator.IProgressVisualizer;
 import plg.gui.util.HumanTimeFormatter;
@@ -92,12 +94,30 @@ public class Progress extends JPanel implements IProgressVisualizer {
 	@Override
 	public void inc() {
 		this.value++;
-		this.progress.setValue(value);
+		try {
+			SwingUtilities.invokeAndWait(new Runnable() {
+				@Override
+				public void run() {
+					progress.setValue(value);
+				}
+			});
+		} catch (InvocationTargetException | InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
-	public void setIndeterminate(boolean indeterminate) {
-		progress.setIndeterminate(indeterminate);
+	public void setIndeterminate(final boolean indeterminate) {
+		try {
+			SwingUtilities.invokeAndWait(new Runnable() {
+				@Override
+				public void run() {
+					progress.setIndeterminate(indeterminate);
+				}
+			});
+		} catch (InvocationTargetException | InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
