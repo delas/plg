@@ -13,6 +13,8 @@ import org.deckfour.xes.model.XEvent;
 import org.deckfour.xes.model.XTrace;
 
 import plg.exceptions.InvalidScript;
+import plg.generator.engine.SimulationEngine;
+import plg.generator.engine.ThreadWithException;
 import plg.generator.log.noise.NoiseProcessor;
 import plg.model.Component;
 import plg.model.FlowObject;

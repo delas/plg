@@ -24,6 +24,8 @@ import plg.gui.util.RuntimeUtils;
 import plg.model.Process;
 
 /**
+ * This class represents the log controller, and is in charge of managing the
+ * logs.
  * 
  * @author Andrea Burattin
  */
@@ -36,14 +38,16 @@ public class LogController {
 
 	/**
 	 * Controller constructor
+	 * 
+	 * @param applicationController the main application controller
 	 */
-	protected LogController() {
-		this.singleProcessVisualizer = ApplicationController.instance().getMainWindow().getSingleProcessVisualizer();
-		this.configuration = ApplicationController.instance().getConfiguration(LogController.class.getCanonicalName());
+	protected LogController(ApplicationController applicationController) {
+		this.singleProcessVisualizer = applicationController.getMainWindow().getSingleProcessVisualizer();
+		this.configuration = applicationController.getConfiguration(LogController.class.getCanonicalName());
 	}
 	
 	/**
-	 * 
+	 * This method is responsible of generating a new log
 	 */
 	public void generateLog() {
 		NewLogDialog nld = new NewLogDialog(

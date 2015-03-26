@@ -9,6 +9,7 @@ import org.deckfour.xes.model.XLog;
 import org.deckfour.xes.out.XSerializer;
 
 import plg.generator.IProgressVisualizer;
+import plg.generator.engine.SimulationEngine;
 import plg.model.Process;
 import plg.model.event.StartEvent;
 import plg.utils.CPUUtils;

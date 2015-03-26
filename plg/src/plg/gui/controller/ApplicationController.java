@@ -47,10 +47,10 @@ public class ApplicationController {
 		mainFrame = new MainFrame(this);
 		
 		// creates children controllers
-		consoleController = new ConsoleController();
-		processesController = new ProcessesController();
-		logController = new LogController();
-		componenstsController = new ComponentsController();
+		consoleController = new ConsoleController(this);
+		processesController = new ProcessesController(this);
+		logController = new LogController(this);
+		componenstsController = new ComponentsController(this);
 	}
 	
 	/**

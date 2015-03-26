@@ -1,4 +1,4 @@
-package plg.generator.log;
+package plg.generator.engine;
 
 /**
  * This class represents a thread which execution can raise an exception. It is

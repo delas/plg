@@ -12,18 +12,31 @@ import plg.gui.config.ConfigurationSet;
 import plg.gui.panels.Console;
 import plg.utils.Logger;
 
+/**
+ * This class represents the console controller, and is in charge of managing
+ * the application console.
+ * 
+ * @author Andrea Burattin
+ */
 public class ConsoleController {
 
 	protected static final String KEY_CONSOLE_VISIBLE = "CONSOLE_VISIBLE";
 	protected static final boolean DEFAULT_VISIBILITY = false;
 	
+	private ApplicationController applicationController;
 	private ConfigurationSet configuration;
 	private Console console;
 	private ConsolePrintStream consolePrintStream;
 	
-	protected ConsoleController() {
-		this.configuration = ApplicationController.instance().getConfiguration(ConsoleController.class.getCanonicalName());
-		this.console = ApplicationController.instance().getMainWindow().getConsole();
+	/**
+	 * Controller constructor
+	 * 
+	 * @param applicationController the main application controller
+	 */
+	protected ConsoleController(ApplicationController applicationController) {
+		this.applicationController = applicationController;
+		this.configuration = applicationController.getConfiguration(ConsoleController.class.getCanonicalName());
+		this.console = applicationController.getMainWindow().getConsole();
 		this.consolePrintStream = new ConsolePrintStream(console.getStyledDocument());
 		
 		// redirect the logger to the application console
@@ -33,10 +46,15 @@ public class ConsoleController {
 		setConsoleVisibility(configuration.getBoolean(KEY_CONSOLE_VISIBLE, DEFAULT_VISIBILITY));
 	}
 	
+	/**
+	 * This method configures the visibility of the console
+	 * 
+	 * @param visible whether the console has to be visible
+	 */
 	public void setConsoleVisibility(boolean visible) {
 		configuration.setBoolean(KEY_CONSOLE_VISIBLE, visible);
-		ApplicationController.instance().getMainWindow().getToolbar().setShowConsoleSelected(visible);
-		ApplicationController.instance().getMainWindow().getConsole().setVisible(visible);
+		applicationController.getMainWindow().getToolbar().setShowConsoleSelected(visible);
+		applicationController.getMainWindow().getConsole().setVisible(visible);
 	}
 	
 	/**
