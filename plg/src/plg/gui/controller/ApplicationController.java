@@ -57,7 +57,9 @@ public class ApplicationController {
 		logController = new LogController(
 				this,
 				mainWindow.getSingleProcessVisualizer());
-		componenstsController = new ComponentsController(this);
+		componenstsController = new ComponentsController(
+				this,
+				mainWindow.getSingleProcessVisualizer());
 	}
 	
 	/**

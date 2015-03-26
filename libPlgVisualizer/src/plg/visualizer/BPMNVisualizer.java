@@ -76,28 +76,37 @@ public class BPMNVisualizer extends JPanel {
 		this.stylesheet = graph.getStylesheet();
 		
 		setupMxGraph();
+		redrawProcess();
+	}
+	
+	/**
+	 * This method redraws the provided process
+	 */
+	public void redrawProcess() {
+		if (process != null) {
 		final mxGraphComponent graphComponent = updateGraph();
-		graphComponent.setBorder(BorderFactory.createEmptyBorder());
-		graphComponent.getViewport().setBackground(Color.WHITE);
-		
-		setLayout(new BorderLayout());
-		add(graphComponent, BorderLayout.CENTER);
-
-		graphComponent.getGraphControl().addMouseListener(new MouseAdapter() {
-			@Override
-			public void mousePressed(MouseEvent e) {
-				if (SwingUtilities.isRightMouseButton(e)) {
-					mxCell cell = (mxCell) graphComponent.getCellAt(e.getX(), e.getY());
-					if (cell != null) {
-						final Component component = cellsToComponents.get(cell);
-						if (component != null && component instanceof Task) {
-							JPopupMenu menu = generateContextMenu((Task) component);
-							menu.show(graphComponent.getGraphControl(), e.getX(), e.getY());
+			graphComponent.setBorder(BorderFactory.createEmptyBorder());
+			graphComponent.getViewport().setBackground(Color.WHITE);
+			
+			setLayout(new BorderLayout());
+			add(graphComponent, BorderLayout.CENTER);
+	
+			graphComponent.getGraphControl().addMouseListener(new MouseAdapter() {
+				@Override
+				public void mousePressed(MouseEvent e) {
+					if (SwingUtilities.isRightMouseButton(e)) {
+						mxCell cell = (mxCell) graphComponent.getCellAt(e.getX(), e.getY());
+						if (cell != null) {
+							final Component component = cellsToComponents.get(cell);
+							if (component != null && component instanceof Task) {
+								JPopupMenu menu = generateContextMenu((Task) component);
+								menu.show(graphComponent.getGraphControl(), e.getX(), e.getY());
+							}
 						}
 					}
 				}
-			}
-		});
+			});
+		}
 	}
 	
 	/**
@@ -368,7 +377,7 @@ public class BPMNVisualizer extends JPanel {
 		dataObjIncoming.add(addIncomingDataObjActivity);
 		
 		// time menus
-		JMenuItem duration = new JMenuItem("Activity time", ImagesCollection.ICON_DURATION);
+		JMenuItem duration = new JMenuItem("Activity time", ImagesCollection.ICON_TIME);
 		duration.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {

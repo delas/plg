@@ -10,8 +10,11 @@ import javax.swing.SwingConstants;
 import plg.gui.config.ConfigurationSet;
 import plg.gui.controller.ApplicationController;
 import plg.model.Process;
+import plg.model.activity.Activity;
 import plg.model.activity.Task;
+import plg.model.data.DataObject;
 import plg.visualizer.BPMNVisualizer;
+import plg.visualizer.listeners.DataObjectListener;
 import plg.visualizer.listeners.TaskListener;
 
 /**
@@ -57,10 +60,36 @@ public class SingleProcessVisualizer extends MainWindowPanel {
 			}
 		});
 		
+		visualizer.addDataObjectListener(new DataObjectListener() {
+			@Override
+			public void removeDataObjects(DataObject dataObject) {
+				ApplicationController.instance().components().removeDataObject(dataObject);
+			}
+			
+			@Override
+			public void editDataObjects(DataObject dataObject) {
+				
+			}
+			
+			@Override
+			public void addIncomingDataObjects(Activity activity) {
+				
+			}
+			
+			@Override
+			public void addActivityDataObjects(Activity activity) {
+				
+			}
+		});
+		
 		removeAll();
 		add(progress, BorderLayout.NORTH);
 		add(visualizer, BorderLayout.CENTER);
 		updateUI();
+	}
+	
+	public void refreshCurrentProcess() {
+		visualizeNewProcess(currentlyVisualizedProcess);
 	}
 	
 	public Process getCurrentlyVisualizedProcess() {
