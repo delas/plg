@@ -10,7 +10,7 @@ import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 
 import plg.gui.controller.ApplicationController;
-import plg.gui.util.ImagesCollection;
+import plg.gui.util.collections.ImagesCollection;
 
 /**
  * This widget contains the main toolbar of the application

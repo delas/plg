@@ -25,7 +25,7 @@ import javax.swing.event.ListSelectionListener;
 
 import plg.gui.config.ConfigurationSet;
 import plg.gui.controller.ApplicationController;
-import plg.gui.util.ImagesCollection;
+import plg.gui.util.collections.ImagesCollection;
 import plg.gui.widgets.list.MultilineImageListEntry;
 import plg.gui.widgets.list.MultilineImageListEntryRenderer;
 import plg.model.Process;
@@ -131,10 +131,12 @@ public class ProcessesList extends MainWindowPanel {
 		if (index >= 0) {
 			MultilineImageListEntry entry = dlm.get(index);
 			
-			if (JOptionPane.showConfirmDialog(ApplicationController.instance().getMainFrame(),
+			int confirmation = JOptionPane.showConfirmDialog(
+					ApplicationController.instance().getMainFrame(),
 					"Are you sure to delete the selected process?",
 					"Confirm deletion",
-					JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) {
+					JOptionPane.YES_NO_OPTION);
+			if (confirmation == JOptionPane.NO_OPTION || confirmation == JOptionPane.CLOSED_OPTION) {
 				return;
 			}
 			

@@ -3,7 +3,14 @@ package plg.gui.dialog;
 import javax.swing.JFrame;
 
 import plg.gui.controller.ApplicationController;
+import plg.gui.util.collections.ScriptsCollection;
 
+/**
+ * This dialog can be used to configure the script for the simulation of the
+ * times relationed information
+ * 
+ * @author Andrea Burattin
+ */
 public class TaskTime extends CodeDialog {
 
 	private static final long serialVersionUID = -1273109278694623349L;
@@ -17,6 +24,6 @@ public class TaskTime extends CodeDialog {
 
 	@Override
 	protected String standardScript() {
-		return getFile("/plg/resources/scripts/taskTime.py");
+		return ScriptsCollection.TIME_SCRIPT;
 	}
 }

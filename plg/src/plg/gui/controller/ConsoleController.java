@@ -17,17 +17,13 @@ public class ConsoleController {
 	protected static final String KEY_CONSOLE_VISIBLE = "CONSOLE_VISIBLE";
 	protected static final boolean DEFAULT_VISIBILITY = false;
 	
-	private ApplicationController applicationController;
 	private ConfigurationSet configuration;
 	private Console console;
 	private ConsolePrintStream consolePrintStream;
 	
-	protected ConsoleController(
-			ApplicationController applicationController,
-			Console console) {
-		this.applicationController = applicationController;
-		this.configuration = applicationController.getConfiguration(ConsoleController.class.getCanonicalName());
-		this.console = console;
+	protected ConsoleController() {
+		this.configuration = ApplicationController.instance().getConfiguration(ConsoleController.class.getCanonicalName());
+		this.console = ApplicationController.instance().getMainWindow().getConsole();
 		this.consolePrintStream = new ConsolePrintStream(console.getStyledDocument());
 		
 		// redirect the logger to the application console
@@ -39,8 +35,8 @@ public class ConsoleController {
 	
 	public void setConsoleVisibility(boolean visible) {
 		configuration.setBoolean(KEY_CONSOLE_VISIBLE, visible);
-		applicationController.getMainWindow().getToolbar().setShowConsoleSelected(visible);
-		applicationController.getMainWindow().getConsole().setVisible(visible);
+		ApplicationController.instance().getMainWindow().getToolbar().setShowConsoleSelected(visible);
+		ApplicationController.instance().getMainWindow().getConsole().setVisible(visible);
 	}
 	
 	/**

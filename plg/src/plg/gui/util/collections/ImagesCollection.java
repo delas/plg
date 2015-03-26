@@ -1,6 +1,8 @@
-package plg.gui.util;
+package plg.gui.util.collections;
 
 import javax.swing.ImageIcon;
+
+import plg.gui.util.ImageUtils;
 
 /**
  * Collection of images used throughout the application

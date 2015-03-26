@@ -31,31 +31,23 @@ public class LogController {
 
 	private static final String KEY_LOG_LOCATION = "LOG_LOCATION";
 	
-	private ApplicationController applicationController;
 	private SingleProcessVisualizer singleProcessVisualizer;
 	private ConfigurationSet configuration;
 
 	/**
 	 * Controller constructor
-	 * 
-	 * @param applicationController
-	 * @param configuration
-	 * @param processesList
-	 * @param singleProcessVisualizer
 	 */
-	protected LogController(
-			ApplicationController applicationController,
-			SingleProcessVisualizer singleProcessVisualizer) {
-		this.applicationController = applicationController;
-		this.singleProcessVisualizer = singleProcessVisualizer;
-		this.configuration = applicationController.getConfiguration(LogController.class.getCanonicalName());
+	protected LogController() {
+		this.singleProcessVisualizer = ApplicationController.instance().getMainWindow().getSingleProcessVisualizer();
+		this.configuration = ApplicationController.instance().getConfiguration(LogController.class.getCanonicalName());
 	}
 	
 	/**
 	 * 
 	 */
 	public void generateLog() {
-		NewLogDialog nld = new NewLogDialog(applicationController.getMainFrame(),
+		NewLogDialog nld = new NewLogDialog(
+				ApplicationController.instance().getMainFrame(),
 				"Log for " + singleProcessVisualizer.getCurrentlyVisualizedProcess().getName());
 		nld.setVisible(true);
 		if (RETURNED_VALUES.SUCCESS.equals(nld.returnedValue())) {
@@ -67,7 +59,7 @@ public class LogController {
 			fc.addChoosableFileFilter(new FileNameExtensionFilter("Compressed MXML file (*.mxml.gz)", "mxml.gz"));
 			fc.addChoosableFileFilter(new FileNameExtensionFilter("MXML file (*.mxml)", "mxml"));
 			
-			int returnVal = fc.showSaveDialog(applicationController.getMainFrame());
+			int returnVal = fc.showSaveDialog(ApplicationController.instance().getMainFrame());
 			
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
 				String fileName = fc.getSelectedFile().getAbsolutePath();
@@ -80,7 +72,7 @@ public class LogController {
 				final LogGenerator lg = new LogGenerator(
 						process,
 						nld.getConfiguredValues(),
-						applicationController.getMainWindow().getProgressStack().askForNewProgress());
+						ApplicationController.instance().getMainWindow().getProgressStack().askForNewProgress());
 				
 				SwingWorker<XLog, Void> worker = new SwingWorker<XLog, Void>() {
 					@Override
@@ -98,7 +90,7 @@ public class LogController {
 						try {
 							return lg.generateAndSerializeLog(serializer, new File(file));
 						} catch (Exception e) {
-							new ErrorDialog(applicationController.getMainFrame(), e).setVisible(true);
+							new ErrorDialog(ApplicationController.instance().getMainFrame(), e).setVisible(true);
 						}
 						return null;
 					}

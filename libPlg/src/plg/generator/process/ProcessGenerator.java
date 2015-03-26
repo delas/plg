@@ -29,14 +29,14 @@ public class ProcessGenerator {
 	 * pattern requires one parameter, which will be replaced with a progressive
 	 * letter, such as "A", ..., "Z", "AA", "AB", ...
 	 */
-	protected static final String ACTIVITY_NAME_PATTERN = "Activity %s";
+	public static final String ACTIVITY_NAME_PATTERN = "Activity %s";
 	
 	/**
 	 * This string contains the pattern for the generation of data objects. The
 	 * pattern requires one parameter, which will be replaced with a progressive
 	 * letter, such as "A", ..., "Z", "AA", "AB", ...
 	 */
-	protected static final String DATA_OBJECT_NAME_PATTERN = "variable_%s";
+	public static final String DATA_OBJECT_NAME_PATTERN = "variable_%s";
 	
 	private Process process;
 	private RandomizationConfiguration parameters;
@@ -293,7 +293,7 @@ public class ProcessGenerator {
 	 * @return a string equivalent to the number, e.g., 1 becomes "A", 2 becomes
 	 * "B", etc.
 	 */
-	protected String numberToAlpha(int num) {
+	public static String numberToAlpha(int num) {
 		String result = "";
 		while (num > 0) {
 			num--;

@@ -5,8 +5,8 @@ import javax.swing.JLabel;
 import javax.swing.JTextArea;
 
 import plg.gui.controller.ApplicationController;
-import plg.gui.util.ImagesCollection;
 import plg.gui.util.SpringUtilities;
+import plg.gui.util.collections.ImagesCollection;
 
 public class ErrorDialog extends GeneralDialog {
 

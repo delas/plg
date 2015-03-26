@@ -47,19 +47,10 @@ public class ApplicationController {
 		mainFrame = new MainFrame(this);
 		
 		// creates children controllers
-		consoleController = new ConsoleController(
-				this,
-				mainWindow.getConsole());
-		processesController = new ProcessesController(
-				this,
-				mainWindow.getProcessesList(),
-				mainWindow.getSingleProcessVisualizer());
-		logController = new LogController(
-				this,
-				mainWindow.getSingleProcessVisualizer());
-		componenstsController = new ComponentsController(
-				this,
-				mainWindow.getSingleProcessVisualizer());
+		consoleController = new ConsoleController();
+		processesController = new ProcessesController();
+		logController = new LogController();
+		componenstsController = new ComponentsController();
 	}
 	
 	/**

@@ -14,7 +14,7 @@ import javax.swing.JFrame;
 
 import plg.gui.config.ConfigurationSet;
 import plg.gui.controller.ApplicationController;
-import plg.gui.util.ImagesCollection;
+import plg.gui.util.collections.ImagesCollection;
 
 /**
  * This class contains the main frame of PLG

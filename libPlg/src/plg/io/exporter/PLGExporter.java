@@ -121,11 +121,11 @@ public class PLGExporter extends FileExporter {
 				dobjTag.addAttribute("id", dobj.getId());
 				dobjTag.addAttribute("owner", dobj.getObjectOwner().getId());
 				if (dobj instanceof StringDataObject) {
-					dobjTag.addAttribute("name", dobj.getName() + "(string)");
+					dobjTag.addAttribute("name", dobj.getName());
 					dobjTag.addAttribute("type", "StringDataObject");
 					dobjTag.addChildNode("script").addCDataNode(((GeneratedDataObject) dobj).getScriptExecutor().getScript());
 				} else if (dobj instanceof IntegerDataObject) {
-					dobjTag.addAttribute("name", dobj.getName() + "(integer)");
+					dobjTag.addAttribute("name", dobj.getName());
 					dobjTag.addAttribute("type", "IntegerDataObject");
 					dobjTag.addChildNode("script").addCDataNode(((GeneratedDataObject) dobj).getScriptExecutor().getScript());
 				} else {

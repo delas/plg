@@ -13,6 +13,7 @@ import plg.model.Process;
 import plg.model.activity.Activity;
 import plg.model.activity.Task;
 import plg.model.data.DataObject;
+import plg.model.data.IDataObjectOwner.DATA_OBJECT_DIRECTION;
 import plg.visualizer.BPMNVisualizer;
 import plg.visualizer.listeners.DataObjectListener;
 import plg.visualizer.listeners.TaskListener;
@@ -68,17 +69,15 @@ public class SingleProcessVisualizer extends MainWindowPanel {
 			
 			@Override
 			public void editDataObjects(DataObject dataObject) {
-				
+				ApplicationController.instance().components().editDataObject(dataObject);
 			}
 			
 			@Override
-			public void addIncomingDataObjects(Activity activity) {
-				
-			}
-			
-			@Override
-			public void addActivityDataObjects(Activity activity) {
-				
+			public void addDataObjects(
+					Activity activity,
+					DATA_OBJECT_DIRECTION direction,
+					Class<?> type) {
+				ApplicationController.instance().components().addDataObject(activity, direction, type);
 			}
 		});
 		

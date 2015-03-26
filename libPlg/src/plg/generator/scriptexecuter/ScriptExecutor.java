@@ -30,7 +30,7 @@ public abstract class ScriptExecutor {
 	 * 
 	 */
 	public ScriptExecutor(String script) {
-		this.script = script.replaceAll("\\xa0", " ");
+		setScript(script);
 	}
 	
 	/**
@@ -40,6 +40,15 @@ public abstract class ScriptExecutor {
 	 */
 	public String getScript() {
 		return script;
+	}
+	
+	/**
+	 * This method sets the script of the executor
+	 * 
+	 * @param script a Python script
+	 */
+	public void setScript(String script) {
+		this.script = script.replaceAll("\\xa0", " ");
 	}
 	
 	/**

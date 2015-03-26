@@ -34,28 +34,18 @@ public class ProcessesController {
 	private static int GENERATED_PROCESSES = 1;
 	private static final String KEY_PROCESS_LOCATION = "PROCESS_LOCATION";
 	
-	private ApplicationController applicationController;
 	private ProcessesList processesList;
 	private SingleProcessVisualizer singleProcessVisualizer;
 	private ConfigurationSet configuration;
 	
 	/**
 	 * Controller constructor
-	 * 
-	 * @param applicationController
-	 * @param configuration
-	 * @param processesList
-	 * @param singleProcessVisualizer
 	 */
-	protected ProcessesController(
-			ApplicationController applicationController,
-			ProcessesList processesList,
-			SingleProcessVisualizer singleProcessVisualizer) {
+	protected ProcessesController() {
 		
-		this.applicationController = applicationController;
-		this.processesList = processesList;
-		this.singleProcessVisualizer = singleProcessVisualizer;
-		this.configuration = applicationController.getConfiguration(ProcessesController.class.getCanonicalName());
+		this.processesList = ApplicationController.instance().getMainWindow().getProcessesList();
+		this.singleProcessVisualizer = ApplicationController.instance().getMainWindow().getSingleProcessVisualizer();
+		this.configuration = ApplicationController.instance().getConfiguration(ProcessesController.class.getCanonicalName());
 		
 		visualizeProcess(null);
 	}
@@ -65,7 +55,9 @@ public class ProcessesController {
 	 * new random process 
 	 */
 	public void randomProcess() {
-		NewProcessDialog npd = new NewProcessDialog(applicationController.getMainFrame(), "Process " + GENERATED_PROCESSES);
+		NewProcessDialog npd = new NewProcessDialog(
+				ApplicationController.instance().getMainFrame(),
+				"Process " + GENERATED_PROCESSES);
 		npd.setVisible(true);
 		if (RETURNED_VALUES.SUCCESS.equals(npd.returnedValue())) {
 			Process p = new Process(npd.getNewProcessName());
@@ -83,7 +75,7 @@ public class ProcessesController {
 	public void openProcess() {
 		final JFileChooser fc = new JFileChooser(new File(configuration.get(KEY_PROCESS_LOCATION, RuntimeUtils.getHomeFolder())));
 		FileFilterHelper.assignImportFileFilters(fc);
-		int returnVal = fc.showOpenDialog(applicationController.getMainFrame());
+		int returnVal = fc.showOpenDialog(ApplicationController.instance().getMainFrame());
 		
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			final String fileName = fc.getSelectedFile().getAbsolutePath();
@@ -94,7 +86,7 @@ public class ProcessesController {
 				@Override
 				protected Process doInBackground() throws Exception {
 					GENERATED_PROCESSES++;
-					return importer.importModel(fileName, applicationController.getMainWindow().getProgressStack().askForNewProgress());
+					return importer.importModel(fileName, ApplicationController.instance().getMainWindow().getProgressStack().askForNewProgress());
 				}
 				
 				@Override
@@ -117,7 +109,7 @@ public class ProcessesController {
 	public void saveProcess() {
 		final JFileChooser fc = new JFileChooser(new File(configuration.get(KEY_PROCESS_LOCATION, RuntimeUtils.getHomeFolder())));
 		FileFilterHelper.assignExportFileFilters(fc);
-		int returnVal = fc.showSaveDialog(applicationController.getMainFrame());
+		int returnVal = fc.showSaveDialog(ApplicationController.instance().getMainFrame());
 		
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			String fileName = fc.getSelectedFile().getAbsolutePath();
@@ -128,7 +120,10 @@ public class ProcessesController {
 				@Override
 				protected Void doInBackground() throws Exception {
 					IFileExporter exporter = FileFilterHelper.getExporterFromFileName((FileNameExtensionFilter) fc.getFileFilter());
-					exporter.exportModel(singleProcessVisualizer.getCurrentlyVisualizedProcess(), file, applicationController.getMainWindow().getProgressStack().askForNewProgress());
+					exporter.exportModel(
+							singleProcessVisualizer.getCurrentlyVisualizedProcess(),
+							file,
+							ApplicationController.instance().getMainWindow().getProgressStack().askForNewProgress());
 					return null;
 				}
 			};
@@ -141,7 +136,7 @@ public class ProcessesController {
 	 */
 	public void evolveProcess() {
 		Process p = singleProcessVisualizer.getCurrentlyVisualizedProcess();
-		EvolutionDialog ed = new EvolutionDialog(applicationController.getMainFrame(), "Evolution of " + p.getName());
+		EvolutionDialog ed = new EvolutionDialog(ApplicationController.instance().getMainFrame(), "Evolution of " + p.getName());
 		ed.setVisible(true);
 		
 		if (RETURNED_VALUES.SUCCESS.equals(ed.returnedValue())) {
@@ -168,7 +163,7 @@ public class ProcessesController {
 		}
 		
 		// update toolbar buttons depending on the selected process or not
-		applicationController.getMainWindow().getToolbar().setProcessSelected((process != null));
+		ApplicationController.instance().getMainWindow().getToolbar().setProcessSelected((process != null));
 	}
 	
 	/**
