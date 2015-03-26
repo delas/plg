@@ -86,7 +86,6 @@ public class PLGExporter extends FileExporter {
 				}
 				SXTag script = tTag.addChildNode("script");
 				if (t.getActivityScript() != null) {
-					System.out.println(t.getActivityScript().getScript());
 					script.addCDataNode(t.getActivityScript().getScript());
 				}
 			}
