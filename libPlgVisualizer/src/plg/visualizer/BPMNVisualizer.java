@@ -21,11 +21,11 @@ import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
 import plg.model.Component;
-import plg.model.FlowObject;
 import plg.model.Process;
 import plg.model.activity.Task;
 import plg.model.data.DataObject;
 import plg.model.data.IDataObjectOwner;
+import plg.model.data.IDataObjectOwner.DATA_OBJECT_DIRECTION;
 import plg.model.data.IntegerDataObject;
 import plg.model.data.StringDataObject;
 import plg.model.event.EndEvent;
@@ -255,8 +255,9 @@ public class BPMNVisualizer extends JPanel {
 				
 				if (dobj.getObjectOwner() != null) {
 					IDataObjectOwner owner = dobj.getObjectOwner();
-					if (owner instanceof Sequence) {
-						graph.insertEdge(parent, null, null, components.get(dobj), components.get(((Sequence) dobj.getObjectOwner()).getSink()), "EDGE_DOBJ");
+					DATA_OBJECT_DIRECTION direction = dobj.getDirectionOwner();
+					if (direction == DATA_OBJECT_DIRECTION.REQUIRED) {
+						graph.insertEdge(parent, null, null, components.get(dobj), components.get(owner), "EDGE_DOBJ");
 					} else {
 						graph.insertEdge(parent, null, null, components.get(owner), components.get(dobj), "EDGE_DOBJ");
 					}
@@ -275,10 +276,10 @@ public class BPMNVisualizer extends JPanel {
 	
 	public JPopupMenu generateContextMenu(final Task task) {
 		// activity data objects
-		JMenu dataObjActivity = new JMenu("Activity Data Object");
+		JMenu dataObjActivity = new JMenu("Generated Data Object");
 		dataObjActivity.setIcon(ImagesCollection.ICON_DATA_OBJ);
 		boolean added = false;
-		for (final DataObject obj : task.getDataObjects()) {
+		for (final DataObject obj : task.getDataObjects(DATA_OBJECT_DIRECTION.GENERATED)) {
 			JMenu objMenu = new JMenu(obj.getName());
 			JMenuItem objMenuEdit = new JMenuItem("Edit", ImagesCollection.ICON_DATA_OBJ_EDIT);
 			JMenuItem objMenuDelete = new JMenuItem("Delete", ImagesCollection.ICON_DATA_OBJ_DELETE);
@@ -321,41 +322,36 @@ public class BPMNVisualizer extends JPanel {
 		dataObjActivity.add(addDataObjActivity);
 		
 		// incoming data objects
-		JMenu dataObjIncoming = new JMenu("Incoming Data Object");
+		JMenu dataObjIncoming = new JMenu("Required Data Object");
 		dataObjIncoming.setIcon(ImagesCollection.ICON_DATA_OBJ);
 		added = false;
-		for (FlowObject fo : task.getIncomingObjects()) {
-			Sequence s = task.getOwner().getSequence(fo, task);
-			if (s != null) {
-				for (final DataObject obj : s.getDataObjects()) {
-					JMenu objMenu = new JMenu(obj.getName());
-					JMenuItem objMenuEdit = new JMenuItem("Edit", ImagesCollection.ICON_DATA_OBJ_EDIT);
-					JMenuItem objMenuDelete = new JMenuItem("Delete", ImagesCollection.ICON_DATA_OBJ_DELETE);
-					
-					objMenuEdit.addActionListener(new ActionListener() {
-						@Override
-						public void actionPerformed(ActionEvent e) {
-							for (DataObjectListener l : dataObjectListeners) {
-								l.editDataObjects(obj);
-							}
-						}
-					});
-					objMenuDelete.addActionListener(new ActionListener() {
-						@Override
-						public void actionPerformed(ActionEvent e) {
-							for (DataObjectListener l : dataObjectListeners) {
-								l.removeDataObjects(obj);
-							}
-						}
-					});
-					
-					objMenu.add(objMenuEdit);
-					objMenu.add(objMenuDelete);
-					
-					dataObjIncoming.add(objMenu);
-					added = true;
+		for (final DataObject obj : task.getDataObjects(DATA_OBJECT_DIRECTION.REQUIRED)) {
+			JMenu objMenu = new JMenu(obj.getName());
+			JMenuItem objMenuEdit = new JMenuItem("Edit", ImagesCollection.ICON_DATA_OBJ_EDIT);
+			JMenuItem objMenuDelete = new JMenuItem("Delete", ImagesCollection.ICON_DATA_OBJ_DELETE);
+			
+			objMenuEdit.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					for (DataObjectListener l : dataObjectListeners) {
+						l.editDataObjects(obj);
+					}
 				}
-			}
+			});
+			objMenuDelete.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					for (DataObjectListener l : dataObjectListeners) {
+						l.removeDataObjects(obj);
+					}
+				}
+			});
+			
+			objMenu.add(objMenuEdit);
+			objMenu.add(objMenuDelete);
+			
+			dataObjIncoming.add(objMenu);
+			added = true;
 		}
 		JMenuItem addIncomingDataObjActivity = new JMenuItem("New...", ImagesCollection.ICON_DATA_OBJ_NEW);
 		addIncomingDataObjActivity.addActionListener(new ActionListener() {

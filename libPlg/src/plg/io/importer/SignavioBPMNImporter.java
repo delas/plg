@@ -24,6 +24,7 @@ import plg.model.Process;
 import plg.model.activity.Task;
 import plg.model.data.DataObject;
 import plg.model.data.IDataObjectOwner;
+import plg.model.data.IDataObjectOwner.DATA_OBJECT_DIRECTION;
 import plg.model.data.IntegerDataObject;
 import plg.model.data.StringDataObject;
 import plg.model.event.EndEvent;
@@ -139,17 +140,20 @@ public class SignavioBPMNImporter extends FileImporter {
 				String doId = ds.getAttributeValue("id");
 				if (taskToDataObject.containsKey(doId)) {
 					for(Task t : taskToDataObject.get(doId)) {
-						parseDataObject(ds, t, p);
+						parseDataObject(ds, t, DATA_OBJECT_DIRECTION.GENERATED, p);
 					}
 				} else if (dataObjectToTask.containsKey(doId)) {
 					for(Task t : dataObjectToTask.get(doId)) {
+						parseDataObject(ds, t, DATA_OBJECT_DIRECTION.REQUIRED, p);
+					}
+					/*for(Task t : dataObjectToTask.get(doId)) {
 						for (FlowObject fo : t.getIncomingObjects()) {
 							Sequence s = p.getSequence(fo, t);
 							parseDataObject(ds, s, p);
 						}
-					}
+					}*/
 				} else {
-					parseDataObject(ds, null, p);
+					parseDataObject(ds, null, null, p);
 				}
 			}
 			progress.inc();
@@ -168,9 +172,11 @@ public class SignavioBPMNImporter extends FileImporter {
 	 * 
 	 * @param dataObjectElement
 	 * @param owner
+	 * @param direction
+	 * @param process
 	 * @return
 	 */
-	private DataObject parseDataObject(Element dataObjectElement, IDataObjectOwner owner, Process process) {
+	private DataObject parseDataObject(Element dataObjectElement, IDataObjectOwner owner, DATA_OBJECT_DIRECTION direction, Process process) {
 		DataObject dataObject = null;
 		String name = dataObjectElement.getAttributeValue("name");
 		Matcher matcherSimple = REGEX_SIMPLE.matcher(name);
@@ -192,7 +198,7 @@ public class SignavioBPMNImporter extends FileImporter {
 		}
 		
 		if (owner != null) {
-			dataObject.setObjectOwner(owner);
+			dataObject.setObjectOwner(owner, direction);
 		}
 		
 		return dataObject;

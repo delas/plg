@@ -9,10 +9,10 @@ import plg.exceptions.InvalidProcessException;
 import plg.model.Process;
 import plg.model.activity.Task;
 import plg.model.data.DataObject;
+import plg.model.data.IDataObjectOwner.DATA_OBJECT_DIRECTION;
 import plg.model.event.EndEvent;
 import plg.model.event.StartEvent;
 import plg.model.gateway.Gateway;
-import plg.model.sequence.Sequence;
 import plg.visualizer.BPMNVisualizer;
 
 public class PlgVisualizerPrototype {
@@ -45,7 +45,7 @@ public class PlgVisualizerPrototype {
 		Task f = p.newTask("f");
 		p.newSequence(start, a);
 		p.newSequence(a, split);
-		Sequence s = p.newSequence(split, b); p.newSequence(b, join);
+		p.newSequence(split, b); p.newSequence(b, join);
 		p.newSequence(split, c); p.newSequence(c, join);
 		p.newSequence(split, d); p.newSequence(d, join);
 		p.newSequence(split, e); p.newSequence(e, join);
@@ -54,8 +54,8 @@ public class PlgVisualizerPrototype {
 		p.newSequence(f, end);
 		
 		new DataObject(p).set("d1", "v1");
-		new DataObject(p, s).set("d2", "v2");
-		new DataObject(p, c).set("d3", "v3");
+		new DataObject(p, b, DATA_OBJECT_DIRECTION.REQUIRED).set("d2", "v2");
+		new DataObject(p, c, DATA_OBJECT_DIRECTION.GENERATED).set("d3", "v3");
 		
 		p.check();
 		return p;

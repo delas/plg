@@ -71,9 +71,6 @@ public class PLGExporter extends FileExporter {
 			for(StartEvent se : model.getStartEvents()) {
 				SXTag seTag = elements.addChildNode("startEvent");
 				seTag.addAttribute("id", se.getId());
-				for (DataObject d : se.getDataObjects()) {
-					seTag.addChildNode("dataObject").addAttribute("id", d.getId());
-				}
 			}
 			Logger.instance().debug("Dumped start events");
 			progress.inc();
@@ -82,7 +79,9 @@ public class PLGExporter extends FileExporter {
 				tTag.addAttribute("id", t.getId());
 				tTag.addAttribute("name", t.getName());
 				for (DataObject d : t.getDataObjects()) {
-					tTag.addChildNode("dataObject").addAttribute("id", d.getId());
+					SXTag dObj = tTag.addChildNode("dataObject");
+					dObj.addAttribute("id", d.getId());
+					dObj.addAttribute("direction", d.getDirectionOwner().toString());
 				}
 				SXTag script = tTag.addChildNode("script");
 				if (t.getActivityScript() != null) {
@@ -99,18 +98,12 @@ public class PLGExporter extends FileExporter {
 				} else if (g instanceof ParallelGateway) {
 					gTag.addAttribute("type", "ParallelGateway");
 				}
-				for (DataObject d : g.getDataObjects()) {
-					gTag.addChildNode("dataObject").addAttribute("id", d.getId());
-				}
 			}
 			Logger.instance().debug("Dumped gateways");
 			progress.inc();
 			for(EndEvent ee : model.getEndEvents()) {
 				SXTag eeTag = elements.addChildNode("endEvent");
 				eeTag.addAttribute("id", ee.getId());
-				for (DataObject d : ee.getDataObjects()) {
-					eeTag.addChildNode("dataObject").addAttribute("id", d.getId());
-				}
 			}
 			Logger.instance().debug("Dumped end events");
 			progress.inc();
@@ -119,9 +112,6 @@ public class PLGExporter extends FileExporter {
 				sTag.addAttribute("id", s.getId());
 				sTag.addAttribute("sourceRef", s.getSource().getId());
 				sTag.addAttribute("targetRef", s.getSink().getId());
-				for (DataObject d : s.getDataObjects()) {
-					sTag.addChildNode("dataObject").addAttribute("id", d.getId());
-				}
 			}
 			Logger.instance().debug("Dumped sequences");
 			progress.inc();

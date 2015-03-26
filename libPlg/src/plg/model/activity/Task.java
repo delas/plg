@@ -11,11 +11,15 @@ import plg.model.Process;
  */
 public class Task extends Activity {
 
-	/** Name of the Python function that generate the duration of the activity,
-	 * in seconds */
+	/**
+	 * Name of the Python function that generate the duration of the activity,
+	 * in seconds
+	 */
 	private static final String FUNCTION_DURATION = "time_lasted";
-	/** Name of the Python function that generate the waiting time after the
-	 * activity execution, in seconds */
+	/**
+	 * Name of the Python function that generate the waiting time after the
+	 * activity execution, in seconds
+	 */
 	private static final String FUNCTION_TIME_AFTER = "time_after";
 	
 	private String name;

@@ -1,14 +1,9 @@
 package plg.model.sequence;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import plg.exceptions.IllegalSequenceException;
 import plg.model.Component;
 import plg.model.FlowObject;
 import plg.model.Process;
-import plg.model.data.DataObject;
-import plg.model.data.IDataObjectOwner;
 import plg.model.event.EndEvent;
 import plg.model.event.StartEvent;
 
@@ -19,11 +14,10 @@ import plg.model.event.StartEvent;
  * <a href="http://www.omg.org/cgi-bin/doc?formal/11-01-03.pdf">BPMN 2.0
  * standard definition</a> for the list of the allowed connection types
  */
-public class Sequence extends Component implements IDataObjectOwner {
+public class Sequence extends Component {
 
 	private FlowObject source;
 	private FlowObject sink;
-	private Set<DataObject> dataObjects;
 	
 	/**
 	 * This constructor creates a new sequence connection and register it to the
@@ -48,7 +42,6 @@ public class Sequence extends Component implements IDataObjectOwner {
 			setSource(source);
 			setSink(sink);
 		}
-		this.dataObjects = new HashSet<DataObject>();
 	}
 	
 	/**
@@ -101,25 +94,6 @@ public class Sequence extends Component implements IDataObjectOwner {
 			source.addOutgoing(sink);
 			sink.addIncomingObject(source);
 		}
-	}
-	
-	@Override
-	public void addDataObject(DataObject data) {
-		if (!dataObjects.contains(data)) {
-			dataObjects.add(data);
-		}
-	}
-	
-	@Override
-	public void removeDataObject(DataObject data) {
-		if (dataObjects.contains(data)) {
-			dataObjects.remove(data);
-		}
-	}
-	
-	@Override
-	public Set<DataObject> getDataObjects() {
-		return dataObjects;
 	}
 	
 	@Override

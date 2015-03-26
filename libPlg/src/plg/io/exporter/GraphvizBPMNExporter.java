@@ -11,6 +11,7 @@ import plg.generator.IProgressVisualizer;
 import plg.model.Process;
 import plg.model.activity.Task;
 import plg.model.data.DataObject;
+import plg.model.data.IDataObjectOwner.DATA_OBJECT_DIRECTION;
 import plg.model.data.IntegerDataObject;
 import plg.model.data.StringDataObject;
 import plg.model.event.EndEvent;
@@ -222,9 +223,9 @@ digraph G {
 		buffer = "";
 		for(DataObject o : model.getDataObjects()) {
 			if (o.getObjectOwner() != null) {
-				if (o.getObjectOwner() instanceof Sequence) { 
+				if (o.getDirectionOwner() == DATA_OBJECT_DIRECTION.REQUIRED) {
 					String left = "c_" + o.getId();
-					String right = "c_" + ((Sequence) o.getObjectOwner()).getSink().getId();
+					String right = "c_" + o.getObjectOwner().getId();
 					buffer +=  "\t" + left + " -> " + right + ";\n";
 				} else {
 					String left = "c_" + o.getObjectOwner().getId();

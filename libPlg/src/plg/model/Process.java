@@ -13,6 +13,7 @@ import plg.model.activity.Task;
 import plg.model.data.DataObject;
 import plg.model.data.IntegerDataObject;
 import plg.model.data.StringDataObject;
+import plg.model.data.IDataObjectOwner.DATA_OBJECT_DIRECTION;
 import plg.model.event.EndEvent;
 import plg.model.event.StartEvent;
 import plg.model.gateway.ExclusiveGateway;
@@ -490,29 +491,8 @@ public class Process {
 			if (t.getActivityScript() != null) {
 				c.setActivityScript(new IntegerScriptExecutor(t.getActivityScript().getScript()));
 			}
-			for (DataObject d : t.getDataObjects()) {
-				DataObject newDataObject = null;
-				if (d instanceof IntegerDataObject) {
-					newDataObject = new IntegerDataObject(p, new IntegerScriptExecutor(((IntegerDataObject) d).getScriptExecutor().getScript()));
-				} else if (d instanceof StringDataObject) {
-					newDataObject = new StringDataObject(p, new StringScriptExecutor(((StringDataObject) d).getScriptExecutor().getScript()));
-				} else {
-					newDataObject = new DataObject(p);
-				}
-				newDataObject.setComponentId(d.componentId);
-				newDataObject.setName(d.getName());
-				newDataObject.setValue(d.getValue());
-				newDataObject.setObjectOwner(c);
-			}
-		}
-		for (Sequence s : getSequences()) {
-			try {
-				FlowObject newSource = (FlowObject) p.searchComponent(s.getSource().getId());
-				FlowObject newSink = (FlowObject) p.searchComponent(s.getSink().getId());
-				Sequence newSequence = p.newSequence(newSource, newSink);
-				newSequence.setComponentId(s.componentId);
-				
-				for (DataObject d : s.getDataObjects()) {
+			for (DATA_OBJECT_DIRECTION direction : DATA_OBJECT_DIRECTION.values()) {
+				for (DataObject d : t.getDataObjects(direction)) {
 					DataObject newDataObject = null;
 					if (d instanceof IntegerDataObject) {
 						newDataObject = new IntegerDataObject(p, new IntegerScriptExecutor(((IntegerDataObject) d).getScriptExecutor().getScript()));
@@ -524,8 +504,16 @@ public class Process {
 					newDataObject.setComponentId(d.componentId);
 					newDataObject.setName(d.getName());
 					newDataObject.setValue(d.getValue());
-					newDataObject.setObjectOwner(newSequence);
+					newDataObject.setObjectOwner(c, direction);
 				}
+			}
+		}
+		for (Sequence s : getSequences()) {
+			try {
+				FlowObject newSource = (FlowObject) p.searchComponent(s.getSource().getId());
+				FlowObject newSink = (FlowObject) p.searchComponent(s.getSink().getId());
+				Sequence newSequence = p.newSequence(newSource, newSink);
+				newSequence.setComponentId(s.componentId);
 			} catch (IllegalSequenceException e) {
 				e.printStackTrace();
 			}

@@ -3,6 +3,7 @@ package plg.model.data;
 import plg.exceptions.InvalidScript;
 import plg.generator.scriptexecuter.ScriptExecutor;
 import plg.model.Process;
+import plg.model.data.IDataObjectOwner.DATA_OBJECT_DIRECTION;
 
 /**
  * This class describes a data object that can be associated to any flow object,
@@ -23,9 +24,10 @@ public abstract class GeneratedDataObject extends DataObject implements INoiseSe
 	 * @param objectOwner the process owner of this data object
 	 * @param generateInstance manually decide whether the instance value
 	 * should be generated or not
+	 * @param direction the direction of the data object
 	 */
-	protected GeneratedDataObject(Process processOwner, IDataObjectOwner objectOwner) {
-		super(processOwner, objectOwner);
+	protected GeneratedDataObject(Process processOwner, IDataObjectOwner objectOwner, DATA_OBJECT_DIRECTION direction) {
+		super(processOwner, objectOwner, direction);
 	}
 	
 	/**
@@ -37,7 +39,7 @@ public abstract class GeneratedDataObject extends DataObject implements INoiseSe
 	 * should be generated or not
 	 */
 	protected GeneratedDataObject(Process processOwner) {
-		this(processOwner, null);
+		this(processOwner, null, null);
 	}
 
 	/**

@@ -20,6 +20,7 @@ import plg.model.Process;
 import plg.model.activity.Task;
 import plg.model.data.DataObject;
 import plg.model.data.GeneratedDataObject;
+import plg.model.data.IDataObjectOwner.DATA_OBJECT_DIRECTION;
 import plg.model.data.IntegerDataObject;
 import plg.model.data.StringDataObject;
 import plg.model.event.StartEvent;
@@ -141,7 +142,7 @@ class TraceGenerator extends ThreadWithException<XTrace> {
 			observationsCounter.put(source, 1);
 		}
 		
-		// different behavior depending of the elment type
+		// different behavior depending of the element type
 		if (object instanceof Task ||
 			object instanceof ExclusiveGateway ||
 			object instanceof StartEvent) {
@@ -169,9 +170,9 @@ class TraceGenerator extends ThreadWithException<XTrace> {
 			// outgoing element selection and token population
 			FlowObject next = SetUtils.getRandomWeighted(outgoing);
 			if (next instanceof Task) {
-				Sequence s = object.getOwner().getSequence(object, next);
-				if (s.getDataObjects().size() > 0) {
-					recordEventAttributes(trace, s.getDataObjects(), trace.get(trace.size() - 1));
+				Set<DataObject> dataObjs = ((Task) next).getDataObjects(DATA_OBJECT_DIRECTION.REQUIRED);
+				if (dataObjs.size() > 0) {
+					recordEventAttributes(trace, dataObjs, trace.get(trace.size() - 1));
 				}
 			}
 			Sequence sequenceToNext = process.getSequence(object, next);
@@ -261,8 +262,8 @@ class TraceGenerator extends ThreadWithException<XTrace> {
 				XLifecycleExtension.instance().assignStandardTransition(event_start, StandardModel.START);
 				XLifecycleExtension.instance().assignStandardTransition(event_complete, StandardModel.COMPLETE);
 			}
-			
-			recordEventAttributes(trace, object.getDataObjects(), event_start, event_complete);
+			Set<DataObject> dataObjs = t.getDataObjects(DATA_OBJECT_DIRECTION.GENERATED);
+			recordEventAttributes(trace, dataObjs, event_start, event_complete);
 			return duration + (t.getTimeAfter(caseId) * 1000);
 		}
 		

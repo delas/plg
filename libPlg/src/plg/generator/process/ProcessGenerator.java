@@ -7,11 +7,14 @@ import plg.generator.process.RandomizationConfiguration.RANDOMIZATION_PATTERN;
 import plg.model.Process;
 import plg.model.activity.Task;
 import plg.model.data.DataObject;
+import plg.model.data.IDataObjectOwner;
+import plg.model.data.IDataObjectOwner.DATA_OBJECT_DIRECTION;
 import plg.model.event.EndEvent;
 import plg.model.event.Event;
 import plg.model.event.StartEvent;
 import plg.model.gateway.Gateway;
 import plg.utils.Logger;
+import plg.utils.SetUtils;
 
 /**
  * This class contains the random generator of processes. Actually, this class
@@ -143,7 +146,7 @@ public class ProcessGenerator {
 		Logger.instance().debug("New activity created (`" + activityName + "')");
 		Task t = process.newTask(activityName);
 		if (parameters.generateDataObject()) {
-			newDataObject().setObjectOwner(t);
+			newDataObject().setObjectOwner(t, SetUtils.getRandom(DATA_OBJECT_DIRECTION.values()));
 		}
 		return new PatternFrame(t);
 	}
@@ -223,8 +226,8 @@ public class ProcessGenerator {
 		for(int i = 0; i < branchesToGenerate; i++) {
 			PatternFrame p = newInternalPattern(currentDepth, loopAllowed, canSkip);
 			PatternFrame.connect(split, p).connect(join);
-			if (parameters.generateDataObject()) {
-				newDataObject().setObjectOwner(process.getSequence(split, p.getLeftBound()));
+			if (parameters.generateDataObject() && p.getLeftBound() instanceof IDataObjectOwner) {
+				newDataObject().setObjectOwner((IDataObjectOwner) p.getLeftBound(), DATA_OBJECT_DIRECTION.REQUIRED);
 			}
 		}
 		

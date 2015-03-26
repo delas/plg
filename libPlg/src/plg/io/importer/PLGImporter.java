@@ -20,7 +20,7 @@ import plg.model.FlowObject;
 import plg.model.Process;
 import plg.model.activity.Task;
 import plg.model.data.DataObject;
-import plg.model.data.IDataObjectOwner;
+import plg.model.data.IDataObjectOwner.DATA_OBJECT_DIRECTION;
 import plg.model.data.IntegerDataObject;
 import plg.model.data.StringDataObject;
 import plg.model.event.EndEvent;
@@ -130,17 +130,11 @@ public class PLGImporter extends FileImporter {
 		for (Element ss : elements.getChildren("startEvent")) {
 			StartEvent s = p.newStartEvent();
 			s.setComponentId(ss.getAttribute("id").getIntValue());
-			for (Element dos : ss.getChildren("dataObject")) {
-				s.addDataObject((DataObject) p.searchComponent(dos.getAttributeValue("id")));
-			}
 		}
 		// end events
 		for (Element ss : elements.getChildren("endEvent")) {
 			EndEvent e = p.newEndEvent();
 			e.setComponentId(ss.getAttribute("id").getIntValue());
-			for (Element dos : ss.getChildren("dataObject")) {
-				e.addDataObject((DataObject) p.searchComponent(dos.getAttributeValue("id")));
-			}
 		}
 		// tasks
 		for (Element ss : elements.getChildren("task")) {
@@ -150,7 +144,8 @@ public class PLGImporter extends FileImporter {
 			IntegerScriptExecutor executor = new IntegerScriptExecutor(script);
 			t.setActivityScript(executor);
 			for (Element dos : ss.getChildren("dataObject")) {
-				t.addDataObject((DataObject) p.searchComponent(dos.getAttributeValue("id")));
+				DATA_OBJECT_DIRECTION direction = DATA_OBJECT_DIRECTION.valueOf(dos.getAttributeValue("direction"));
+				t.addDataObject((DataObject) p.searchComponent(dos.getAttributeValue("id")), direction);
 			}
 		}
 		// gateways
@@ -162,9 +157,6 @@ public class PLGImporter extends FileImporter {
 				g = p.newParallelGateway();
 			}
 			g.setComponentId(ss.getAttribute("id").getIntValue());
-			for (Element dos : ss.getChildren("dataObject")) {
-				g.addDataObject((DataObject) p.searchComponent(dos.getAttributeValue("id")));
-			}
 		}
 		// sequences
 		for (Element ss : elements.getChildren("sequenceFlow")) {
@@ -173,19 +165,8 @@ public class PLGImporter extends FileImporter {
 						(FlowObject) p.searchComponent(ss.getAttributeValue("sourceRef")),
 						(FlowObject) p.searchComponent(ss.getAttributeValue("targetRef")));
 				s.setComponentId(ss.getAttribute("id").getIntValue());
-				for (Element dos : ss.getChildren("dataObject")) {
-					s.addDataObject((DataObject) p.searchComponent(dos.getAttributeValue("id")));
-				}
 			} catch (IllegalSequenceException e) {
 				e.printStackTrace();
-			}
-		}
-		// data objects owner
-		for (Element ss : elements.getChildren("dataObject")) {
-			DataObject d = (DataObject) p.searchComponent(ss.getAttributeValue("id"));
-			String owner = ss.getAttributeValue("owner");
-			if (owner != null) {
-				d.setObjectOwner((IDataObjectOwner) p.searchComponent(owner));
 			}
 		}
 	

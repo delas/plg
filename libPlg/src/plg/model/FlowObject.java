@@ -3,8 +3,6 @@ package plg.model;
 import java.util.HashSet;
 import java.util.Set;
 
-import plg.model.data.DataObject;
-import plg.model.data.IDataObjectOwner;
 import plg.model.event.EndEvent;
 import plg.model.sequence.Sequence;
 
@@ -18,9 +16,8 @@ import plg.model.sequence.Sequence;
  * 
  * @author Andrea Burattin
  */
-public abstract class FlowObject extends Component implements IDataObjectOwner {
+public abstract class FlowObject extends Component {
 
-	private Set<DataObject> dataObjects;
 	private Set<FlowObject> incoming;
 	private Set<FlowObject> outgoing;
 	
@@ -31,7 +28,6 @@ public abstract class FlowObject extends Component implements IDataObjectOwner {
 	 */
 	public FlowObject(Process owner) {
 		super(owner);
-		this.dataObjects = new HashSet<DataObject>();
 		this.incoming = new HashSet<FlowObject>();
 		this.outgoing = new HashSet<FlowObject>();
 	}
@@ -143,24 +139,5 @@ public abstract class FlowObject extends Component implements IDataObjectOwner {
 			}
 		}
 		return false;
-	}
-	
-	@Override
-	public void addDataObject(DataObject data) {
-		if (!dataObjects.contains(data)) {
-			dataObjects.add(data);
-		}
-	}
-	
-	@Override
-	public void removeDataObject(DataObject data) {
-		if (dataObjects.contains(data)) {
-			dataObjects.remove(data);
-		}
-	}
-	
-	@Override
-	public Set<DataObject> getDataObjects() {
-		return dataObjects;
 	}
 }

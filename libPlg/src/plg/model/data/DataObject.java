@@ -2,6 +2,7 @@ package plg.model.data;
 
 import plg.model.Component;
 import plg.model.Process;
+import plg.model.data.IDataObjectOwner.DATA_OBJECT_DIRECTION;
 
 /**
  * This class describes a general data object. Each data object must be
@@ -12,6 +13,7 @@ import plg.model.Process;
 public class DataObject extends Component implements IDataObject {
 
 	private IDataObjectOwner objectOwner;
+	private DATA_OBJECT_DIRECTION ownerDirection;
 	private String name;
 	private Object value;
 	
@@ -22,7 +24,7 @@ public class DataObject extends Component implements IDataObject {
 	 * @param processOwner the process owner of this data object
 	 */
 	public DataObject(Process processOwner) {
-		this(processOwner, null);
+		this(processOwner, null, null);
 	}
 	
 	/**
@@ -31,11 +33,12 @@ public class DataObject extends Component implements IDataObject {
 	 * 
 	 * @param processOwner the process owner of this data object
 	 * @param objectOwner the flow object owner of this data object
+	 * @param direction the direction of the data object
 	 */
-	public DataObject(Process processOwner, IDataObjectOwner objectOwner) {
+	public DataObject(Process processOwner, IDataObjectOwner objectOwner, DATA_OBJECT_DIRECTION direction) {
 		super(processOwner);
 		if (objectOwner != null) {
-			setObjectOwner(objectOwner);
+			setObjectOwner(objectOwner, direction);
 		}
 	}
 	
@@ -86,6 +89,15 @@ public class DataObject extends Component implements IDataObject {
 	public IDataObjectOwner getObjectOwner() {
 		return objectOwner;
 	}
+	
+	/**
+	 * This method returns the data object direction at the owner side
+	 * 
+	 * @return the direction of the data object
+	 */
+	public DATA_OBJECT_DIRECTION getDirectionOwner() {
+		return ownerDirection;
+	}
 
 	/**
 	 * This method returns the object owner of the data object
@@ -100,13 +112,16 @@ public class DataObject extends Component implements IDataObject {
 	 * This method sets the object owner of the data object
 	 * 
 	 * @param objectOwner the object owner to set
+	 * @param direction the direction of the data object
 	 */
-	public void setObjectOwner(IDataObjectOwner objectOwner) {
-		if (this.objectOwner != null) {
+	public void setObjectOwner(IDataObjectOwner objectOwner, DATA_OBJECT_DIRECTION direction) {
+		// why i added this recursive call? mmmm... :/
+		/*if (this.objectOwner != null) {
 			this.objectOwner.removeDataObject(this);
-		}
+		}*/
 		this.objectOwner = objectOwner;
-		this.objectOwner.addDataObject(this);
+		this.ownerDirection = direction;
+		this.objectOwner.addDataObject(this, direction);
 	}
 	
 	@Override
