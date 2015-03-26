@@ -316,19 +316,43 @@ public class BPMNVisualizer extends JPanel {
 			dataObjActivity.add(objMenu);
 			added = true;
 		}
-		JMenuItem addDataObjActivity = new JMenuItem("New...", ImagesCollection.ICON_DATA_OBJ_NEW);
-		addDataObjActivity.addActionListener(new ActionListener() {
+		
+		JMenuItem addDataObjPlain = new JMenuItem("Plain data object");
+		JMenuItem addDataObjScriptInteger = new JMenuItem("Script data object (integer)");
+		JMenuItem addDataObjScriptString = new JMenuItem("Script data object (string)");
+		addDataObjPlain.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				for (DataObjectListener l : dataObjectListeners) {
-					l.addActivityDataObjects(task);
+					l.addDataObjects(task, DATA_OBJECT_DIRECTION.GENERATED, DataObject.class);
+				}
+			}
+		});
+		addDataObjScriptInteger.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				for (DataObjectListener l : dataObjectListeners) {
+					l.addDataObjects(task, DATA_OBJECT_DIRECTION.GENERATED, IntegerDataObject.class);
+				}
+			}
+		});
+		addDataObjScriptString.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				for (DataObjectListener l : dataObjectListeners) {
+					l.addDataObjects(task, DATA_OBJECT_DIRECTION.GENERATED, StringDataObject.class);
 				}
 			}
 		});
 		if (added) {
 			dataObjActivity.addSeparator();
 		}
-		dataObjActivity.add(addDataObjActivity);
+		JMenu addDataObjMenu = new JMenu("New...");
+		addDataObjMenu.setIcon(ImagesCollection.ICON_DATA_OBJ_NEW);
+		addDataObjMenu.add(addDataObjPlain);
+		addDataObjMenu.add(addDataObjScriptString);
+		addDataObjMenu.add(addDataObjScriptInteger);
+		dataObjActivity.add(addDataObjMenu);
 		
 		// incoming data objects
 		JMenu dataObjIncoming = new JMenu("Required Data Object");
@@ -362,19 +386,43 @@ public class BPMNVisualizer extends JPanel {
 			dataObjIncoming.add(objMenu);
 			added = true;
 		}
-		JMenuItem addIncomingDataObjActivity = new JMenuItem("New...", ImagesCollection.ICON_DATA_OBJ_NEW);
-		addIncomingDataObjActivity.addActionListener(new ActionListener() {
+		
+		JMenuItem addIncomingDataObjPlain = new JMenuItem("Plain data object");
+		JMenuItem addIncomingDataObjScriptInteger = new JMenuItem("Script data object (integer)");
+		JMenuItem addIncomingDataObjScriptString = new JMenuItem("Script data object (string)");
+		addIncomingDataObjPlain.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				for (DataObjectListener l : dataObjectListeners) {
-					l.addIncomingDataObjects(task);
+					l.addDataObjects(task, DATA_OBJECT_DIRECTION.REQUIRED, DataObject.class);
+				}
+			}
+		});
+		addIncomingDataObjScriptInteger.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				for (DataObjectListener l : dataObjectListeners) {
+					l.addDataObjects(task, DATA_OBJECT_DIRECTION.REQUIRED, IntegerDataObject.class);
+				}
+			}
+		});
+		addIncomingDataObjScriptString.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				for (DataObjectListener l : dataObjectListeners) {
+					l.addDataObjects(task, DATA_OBJECT_DIRECTION.REQUIRED, StringDataObject.class);
 				}
 			}
 		});
 		if (added) {
 			dataObjIncoming.addSeparator();
 		}
-		dataObjIncoming.add(addIncomingDataObjActivity);
+		JMenu addIncomingDataObjMenu = new JMenu("New...");
+		addIncomingDataObjMenu.setIcon(ImagesCollection.ICON_DATA_OBJ_NEW);
+		addIncomingDataObjMenu.add(addIncomingDataObjPlain);
+		addIncomingDataObjMenu.add(addIncomingDataObjScriptString);
+		addIncomingDataObjMenu.add(addIncomingDataObjScriptInteger);
+		dataObjIncoming.add(addIncomingDataObjMenu);
 		
 		// time menus
 		JMenuItem duration = new JMenuItem("Activity time", ImagesCollection.ICON_TIME);
