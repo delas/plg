@@ -115,11 +115,11 @@ public class PLGImporter extends FileImporter {
 				d = new DataObject(p);
 				d.setValue(ss.getAttributeValue("value"));
 			} else if (type.equals("StringDataObject")) {
-				String script = ss.getChildText("script");
+				String script = ss.getChildText("script").trim();
 				StringScriptExecutor executor = new StringScriptExecutor(script);
 				d = new StringDataObject(p, executor);
 			} else if (type.equals("IntegerDataObject")) {
-				String script = ss.getChildText("script");
+				String script = ss.getChildText("script").trim();
 				IntegerScriptExecutor executor = new IntegerScriptExecutor(script);
 				d = new IntegerDataObject(p, executor);
 			}
@@ -146,7 +146,7 @@ public class PLGImporter extends FileImporter {
 		for (Element ss : elements.getChildren("task")) {
 			Task t = p.newTask(ss.getAttributeValue("name"));
 			t.setComponentId(ss.getAttribute("id").getIntValue());
-			String script = ss.getChildText("script");
+			String script = ss.getChildText("script").trim();
 			IntegerScriptExecutor executor = new IntegerScriptExecutor(script);
 			t.setActivityScript(executor);
 			for (Element dos : ss.getChildren("dataObject")) {
