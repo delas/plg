@@ -49,11 +49,13 @@ public abstract class GeneralDialog extends JDialog {
 	protected static int WIDTH = 615;
 	protected static int HEIGHT = 500;
 	
+	protected boolean isBodyScrollable;
 	protected ConfigurationSet configuration = null;
 	protected RETURNED_VALUES returnedValue = RETURNED_VALUES.CANCEL;
 	
 	protected JPanel titlePanel;
 	protected JPanel bodyPanel;
+	protected JScrollPane bodyPanelScroller;
 	protected JPanel bodyPanelContainer;
 	protected JPanel footerPanel;
 	protected JPanel footerButtonsPanel;
@@ -79,10 +81,12 @@ public abstract class GeneralDialog extends JDialog {
 	 * @param title the title of the dialog
 	 * @param help a short text describing the dialog content
 	 * @param configuration the configuration set to use for the dialog
+	 * @param isBodyScrollable whether the dialog body is scrollable or not
 	 */
-	public GeneralDialog(JFrame owner, String title, String help, ConfigurationSet configuration) {
+	public GeneralDialog(JFrame owner, String title, String help, ConfigurationSet configuration, boolean isBodyScrollable) {
 		super(owner);
 		
+		this.isBodyScrollable = isBodyScrollable;
 		this.title = title;
 		this.help = help;
 		this.configuration = configuration;
@@ -106,6 +110,18 @@ public abstract class GeneralDialog extends JDialog {
 						GeneralDialog.this.dispatchEvent(new WindowEvent(GeneralDialog.this, WindowEvent.WINDOW_CLOSING));
 					}
 				});
+	}
+	
+	/**
+	 * Dialog constructor
+	 * 
+	 * @param owner the owner of the dialog
+	 * @param title the title of the dialog
+	 * @param help a short text describing the dialog content
+	 * @param configuration the configuration set to use for the dialog
+	 */
+	public GeneralDialog(JFrame owner, String title, String help, ConfigurationSet configuration) {
+		this(owner, title, help, configuration, true);
 	}
 	
 	/**
@@ -151,12 +167,9 @@ public abstract class GeneralDialog extends JDialog {
 		c.weightx = 1;
 		c.weighty = 1;
 		c.anchor = GridBagConstraints.NORTHWEST;
-		c.fill = GridBagConstraints.HORIZONTAL;
+		c.fill = GridBagConstraints.BOTH;
 		c.insets = new Insets(15, 5, 15, 5);
 		bodyPanelContainer.add(bodyPanel, c);
-		
-		JScrollPane bodyPanelScroller = new JScrollPane(bodyPanelContainer);
-		bodyPanelScroller.setBorder(BorderFactory.createEmptyBorder());
 		
 		// footer
 		cancelButton = new JButton("Cancel");
@@ -181,7 +194,14 @@ public abstract class GeneralDialog extends JDialog {
 		// add everything
 		setLayout(new BorderLayout());
 		add(titlePanel, BorderLayout.NORTH);
-		add(bodyPanelScroller, BorderLayout.CENTER);
+		
+		if (isBodyScrollable) {
+			bodyPanelScroller = new JScrollPane(bodyPanelContainer);
+			bodyPanelScroller.setBorder(BorderFactory.createEmptyBorder());
+			add(bodyPanelScroller, BorderLayout.CENTER);
+		} else {
+			add(bodyPanelContainer, BorderLayout.CENTER);
+		}
 		add(footerPanel, BorderLayout.SOUTH);
 	}
 	

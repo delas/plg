@@ -2,6 +2,7 @@ package plg.generator.scriptexecuter;
 
 import org.python.core.PyObject;
 import org.python.core.PyString;
+import org.python.core.PySyntaxError;
 import org.python.util.PythonInterpreter;
 
 import plg.exceptions.InvalidScript;
@@ -63,13 +64,13 @@ public abstract class ScriptExecutor {
 	public void execute(String functionName, String arg) throws InvalidScript {
 		try {
 			interpreter.exec(script);
-		} catch (Exception e) {
-			throw new InvalidScript(e.getMessage());
+		} catch (PySyntaxError e) {
+			throw new InvalidScript(e.getMessage(), e.toString());
 		}
 		PyObject generator = interpreter.get(functionName);
 		if (generator == null) {
 			throw new InvalidScript("The script provided does not contain a " +
-					"required `" + functionName + "(str)' function.");
+					"required `" + functionName + "(str)' function.", script);
 		}
 		result = generator.__call__(new PyString(arg));
 	}
