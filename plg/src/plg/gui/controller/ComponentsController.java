@@ -66,7 +66,7 @@ public class ComponentsController {
 	public void addDataObject(Activity activity, DATA_OBJECT_DIRECTION direction, Class<?> type) {
 		Process owner = activity.getOwner();
 		String candidateName = String.format(
-				ProcessGenerator.DATA_OBJECT_NAME_PATTERN,
+				"variable_%s",
 				ProcessGenerator.numberToAlpha(owner.getDataObjects().size() + 1).toLowerCase());
 		DataObject newDataObject = null;
 		

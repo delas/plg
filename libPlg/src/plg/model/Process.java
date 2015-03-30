@@ -245,6 +245,9 @@ public class Process {
 			endEvents.remove((EndEvent) component);
 			valid = false;
 		} else if (component instanceof Task) {
+			for (DataObject dObj : ((Task) component).getDataObjects()) {
+				removeComponent(dObj);
+			}
 			tasks.remove((Task) component);
 			valid = false;
 		} else if (component instanceof Sequence) {

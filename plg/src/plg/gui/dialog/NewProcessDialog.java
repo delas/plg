@@ -64,7 +64,7 @@ public class NewProcessDialog extends GeneralDialog {
 		super(owner,title, help, configuration);
 		
 		// creates widgets
-		nameField = new JTextField();
+		nameField = new JTextField(candidateProcessName);
 		depthSpinner = new JSpinner(new SpinnerNumberModel(
 				configuration.getInteger(KEY_MAX_DEPTH, DEFAULTS.getMaximumDepth()), 1, 20, 1));
 		sequenceWeightSlider = new JSlider(0, 100,
@@ -148,7 +148,6 @@ public class NewProcessDialog extends GeneralDialog {
 		addFooterButton(okButton, true);
 		
 		// new process name
-		nameField.setText(candidateProcessName);
 		bodyPanel.add(prepareFieldLabel("New process name"));
 		bodyPanel.add(nameField);
 		insertBodySeparator(10);
