@@ -43,15 +43,15 @@ public class GraphvizBPMNExporter extends FileExporter {
 	 */
 	/**
 digraph G {
-	graph [splines=ortho, nodesep="0.5"];
-	rankdir=LR;
+	graph [splines="ortho", nodesep="0.5"];
+	rankdir="LR";
 	
 	// start events
 	node [
 		label="",
-		shape=circle,
+		shape="circle",
 		width="0.3",
-		style=filled,
+		style="filled",
 		fillcolor="#5dbd5a:#bafcc2",
 		gradientangle=270,
 		color="#20962f",
@@ -65,9 +65,9 @@ digraph G {
 	// end events
 	node [
 		label="",
-		shape=circle,
+		shape="circle",
 		width="0.3",
-		style=filled,
+		style="filled",
 		fillcolor="#e46e60:#ffc5c1",
 		gradientangle=270,
 		color="#630000",
@@ -80,7 +80,7 @@ digraph G {
 
 	// activities
 	node [
-		shape=box,
+		shape="box",
 		style="filled",
 		fillcolor="#cedeef:#ffffff",
 		gradientangle=270,
@@ -95,8 +95,8 @@ digraph G {
 
 	// data objects
 	node [
-		shape=note,
-		fontsize="10",
+		shape="note",
+		fontsize=10,
 		width="0.5",
 		height="0.5",
 		style="filled",
@@ -109,11 +109,11 @@ digraph G {
 	
 	// gateways
 	node [
-		shape=diamond,
-		fixedsize=true,
+		shape="diamond",
+		fixedsize="true",
 		width="0.5",
 		height="0.5",
-		fontsize="20.0",
+		fontsize=20,
 		style="filled",
 		fillcolor="#ffff84:#ffffbd",
 		gradientangle=270,
@@ -204,7 +204,7 @@ digraph G {
 			} else if (o instanceof IntegerDataObject) {
 				buffer += "\tc_" + o.getId() + " [label=\"" + o.getName() + " (integer)\"];\n";
 			} else {
-				buffer += "\tc_" + o.getId() + " [label=\"" + o.getName() + " = \\\""+ o.getValue() +"\\\"\"];\n";
+				buffer += "\tc_" + o.getId() + " [label=\"" + o.getName() + " = "+ o.getValue() +"\"];\n";
 			}
 		}
 		basic = basic.replace("### DATAOBJECTS ###", buffer);
