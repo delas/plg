@@ -47,7 +47,6 @@ import java.io.File;
  */
 public class RuntimeUtils {
 	
-	
 	/**
 	 * Enum for defining host platforms.
 	 * 
