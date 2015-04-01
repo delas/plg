@@ -9,7 +9,6 @@ import plg.model.FlowObject;
 import plg.model.Process;
 import plg.model.activity.Task;
 import plg.utils.Logger;
-import plg.utils.Random;
 
 /**
  * This class contains the procedures for the evolution of a business process
@@ -30,8 +29,8 @@ public class EvolutionGenerator extends ProcessGenerator {
 	 */
 	protected EvolutionGenerator(Process process, RandomizationConfiguration parameters) {
 		super(process, parameters);
-		generatedActivities = Random.nextInt(process.getTasks().size() * 10, process.getTasks().size() * 100);
-		generatedDataObjects = Random.nextInt(process.getDataObjects().size() * 10, process.getDataObjects().size() * 100);
+		generatedActivities = process.getTasks().size();
+		generatedDataObjects = process.getDataObjects().size();
 	}
 	
 	/**
@@ -102,6 +101,8 @@ public class EvolutionGenerator extends ProcessGenerator {
 		}
 		
 		// check if the new process contains any new stuff
+		// the set of feature contains: the number of tasks, sequences,
+		// gateways, and data objects
 		int[] newProcessFeatures = {
 				process.getTasks().size(),
 				process.getSequences().size(),
@@ -122,6 +123,7 @@ public class EvolutionGenerator extends ProcessGenerator {
 			}
 		}
 		if (match) {
+			// sadly, no new stuff, we have to run through the evolution again
 			return evolveProcess(originalProcess, parameters);
 		} else {
 			return process;

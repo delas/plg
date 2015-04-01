@@ -26,7 +26,7 @@ public class EvolutionDialog extends NewProcessDialog {
 			2, // max XOR branches
 			0.01, // loop weight
 			0.5, // single activity weight
-			0.25, // skip weight
+			0.1, // skip weight
 			0.5, // sequence weight
 			0.01, // AND weight
 			0.01, // XOR weight

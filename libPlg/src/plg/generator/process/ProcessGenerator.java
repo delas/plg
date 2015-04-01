@@ -271,7 +271,24 @@ public class ProcessGenerator {
 	 */
 	protected String askNewActivityName() {
 		generatedActivities++;
-		return String.format(ACTIVITY_NAME_PATTERN, numberToAlpha(generatedActivities));
+		String candidateActivityName = String.format(ACTIVITY_NAME_PATTERN, numberToAlpha(generatedActivities));
+		
+		// check whether the candidate activity name is already present in the
+		// process
+		boolean activityAlreadyPresent = false;
+		for (Task t : process.getTasks()) {
+			if (t.getName().equals(candidateActivityName)) {
+				activityAlreadyPresent = true;
+				break;
+			}
+		}
+		// if the activity is already there, then generate a new one, otherwise
+		// the candidate activity name is returned
+		if (activityAlreadyPresent) {
+			return askNewActivityName();
+		} else {
+			return candidateActivityName;
+		}
 	}
 	
 	/**
