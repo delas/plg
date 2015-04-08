@@ -51,7 +51,8 @@ public class PlainDataObjectDialog extends GeneralDialog {
 		
 		bodyPanel.add(prepareFieldLabel("Data object value"));
 		bodyPanel.add(valueField);
-		insertBodySeparator(10);
+		
+		insertBodySeparator(300);
 		
 		// layout everything
 		layoutBody();
