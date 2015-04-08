@@ -7,6 +7,10 @@ import java.net.Socket;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.deckfour.xes.model.XTrace;
+import org.processmining.operationalsupport.xml.OSXMLConverter;
+
+import plg.stream.configuration.StreamConfiguration;
 import plg.utils.Pair;
 
 /**
@@ -19,7 +23,9 @@ import plg.utils.Pair;
  */
 public class BroadcastService extends Thread {
 
-	private int port;
+	protected static OSXMLConverter converter = new OSXMLConverter();
+	
+	private StreamConfiguration confiuguration;
 	private ServerSocket socket;
 	private Set<Pair<Socket, OutputStreamWriter>> clients;
 	private boolean running = true;
@@ -27,10 +33,10 @@ public class BroadcastService extends Thread {
 	/**
 	 * Basic broadcast service constructor
 	 * 
-	 * @param port the port for the connections
+	 * @param configuration the stream configuration
 	 */
-	public BroadcastService(int port) {
-		this.port = port;
+	public BroadcastService(StreamConfiguration configuration) {
+		this.confiuguration = configuration;
 		this.clients = new HashSet<Pair<Socket, OutputStreamWriter>>();
 	}
 	
@@ -41,21 +47,9 @@ public class BroadcastService extends Thread {
 	 * @throws IOException socket opening errors (e.g. port already used)
 	 */
 	public void open() throws IOException {
-		socket = new ServerSocket(port);
+		socket = new ServerSocket(confiuguration.servicePort);
 		socket.setSoTimeout(1000);
 		start();
-	}
-	
-	/**
-	 * Method to open the broadcasting service. This method wraps the call to
-	 * the {@link #start()} method.
-	 * 
-	 * @param port the port for the connections
-	 * @throws IOException socket opening errors (e.g. port already used)
-	 */
-	public void open(int port) throws IOException {
-		this.port = port;
-		open();
 	}
 	
 	/**
@@ -107,6 +101,18 @@ public class BroadcastService extends Thread {
 				clients.remove(p);
 			}
 		}
+	}
+	
+	/**
+	 * This method sends an {@link XTrace} to all the clients connected. This
+	 * method can identify if a client is not connected anymore, and remove it
+	 * from the connected clients list. 
+	 * 
+	 * @param trace the trace to send
+	 * @see #send(String)
+	 */
+	public void send(XTrace trace) {
+		send(converter.toXML(trace).replace('\n', ' ') + "\n");
 	}
 	
 	@Override
