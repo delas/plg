@@ -20,22 +20,20 @@ public class ZipHelper {
 	 * <tt>false</tt> otherwise
 	 */
 	public static boolean isValid(final File file) {
+		boolean result = false;
 		ZipFile zipfile = null;
 		try {
 			zipfile = new ZipFile(file);
-			return true;
-		} catch (ZipException e) {
-			return false;
-		} catch (IOException e) {
-			return false;
+			result = true;
+		} catch (Exception e) {
 		} finally {
 			try {
 				if (zipfile != null) {
 					zipfile.close();
 					zipfile = null;
 				}
-			} catch (IOException e) {
-			}
+			} catch (IOException e) { }
 		}
+		return result;
 	}
 }
