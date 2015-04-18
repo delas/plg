@@ -47,7 +47,7 @@ import plg.utils.XLogHelper;
  * @author Andrea Burattin
  * @see SimulationEngine
  */
-class TraceGenerator extends ThreadWithException<XTrace> {
+public class TraceGenerator extends ThreadWithException<XTrace> {
 
 	private Map<Component, Long> componentsObservationTime;
 	private Map<Sequence, Integer> observationsCounter;

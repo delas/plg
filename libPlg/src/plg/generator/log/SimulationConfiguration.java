@@ -18,6 +18,14 @@ public class SimulationConfiguration {
 	private NoiseConfiguration noise;
 	
 	/**
+	 * Basic class constructor. No parameter is required. The simulation
+	 * will generate 1 trace with no noise.
+	 */
+	public SimulationConfiguration() {
+		this(1, NoiseConfiguration.NO_NOISE);
+	}
+	
+	/**
 	 * Basic class constructor. The only required parameter is the number of
 	 * traces to simulate. For all other parameters, standard values are
 	 * available
