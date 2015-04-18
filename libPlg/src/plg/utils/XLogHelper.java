@@ -1,8 +1,10 @@
 package plg.utils;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 
 import org.deckfour.xes.extension.XExtensionManager;
 import org.deckfour.xes.extension.std.XConceptExtension;
@@ -21,6 +23,10 @@ import org.deckfour.xes.model.XAttributeTimestamp;
 import org.deckfour.xes.model.XEvent;
 import org.deckfour.xes.model.XLog;
 import org.deckfour.xes.model.XTrace;
+import org.deckfour.xes.model.buffered.XAttributeMapBufferedImpl;
+import org.deckfour.xes.model.buffered.XAttributeMapSerializerImpl;
+import org.deckfour.xes.model.buffered.XTraceBufferedImpl;
+import org.deckfour.xes.model.impl.XAttributeMapLazyImpl;
 
 /**
  * This class is a helper that can be used to handle XLog objects. It is only
@@ -381,7 +387,7 @@ public class XLogHelper {
 	 * @return the value of the <tt>concept:name</tt> attribute
 	 */
 	public static String getName(XAttributable element) {
-		XAttributeLiteral name = (XAttributeLiteral) element.getAttributes().get("concept:name");
+		XAttributeLiteral name = (XAttributeLiteral) element.getAttributes().get(XConceptExtension.KEY_NAME);
 		return name.getValue();
 	}
 	
@@ -393,8 +399,23 @@ public class XLogHelper {
 	 * @return the value of the <tt>time:timestamp</tt> attribute
 	 */
 	public static Date getTimestamp(XAttributable element) {
-		XAttributeTimestamp time = (XAttributeTimestamp) element.getAttributes().get("time:timestamp");
+		XAttributeTimestamp time = (XAttributeTimestamp) element.getAttributes().get(XTimeExtension.KEY_TIMESTAMP);
 		return time.getValue();
+	}
+	
+	/**
+	 * This method sets the value of the attribute <tt>time:timestamp</tt>
+	 * for the given attributable element
+	 * 
+	 * @param element the element to update
+	 * @param date the new value of the <tt>time:timestamp</tt> attribute
+	 */
+	public static void setTimestamp(XAttributable element, Date date) {
+		XAttributeMap am = element.getAttributes();
+		am.remove(XTimeExtension.KEY_TIMESTAMP);
+		element.setAttributes(am);
+		
+		decorateElement(element, XTimeExtension.KEY_TIMESTAMP, date);
 	}
 	
 	/**
@@ -430,5 +451,29 @@ public class XLogHelper {
 		}
 		e.setAttributes(newAm);
 		return e;
+	}
+	
+	/**
+	 * This method converts a trace into a list of traces each of them
+	 * containing only one event. The order of the returned list is the same of
+	 * the events in the original trace.
+	 * 
+	 * @param trace the original trace
+	 * @return the list of events grouped into traces
+	 */
+	public static List<XTrace> traceToEventsForStream(XTrace trace) {
+		List<XTrace> traceToStream = new ArrayList<XTrace>();
+		for (XEvent e : trace) {
+			XTrace eventWrapper = new XTraceBufferedImpl(
+					new XAttributeMapLazyImpl<XAttributeMapBufferedImpl>(XAttributeMapBufferedImpl.class),
+					new XAttributeMapSerializerImpl());
+			XAttributeMap am = trace.getAttributes();
+			for (String key : am.keySet()) {
+				eventWrapper.getAttributes().put(key, am.get(key));
+			}
+			eventWrapper.add(clone(e));
+			traceToStream.add(eventWrapper);
+		}
+		return traceToStream;
 	}
 }

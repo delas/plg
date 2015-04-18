@@ -1,21 +1,30 @@
-package plg.stream.configuration;
+package plg.stream.model;
 
+import java.util.List;
 import java.util.Queue;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.deckfour.xes.model.XTrace;
+import org.processmining.operationalsupport.messages.query.TraceSessionMessage;
 
+import plg.generator.engine.SimulationEngine;
 import plg.model.Process;
 import plg.stream.BroadcastService;
+import plg.stream.configuration.StreamConfiguration;
+import plg.utils.Logger;
 
 public class Streamer implements Runnable {
 
+	private int generatedInstances = 0;
 	private StreamConfiguration configuration;
 	private Process process;
-	private Queue<XTrace> queue;
 	private BroadcastService broadcaster;
+	
+	private List<ConcurrentLinkedQueue<XTrace>> queue;
+	
 	private boolean enabled = true;
 	private boolean running = false;
 	private Timer updateQueue = new Timer();
@@ -23,7 +32,7 @@ public class Streamer implements Runnable {
 	public Streamer(StreamConfiguration configuration, Process process) {
 		this.configuration = configuration;
 		this.process = process;
-		this.queue = new ConcurrentLinkedQueue<XTrace>();
+		this.queue = new CopyOnWriteArrayList<ConcurrentLinkedQueue<XTrace>>();
 	}
 	
 	public synchronized void start() {
@@ -39,25 +48,29 @@ public class Streamer implements Runnable {
 		
 		// wake up the current thread
 		notify();
+		
+		Logger.instance().info("Streaming started");
 	}
 	
 	public synchronized void pause() {
 		running = false;
 		updateQueue.cancel();
+		Logger.instance().info("Streamimg paused");
 	}
 	
 	public synchronized void stop() {
 		enabled = false;
+		Logger.instance().info("Streaming stopped");
 	}
 	
 	protected synchronized void populateEventsQueue() {
-		
+//		TraceGenerator
 	}
 	
 	protected synchronized void streamEvent() {
-		if (!queue.isEmpty()) {
-			broadcaster.send(queue.poll());
-		}
+//		if (!queue.isEmpty()) {
+//			broadcaster.send(queue.poll());
+//		}
 	}
 	
 	protected synchronized void updateProcess(Process process) {
@@ -81,9 +94,9 @@ public class Streamer implements Runnable {
 			streamEvent();
 			
 			// sleep for a while
-			try {
-				Thread.sleep(configuration.timeBetweenEachEvent);
-			} catch (InterruptedException e) { }
+//			try {
+//				Thread.sleep(configuration.timeBetweenEachEvent);
+//			} catch (InterruptedException e) { }
 		}
 	}
 }
