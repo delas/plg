@@ -23,9 +23,4 @@ public class StreamConfiguration {
 	public double timeMultiplier = 0.5;
 	
 	public double timeFractionBeforeNewTrace = 0.5;
-	
-	/**
-	 * Time in milliseconds.
-	 */
-	public int timeBetweenPopulateQueue = 1000;
 }

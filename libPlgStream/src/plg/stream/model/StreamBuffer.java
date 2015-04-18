@@ -3,7 +3,6 @@ package plg.stream.model;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedDeque;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.deckfour.xes.model.XTrace;
@@ -12,13 +11,6 @@ import plg.stream.configuration.StreamConfiguration;
 import plg.utils.XLogHelper;
 
 /**
- * 
- * List<Queue<Xtrace>>
- * parallel traces
- *     - queue traces
- *     - queue traces
- *     - queue traces
- *     - queue traces
  * 
  * @author Andrea Burattin
  */
@@ -77,7 +69,33 @@ public class StreamBuffer extends CopyOnWriteArrayList<ConcurrentLinkedDeque<Str
 			get(targetChannel).add(se);
 		}
 	}
-
+	
+	public synchronized boolean needsTraces() {
+		for (int i = 0; i < size(); i++) {
+			if (get(i).size() <= 2) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public synchronized boolean isEmpty() {
+		for (int i = 0; i < size(); i++) {
+			if (!get(i).isEmpty()) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	public synchronized int eventsInQueue() {
+		int tot = 0;
+		for (int i = 0; i < size(); i++) {
+			tot += get(i).size();
+		}
+		return tot;
+	}
+	
 	protected int channelWithEventToStream() {
 		// search for the nearest event through all the channels
 		int channelToUse = -1;
@@ -115,43 +133,5 @@ public class StreamBuffer extends CopyOnWriteArrayList<ConcurrentLinkedDeque<Str
 		}
 		// return the oldest back to the caller
 		return channelToUse;
-	}
-	
-	public static void main(String args[]) {
-		System.out.println("start");
-
-		XTrace t1 = XLogHelper.createTrace("t1");
-		XLogHelper.insertEvent(t1, "a", new Date(115, 1, 1));
-		XLogHelper.insertEvent(t1, "b", new Date(115, 1, 2));
-		XLogHelper.insertEvent(t1, "c", new Date(115, 1, 5));
-
-		XTrace t2 = XLogHelper.createTrace("t2");
-		XLogHelper.insertEvent(t2, "a", new Date(115, 0, 1));
-		XLogHelper.insertEvent(t2, "b", new Date(115, 0, 2));
-		XLogHelper.insertEvent(t2, "c", new Date(115, 0, 5));
-
-//		XTrace t3 = XLogHelper.createTrace("t3");
-//		XLogHelper.insertEvent(t3, "a", new Date(115, 0, 1));
-//		XLogHelper.insertEvent(t3, "b", new Date(115, 0, 2));
-//		XLogHelper.insertEvent(t3, "c", new Date(115, 0, 5));
-		
-		StreamConfiguration sc = new StreamConfiguration();
-		sc.maximumParallelInstances = 1;
-		sc.timeFractionBeforeNewTrace = 1;
-		StreamBuffer sb = new StreamBuffer(sc);
-		sb.enqueueTrace(t1);
-		sb.enqueueTrace(t2);
-//		sb.enqueueTrace(t3);
-		
-		StreamEvent se = null;
-		do {
-			se = sb.getEventToStream();
-			if (se != null) {
-				System.out.println(XLogHelper.getName(se.get(0)) + " " + XLogHelper.getName(se) + " - " + se.getDate());
-				System.out.flush();
-			}
-		} while (se != null);
-		
-		System.out.println("complete");
 	}
 }

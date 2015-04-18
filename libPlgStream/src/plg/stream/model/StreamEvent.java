@@ -12,7 +12,10 @@ import org.deckfour.xes.model.impl.XAttributeMapLazyImpl;
 
 import plg.utils.XLogHelper;
 
-
+/**
+ * 
+ * @author Andrea Burattin
+ */
 public class StreamEvent extends XTraceBufferedImpl {
 
 	private int internalChannel = -1;
@@ -25,8 +28,8 @@ public class StreamEvent extends XTraceBufferedImpl {
 	}
 	
 	/**
-	 * This method wraps the attributes which, however still refer to the same
-	 * objects.
+	 * This method wraps the attributes which, however it still refers to the
+	 * same internal objects.
 	 * 
 	 * @param trace
 	 * @return

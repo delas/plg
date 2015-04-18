@@ -1,102 +1,113 @@
 package plg.stream.model;
 
-import java.util.List;
-import java.util.Queue;
-import java.util.Timer;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.util.TimerTask;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.deckfour.xes.model.XTrace;
-import org.processmining.operationalsupport.messages.query.TraceSessionMessage;
+import javax.swing.Timer;
 
-import plg.generator.engine.SimulationEngine;
 import plg.model.Process;
+import plg.generator.log.SimulationConfiguration;
+import plg.generator.log.TraceGenerator;
 import plg.stream.BroadcastService;
 import plg.stream.configuration.StreamConfiguration;
 import plg.utils.Logger;
 
-public class Streamer implements Runnable {
+public class Streamer extends Thread {
 
 	private int generatedInstances = 0;
 	private StreamConfiguration configuration;
 	private Process process;
+	private SimulationConfiguration simulationParameters;
 	private BroadcastService broadcaster;
 	
-	private List<ConcurrentLinkedQueue<XTrace>> queue;
+	private StreamBuffer buffer;
 	
 	private boolean enabled = true;
-	private boolean running = false;
-	private Timer updateQueue = new Timer();
 	
-	public Streamer(StreamConfiguration configuration, Process process) {
+	public Streamer(StreamConfiguration configuration, Process process, SimulationConfiguration simulationParameters) {
 		this.configuration = configuration;
 		this.process = process;
-		this.queue = new CopyOnWriteArrayList<ConcurrentLinkedQueue<XTrace>>();
+		this.simulationParameters = simulationParameters;
+		this.buffer = new StreamBuffer(configuration);
+		this.broadcaster = new BroadcastService(configuration);
 	}
 	
-	public synchronized void start() {
-		running = true;
+	public synchronized void startStream() {
+		enabled = true;
+
+		// start the broadcast service
+		try {
+			broadcaster.open();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
-		// start the update queue
-		updateQueue.schedule(new TimerTask() {
-			@Override
-			public void run() {
-				populateEventsQueue();
-			}
-		}, 0, configuration.timeBetweenPopulateQueue);
-		
-		// wake up the current thread
-		notify();
+		// populate the buffer
+		populateBuffer();
 		
 		Logger.instance().info("Streaming started");
+		
+		// start the thread
+		start();
+		
+		new Timer(1000, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				System.out.println("Buffer size: " + buffer.eventsInQueue());
+			}
+		}).start();;
 	}
 	
-	public synchronized void pause() {
-		running = false;
-		updateQueue.cancel();
-		Logger.instance().info("Streamimg paused");
-	}
-	
-	public synchronized void stop() {
+	public synchronized void endStream() {
 		enabled = false;
+		
+		// stop the broadcast service
+		try {
+			broadcaster.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 		Logger.instance().info("Streaming stopped");
 	}
 	
-	protected synchronized void populateEventsQueue() {
-//		TraceGenerator
+	protected synchronized void populateBuffer() {
+		TraceGenerator th = new TraceGenerator(process,
+				String.format(simulationParameters.getCaseIdPattern(), generatedInstances++),
+				simulationParameters);
+		try {
+			th.start();
+			th.join();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		buffer.enqueueTrace(th.getGeneratedTrace());
 	}
 	
 	protected synchronized void streamEvent() {
-//		if (!queue.isEmpty()) {
-//			broadcaster.send(queue.poll());
-//		}
+		if (buffer.isEmpty()) {
+			populateBuffer();
+		}
+		
+		broadcaster.send(buffer.getEventToStream());
+		
+		if (buffer.needsTraces()) {
+			populateBuffer();
+		}
 	}
 	
 	protected synchronized void updateProcess(Process process) {
 		this.process = process;
 	}
 	
+	
 	@Override
 	public void run() {
 		while(enabled) {
-			if (!running) {
-				try {
-					wait();
-				} catch (InterruptedException e) { }
-			}
-			// check if the queue needs to be refilled
-			if (queue.isEmpty()) {
-				populateEventsQueue();
-			}
-			
 			// stream next event
 			streamEvent();
-			
-			// sleep for a while
-//			try {
-//				Thread.sleep(configuration.timeBetweenEachEvent);
-//			} catch (InterruptedException e) { }
 		}
 	}
 }
