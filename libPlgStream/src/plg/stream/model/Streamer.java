@@ -25,6 +25,7 @@ public class Streamer extends Thread {
 	private StreamBuffer buffer;
 	
 	private boolean enabled = true;
+	private Timer infoTimer = null;
 	
 	public Streamer(StreamConfiguration configuration, Process process, SimulationConfiguration simulationParameters) {
 		this.configuration = configuration;
@@ -44,6 +45,15 @@ public class Streamer extends Thread {
 			e.printStackTrace();
 		}
 		
+		// start the stream info thread
+		infoTimer = new Timer(2000, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Logger.instance().debug("Stream Buffer size: " + buffer.eventsInQueue());
+			}
+		});
+		infoTimer.start();
+		
 		// populate the buffer
 		populateBuffer();
 		
@@ -51,13 +61,6 @@ public class Streamer extends Thread {
 		
 		// start the thread
 		start();
-		
-		new Timer(1000, new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				System.out.println("Buffer size: " + buffer.eventsInQueue());
-			}
-		}).start();;
 	}
 	
 	public synchronized void endStream() {
@@ -69,6 +72,9 @@ public class Streamer extends Thread {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
+		// end the stream info thread
+		infoTimer.stop();
 		
 		Logger.instance().info("Streaming stopped");
 	}
@@ -96,6 +102,10 @@ public class Streamer extends Thread {
 		if (buffer.needsTraces()) {
 			populateBuffer();
 		}
+		
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e1) { }
 	}
 	
 	protected synchronized void updateProcess(Process process) {

@@ -11,6 +11,7 @@ import org.deckfour.xes.model.XTrace;
 import org.processmining.operationalsupport.xml.OSXMLConverter;
 
 import plg.stream.configuration.StreamConfiguration;
+import plg.stream.model.StreamEvent;
 import plg.utils.Pair;
 
 /**
@@ -113,6 +114,18 @@ public class BroadcastService extends Thread {
 	 */
 	public void send(XTrace trace) {
 		send(converter.toXML(trace).replace('\n', ' ') + "\n");
+	}
+	
+	/**
+	 * This method sends an {@link XTrace} to all the clients connected. This
+	 * method can identify if a client is not connected anymore, and remove it
+	 * from the connected clients list. 
+	 * 
+	 * @param trace the trace to send
+	 * @see #send(String)
+	 */
+	public void send(StreamEvent event) {
+		send(converter.toXML(event.unwrap()).replace('\n', ' ') + "\n");
 	}
 	
 	@Override

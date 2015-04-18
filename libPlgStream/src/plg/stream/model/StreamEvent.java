@@ -51,6 +51,20 @@ public class StreamEvent extends XTraceBufferedImpl {
 		return streamEvent;
 	}
 	
+	public XTrace unwrap() {
+		XTrace t = new XTraceBufferedImpl(
+			new XAttributeMapLazyImpl<XAttributeMapBufferedImpl>(XAttributeMapBufferedImpl.class),
+			new XAttributeMapSerializerImpl());
+		XAttributeMap am = getAttributes();
+		XAttributeMap newAm = t.getAttributes();
+		for (String key : am.keySet()) {
+			newAm.put(key, am.get(key));
+		}
+		t.setAttributes(newAm);
+		add(internalEvent);
+		return t;
+	}
+	
 	public void setDate(Date date) {
 		XLogHelper.setTimestamp(internalEvent, date);
 		remove(0);
