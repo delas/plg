@@ -90,6 +90,8 @@ public class Streamer extends Thread {
 			e.printStackTrace();
 		}
 		buffer.enqueueTrace(th.getGeneratedTrace());
+		
+		Logger.instance().debug("Generated new traces (" + generatedInstances + " so far)");
 	}
 	
 	protected synchronized void streamEvent() {
