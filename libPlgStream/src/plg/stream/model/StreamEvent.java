@@ -9,6 +9,7 @@ import org.deckfour.xes.model.buffered.XAttributeMapBufferedImpl;
 import org.deckfour.xes.model.buffered.XAttributeMapSerializerImpl;
 import org.deckfour.xes.model.buffered.XTraceBufferedImpl;
 import org.deckfour.xes.model.impl.XAttributeMapLazyImpl;
+import org.deckfour.xes.model.impl.XTraceImpl;
 
 import plg.utils.XLogHelper;
 
@@ -52,16 +53,14 @@ public class StreamEvent extends XTraceBufferedImpl {
 	}
 	
 	public XTrace unwrap() {
-		XTrace t = new XTraceBufferedImpl(
-			new XAttributeMapLazyImpl<XAttributeMapBufferedImpl>(XAttributeMapBufferedImpl.class),
-			new XAttributeMapSerializerImpl());
+		XTrace t = new XTraceImpl(new XAttributeMapLazyImpl<XAttributeMapBufferedImpl>(XAttributeMapBufferedImpl.class));
 		XAttributeMap am = getAttributes();
 		XAttributeMap newAm = t.getAttributes();
 		for (String key : am.keySet()) {
 			newAm.put(key, am.get(key));
 		}
 		t.setAttributes(newAm);
-		add(internalEvent);
+		t.add(internalEvent);
 		return t;
 	}
 	

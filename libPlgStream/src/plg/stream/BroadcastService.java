@@ -113,7 +113,7 @@ public class BroadcastService extends Thread {
 	 * @see #send(String)
 	 */
 	public void send(XTrace trace) {
-		send(converter.toXML(trace).replace('\n', ' ') + "\n");
+		send(converter.toXML(trace).replace("\n", "").trim() + "\n");
 	}
 	
 	/**
@@ -125,7 +125,7 @@ public class BroadcastService extends Thread {
 	 * @see #send(String)
 	 */
 	public void send(StreamEvent event) {
-		send(converter.toXML(event.unwrap()).replace('\n', ' ') + "\n");
+		send(event.unwrap());
 	}
 	
 	@Override
