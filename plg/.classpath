@@ -13,5 +13,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/plgResources"/>
 	<classpathentry kind="lib" path="/libPlg/lib/multiline-string-0.1.1.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/spex"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/libPlgStream"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

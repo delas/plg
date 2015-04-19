@@ -52,7 +52,7 @@ public class MainFrame extends JFrame {
 		this.controller = controller;
 		this.conf = controller.getConfiguration(this.getClass().getCanonicalName());
 		
-		// register closing action..
+		// register closing action
 		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		this.addWindowListener(new WindowAdapter() {
 			@Override
