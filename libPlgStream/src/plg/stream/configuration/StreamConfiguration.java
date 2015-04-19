@@ -10,7 +10,7 @@ public class StreamConfiguration {
 	/**
 	 * The TCP/IP port where the module can accept incoming connections
 	 */
-	public int servicePort = 1337;
+	public int servicePort = 1234;
 	
 	public int maximumParallelInstances = 10;
 	

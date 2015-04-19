@@ -117,9 +117,9 @@ public class BroadcastService extends Thread {
 	}
 	
 	/**
-	 * This method sends an {@link XTrace} to all the clients connected. This
-	 * method can identify if a client is not connected anymore, and remove it
-	 * from the connected clients list. 
+	 * This method sends an {@link StreamEvent} to all the clients connected.
+	 * This method can identify if a client is not connected anymore, and remove
+	 * it from the connected clients list. 
 	 * 
 	 * @param trace the trace to send
 	 * @see #send(String)

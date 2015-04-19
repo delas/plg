@@ -11,6 +11,15 @@ import plg.stream.configuration.StreamConfiguration;
 import plg.utils.XLogHelper;
 
 /**
+ * This class represents a stream buffer. A stream buffer is capable of keeping
+ * the space usage as low as possible, even when simulating streams of large
+ * processes.
+ * 
+ * <p>
+ * Its internal structure consists of a list of queue of {@link StreamEvent}s.
+ * In particular, the outer list contains the total number of allowed "channels"
+ * (i.e., the number of parallel traces). A queue, which belongs to a specific
+ * channel contains the actual events to be sent over the network.
  * 
  * @author Andrea Burattin
  */
@@ -19,6 +28,11 @@ public class StreamBuffer extends CopyOnWriteArrayList<ConcurrentLinkedDeque<Str
 	private static final long serialVersionUID = -2148968724588635829L;
 	private StreamConfiguration configuration;
 	
+	/**
+	 * Buffer constructor
+	 * 
+	 * @param configuration the stream configuration
+	 */
 	public StreamBuffer(StreamConfiguration configuration) {
 		this.configuration = configuration;
 		
@@ -28,6 +42,12 @@ public class StreamBuffer extends CopyOnWriteArrayList<ConcurrentLinkedDeque<Str
 		}
 	}
 	
+	/**
+	 * This method returns the new event to be streamed
+	 * 
+	 * @return the stream event to be sent, or <tt>null</tt> if no event is
+	 * available
+	 */
 	public synchronized StreamEvent getEventToStream() {
 		int channel = channelWithEventToStream();
 		if (channel != -1) {
@@ -38,6 +58,12 @@ public class StreamBuffer extends CopyOnWriteArrayList<ConcurrentLinkedDeque<Str
 		return null;
 	}
 	
+	/**
+	 * This method enqueues the provided trace into the buffer. Specifically,
+	 * the trace is added to the channel which is going to end the sooner.
+	 * 
+	 * @param trace the new trace to add
+	 */
 	public synchronized void enqueueTrace(XTrace trace) {
 		List<XTrace> events = XLogHelper.traceToEventsForStream(trace);
 		int targetChannel = channelToEnqueueEvents();
@@ -70,6 +96,12 @@ public class StreamBuffer extends CopyOnWriteArrayList<ConcurrentLinkedDeque<Str
 		}
 	}
 	
+	/**
+	 * This method can be used to check whether the buffer needs to be refilled
+	 * 
+	 * @return <tt>true</tt> if the buffer has to be refilled, <tt>false</tt>
+	 * otherwise
+	 */
 	public synchronized boolean needsTraces() {
 		for (int i = 0; i < size(); i++) {
 			if (get(i).size() <= 2) {
@@ -79,6 +111,7 @@ public class StreamBuffer extends CopyOnWriteArrayList<ConcurrentLinkedDeque<Str
 		return false;
 	}
 	
+	@Override
 	public synchronized boolean isEmpty() {
 		for (int i = 0; i < size(); i++) {
 			if (!get(i).isEmpty()) {
@@ -88,6 +121,11 @@ public class StreamBuffer extends CopyOnWriteArrayList<ConcurrentLinkedDeque<Str
 		return true;
 	}
 	
+	/**
+	 * This method returns the number of events currently in the buffer queue
+	 * 
+	 * @return the number of enqueued events
+	 */
 	public synchronized int eventsInQueue() {
 		int tot = 0;
 		for (int i = 0; i < size(); i++) {
@@ -96,6 +134,11 @@ public class StreamBuffer extends CopyOnWriteArrayList<ConcurrentLinkedDeque<Str
 		return tot;
 	}
 	
+	/**
+	 * This method returns the channel with the event to be removed and sent
+	 * 
+	 * @return
+	 */
 	protected int channelWithEventToStream() {
 		// search for the nearest event through all the channels
 		int channelToUse = -1;
@@ -114,6 +157,12 @@ public class StreamBuffer extends CopyOnWriteArrayList<ConcurrentLinkedDeque<Str
 		return channelToUse;
 	}
 	
+	/**
+	 * This method returns the channel which will host the new trace to be
+	 * enqueued
+	 * 
+	 * @return
+	 */
 	protected int channelToEnqueueEvents() {
 		// search for the most distant event through all the channels
 		int channelToUse = -1;

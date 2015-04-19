@@ -14,6 +14,7 @@ import org.deckfour.xes.model.impl.XTraceImpl;
 import plg.utils.XLogHelper;
 
 /**
+ * This class represents an event which can be streamed over the network
  * 
  * @author Andrea Burattin
  */
@@ -22,6 +23,9 @@ public class StreamEvent extends XTraceBufferedImpl {
 	private int internalChannel = -1;
 	private XEvent internalEvent = null;
 	
+	/**
+	 * Basic constructor
+	 */
 	public StreamEvent() {
 		super(
 			new XAttributeMapLazyImpl<XAttributeMapBufferedImpl>(XAttributeMapBufferedImpl.class),
@@ -52,6 +56,11 @@ public class StreamEvent extends XTraceBufferedImpl {
 		return streamEvent;
 	}
 	
+	/**
+	 * This method unwraps the event, in order to obtain the trace it contains
+	 * 
+	 * @return the {@link XTrace} object contained into this {@link StreamEvent}
+	 */
 	public XTrace unwrap() {
 		XTrace t = new XTraceImpl(new XAttributeMapLazyImpl<XAttributeMapBufferedImpl>(XAttributeMapBufferedImpl.class));
 		XAttributeMap am = getAttributes();
@@ -64,24 +73,45 @@ public class StreamEvent extends XTraceBufferedImpl {
 		return t;
 	}
 	
+	/**
+	 * This method sets the date of the event
+	 * 
+	 * @param date
+	 */
 	public void setDate(Date date) {
 		XLogHelper.setTimestamp(internalEvent, date);
 		remove(0);
 		add(internalEvent);
 	}
 	
+	/**
+	 * This method gets the date of the event
+	 * 
+	 * @return
+	 */
 	public Date getDate() {
 		if (isEmpty()) {
 			return null;
 		}
 		return XLogHelper.getTimestamp(get(0));
 	}
-
+	
+	/**
+	 * This method gets the buffer channel of the event
+	 * 
+	 * @return
+	 */
 	public int getInternalChannel() {
 		return internalChannel;
 	}
 
-	public void setInternalChannel(int internalChannel) {
+	/**
+	 * This method sets the buffer channel of the event. This method will be
+	 * called by the {@link StreamBuffer#enqueueTrace(XTrace)}.
+	 * 
+	 * @param internalChannel
+	 */
+	protected void setInternalChannel(int internalChannel) {
 		this.internalChannel = internalChannel;
 	}
 }
