@@ -72,6 +72,17 @@ public class StreamEvent extends XTraceBufferedImpl {
 		t.add(internalEvent);
 		return t;
 	}
+
+	/**
+	 * This method can be used to set the
+	 * <tt>stream:lifecycle:trace-transition</tt> attribute
+	 * 
+	 * @param status values of the attribute, common values are <tt>start</tt>
+	 * and <tt>complete</tt>
+	 */
+	public void setTraceLifecycle(String status) {
+		XLogHelper.decorateElement(internalEvent, "stream:lifecycle:trace-transition", status);
+	}
 	
 	/**
 	 * This method sets the date of the event

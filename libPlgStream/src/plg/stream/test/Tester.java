@@ -2,10 +2,11 @@ package plg.stream.test;
 
 import plg.exceptions.IllegalSequenceException;
 import plg.generator.log.SimulationConfiguration;
-import plg.generator.process.ProcessGenerator;
-import plg.generator.process.RandomizationConfiguration;
+import plg.io.exporter.GraphvizBPMNExporter;
 import plg.model.Process;
 import plg.model.activity.Task;
+import plg.model.data.DataObject;
+import plg.model.data.IDataObjectOwner.DATA_OBJECT_DIRECTION;
 import plg.model.event.EndEvent;
 import plg.model.event.StartEvent;
 import plg.stream.configuration.StreamConfiguration;
@@ -52,15 +53,27 @@ public class Tester {
 	}*/
 	
 	public static void main(String args[]) throws IllegalSequenceException {
-		System.out.println("start");
+		System.out.println("start1");
 		
 		StreamConfiguration sc = new StreamConfiguration();
 		sc.servicePort = 1234;
 		sc.maximumParallelInstances = 10;
 		sc.timeFractionBeforeNewTrace = 1;
+		sc.markTraceBeginningEnd = true;
 		
 		Process p = new Process("test");
-		ProcessGenerator.randomizeProcess(p, RandomizationConfiguration.BASIC_VALUES);
+		StartEvent start = p.newStartEvent();
+		Task A = p.newTask("A"); p.newSequence(start, A);
+		Task B = p.newTask("B"); p.newSequence(A, B);
+		EndEvent end = p.newEndEvent(); p.newSequence(B, end);
+		DataObject do1 = new DataObject(p);
+		do1.set("do1", "10");
+		do1.setObjectOwner(A, DATA_OBJECT_DIRECTION.GENERATED);
+		
+//		ProcessGenerator.randomizeProcess(p, RandomizationConfiguration.BASIC_VALUES);
+		
+		GraphvizBPMNExporter e = new GraphvizBPMNExporter();
+		e.exportModel(p, "C:\\Users\\Andrea\\Desktop\\model.dot");
 		
 		Streamer s = new Streamer(sc, p, new SimulationConfiguration());
 		s.startStream();

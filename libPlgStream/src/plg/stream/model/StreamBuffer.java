@@ -85,14 +85,27 @@ public class StreamBuffer extends CopyOnWriteArrayList<ConcurrentLinkedDeque<Str
 		}
 		
 		// set the actual time of all events
+		int progress = 0;
 		for(XTrace t : events) {
+			// create the actual stream event
 			StreamEvent se = StreamEvent.wrap(t);
 			se.setInternalChannel(targetChannel);
+			
+			// add trace start/end marking, if necessary
+			if (configuration.markTraceBeginningEnd) {
+				if (progress == 0) {
+					se.setTraceLifecycle("start");
+				} else if (progress == t.size()) {
+					se.setTraceLifecycle("complete");
+				}
+			}
+			
 			// fix the time of the event
 			long eventTime = XLogHelper.getTimestamp(t.get(0)).getTime();
 			se.setDate(new Date(eventTime + timeShift));
 			// enqueue the stream event into the buffer
 			get(targetChannel).add(se);
+			progress++;
 		}
 	}
 	

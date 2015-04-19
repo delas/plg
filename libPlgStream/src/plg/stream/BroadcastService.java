@@ -113,7 +113,11 @@ public class BroadcastService extends Thread {
 	 * @see #send(String)
 	 */
 	public void send(XTrace trace) {
-		send(converter.toXML(trace).replace("\n", "").trim() + "\n");
+		String toSend = converter.toXML(trace);
+		toSend = toSend.replace("\n", "");
+		toSend = toSend.replaceAll(">\\s+<", "><");
+		toSend = toSend.trim() + "\n";
+		send(toSend);
 	}
 	
 	/**
