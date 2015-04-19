@@ -53,6 +53,11 @@ public class Streamer extends Thread {
 		this.simulationParameters = simulationParameters;
 		this.buffer = new StreamBuffer(configuration);
 		this.broadcaster = new BroadcastService(configuration);
+		
+		// initial population of the buffer
+		for(int i = 0; i < configuration.maximumParallelInstances * 3; i++) {
+			populateBuffer();
+		}
 	}
 	
 	/**
@@ -128,6 +133,15 @@ public class Streamer extends Thread {
 		
 		// enqueue the new trace
 		buffer.enqueueTrace(th.getGeneratedTrace());
+	}
+	
+	/**
+	 * This method returns the stream buffer
+	 * 
+	 * @return the stream buffer
+	 */
+	public synchronized StreamBuffer getBuffer() {
+		return buffer;
 	}
 	
 	/**

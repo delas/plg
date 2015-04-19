@@ -62,6 +62,10 @@ public class StreamBuffer extends CopyOnWriteArrayList<ConcurrentLinkedDeque<Str
 	 * This method enqueues the provided trace into the buffer. Specifically,
 	 * the trace is added to the channel which is going to end the sooner.
 	 * 
+	 * <p>
+	 * If the trace has no duration (i.e., it is composed of just one event),
+	 * then the activity duration is set to 1 hour.
+	 * 
 	 * @param trace the new trace to add
 	 */
 	public synchronized void enqueueTrace(XTrace trace) {
@@ -79,6 +83,9 @@ public class StreamBuffer extends CopyOnWriteArrayList<ConcurrentLinkedDeque<Str
 			long startEvent = XLogHelper.getTimestamp(trace.get(0)).getTime();
 			long endEvent = XLogHelper.getTimestamp(trace.get(trace.size() - 1)).getTime();
 			long traceDuration = endEvent - startEvent;
+			if (traceDuration == 0) {
+				traceDuration = 1000*60*60;
+			}
 			long timeToWait = (long) (traceDuration * configuration.timeFractionBeforeNewTrace);
 			long timeLastEventOnChannel = get(targetChannel).peekLast().getDate().getTime();
 			timeShift = (timeLastEventOnChannel + timeToWait) - startEvent;
@@ -103,6 +110,7 @@ public class StreamBuffer extends CopyOnWriteArrayList<ConcurrentLinkedDeque<Str
 			// fix the time of the event
 			long eventTime = XLogHelper.getTimestamp(t.get(0)).getTime();
 			se.setDate(new Date(eventTime + timeShift));
+			
 			// enqueue the stream event into the buffer
 			get(targetChannel).add(se);
 			progress++;
