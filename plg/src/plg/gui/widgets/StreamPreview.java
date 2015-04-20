@@ -138,24 +138,37 @@ public class StreamPreview extends JPanel {
 				g2d.fillOval(x, y, eventSize, eventSize);
 			}
 			
+			int marginTop = 5;
+			int marginBottom = 5;
+			int marginLeft = 5;
+			int marginRight = 5;
+			
 			// draw scale
 			if (maxEventsPerPoint > 1) {
-				g2d.setPaint(new GradientPaint(0, 0, Color.red, 40, 0, Color.white));
-				g2d.fillRect(3, height-10, 40, 7);
+				int scaleWidth = 30;
+				int scaleHeight = fm.getHeight() - 4;
+				String longest = ((int) maxEventsPerPoint) + " events";
 				
-				g2d.drawString("" + maxEventsPerPoint, 0, height - 10);
-				g2d.drawString("1", 40, height - 10);
+				g2d.setColor(new Color(0, 0, 0, 200));
+				g2d.fillRoundRect(marginLeft, height - scaleHeight - 4 - marginBottom, scaleWidth + 10 + fm.stringWidth(longest) + 2, fm.getHeight(), 10, 10);
+				
+				g2d.setPaint(new GradientPaint(scaleWidth / 2, 0, Color.WHITE, scaleWidth, 0, Color.RED));
+				g2d.fillRoundRect(marginLeft + 8, height - scaleHeight - marginBottom - 1, scaleWidth, scaleHeight - 3, 5, 5);
+				
+				g2d.setColor(Color.WHITE);
+				g2d.drawString("1", marginLeft + 2, height - 4 - marginBottom);
+				g2d.drawString(longest, marginLeft + scaleWidth + 10, height - 4 - marginBottom);
 			}
 			
-			// draw final strings
+			// draw total frequency label
 			String eventsIncludedText = eventsIncluded + " events in the first minute";
 			if (allEventsIncluded) {
 				eventsIncludedText = "At least " + eventsIncludedText + " (estimated value)";
 			}
 			g2d.setColor(new Color(0, 0, 0, 200));
-			g2d.fillRect(width - fm.stringWidth(eventsIncludedText) - 4, height - fm.getHeight(), fm.stringWidth(eventsIncludedText) + 2, fm.getHeight() - 2);
+			g2d.fillRoundRect(width - fm.stringWidth(eventsIncludedText) - 2 - marginRight, marginTop, fm.stringWidth(eventsIncludedText) + 3, fm.getHeight(), 10, 10);
 			g2d.setColor(Color.WHITE);
-			g2d.drawString(eventsIncludedText, width - fm.stringWidth(eventsIncludedText) - 2, height - 4);
+			g2d.drawString(eventsIncludedText, width - fm.stringWidth(eventsIncludedText) - marginRight, fm.getHeight() - 4 + marginTop);
 		}
 		
 		// final paint stuff
