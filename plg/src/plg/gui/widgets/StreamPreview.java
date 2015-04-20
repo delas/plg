@@ -2,6 +2,7 @@ package plg.gui.widgets;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
@@ -53,6 +54,10 @@ public class StreamPreview extends JPanel {
 		buffer = new SoftReference<BufferedImage>(new BufferedImage(width, height, BufferedImage.TRANSLUCENT));
 		Graphics2D g2d = buffer.get().createGraphics();
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		
+		// font stuff
+		Font newFont = g2d.getFont().deriveFont(11f);
+		g2d.setFont(newFont);
 		FontMetrics fm = g2d.getFontMetrics();
 		
 		// background
@@ -61,7 +66,7 @@ public class StreamPreview extends JPanel {
 		
 		// draw the channels
 		g2d.setColor(Color.DARK_GRAY);
-		int channelHeight = Math.min(height / streamConfiguration.maximumParallelInstances, 16);
+		int channelHeight = Math.min(height / streamConfiguration.maximumParallelInstances, 26);
 		for (int i = 0; i < streamConfiguration.maximumParallelInstances; i++) {
 			int y = (channelHeight * i);
 			g2d.fillRect(0, y, width, channelHeight - 1);
@@ -89,8 +94,8 @@ public class StreamPreview extends JPanel {
 			// draw the events
 			int eventsIncluded = 0;
 			boolean allEventsIncluded = true;
-			int eventSize = channelHeight - 4;
-			if (channelHeight < 8) {
+			int eventSize = channelHeight - 8;
+			if (eventSize < 5) {
 				eventSize = channelHeight - 2;
 			}
 			// compute events coordinates
@@ -147,8 +152,10 @@ public class StreamPreview extends JPanel {
 			if (allEventsIncluded) {
 				eventsIncludedText = "At least " + eventsIncludedText + " (estimated value)";
 			}
-			g2d.setColor(Color.CYAN);
-			g2d.drawString(eventsIncludedText, width - fm.stringWidth(eventsIncludedText) - 2, height - 2);
+			g2d.setColor(new Color(0, 0, 0, 200));
+			g2d.fillRect(width - fm.stringWidth(eventsIncludedText) - 4, height - fm.getHeight(), fm.stringWidth(eventsIncludedText) + 2, fm.getHeight() - 2);
+			g2d.setColor(Color.WHITE);
+			g2d.drawString(eventsIncludedText, width - fm.stringWidth(eventsIncludedText) - 2, height - 4);
 		}
 		
 		// final paint stuff
@@ -161,7 +168,7 @@ public class StreamPreview extends JPanel {
 	
 	public static void main(String[] args) throws IllegalSequenceException {
 		final StreamConfiguration sc = new StreamConfiguration();
-		sc.maximumParallelInstances = 3;
+		sc.maximumParallelInstances = 15;
 		sc.timeMultiplier = 0.005;
 		
 		Process p = new Process("test");
