@@ -38,6 +38,7 @@ public class NewLogDialog extends GeneralDialog {
 	protected Map<String, SimulationConfiguration> CONFIGURATIONS = new HashMap<String, SimulationConfiguration>();
 	protected SimulationConfiguration currentConfiguration = null;
 	
+	protected boolean showLogNameAndTraces = true;
 	protected JComboBox<PresetConfiguration> presetConfigurations = null;
 	protected JTextField nameField = null;
 	protected JSpinner noOfTrace = null;
@@ -66,8 +67,10 @@ public class NewLogDialog extends GeneralDialog {
 	 * @param help a short text describing the dialog content
 	 * @param configuration the configuration set to use for the dialog
 	 */
-	protected NewLogDialog(String candidateProcessName, JFrame owner, String title, String help, final ConfigurationSet configuration) {
-		super(owner,title, help, configuration);
+	protected NewLogDialog(String candidateProcessName, JFrame owner, String title, String help, final ConfigurationSet configuration, boolean showLogNameAndTraces) {
+		super(owner, title, help, configuration);
+		
+		this.showLogNameAndTraces = showLogNameAndTraces;
 		
 		CONFIGURATIONS.put(NAME_COMPLETE_NOISE, new SimulationConfiguration(1000, NoiseConfiguration.COMPLETE_NOISE));
 		CONFIGURATIONS.put(NAME_NO_NOISE, new SimulationConfiguration(1000, NoiseConfiguration.NO_NOISE));
@@ -176,12 +179,14 @@ public class NewLogDialog extends GeneralDialog {
 		insertBodySeparator(10);
 		
 		// new log name and no of traces
-		nameField.setText(candidateProcessName);
-		bodyPanel.add(prepareFieldLabel("New log name"));
-		bodyPanel.add(nameField);
-		bodyPanel.add(prepareFieldLabel("Number of traces"));
-		bodyPanel.add(noOfTrace);
-		insertBodySeparator(10);
+		if (showLogNameAndTraces) {
+			nameField.setText(candidateProcessName);
+			bodyPanel.add(prepareFieldLabel("New log name"));
+			bodyPanel.add(nameField);
+			bodyPanel.add(prepareFieldLabel("Number of traces"));
+			bodyPanel.add(noOfTrace);
+			insertBodySeparator(10);
+		}
 		
 		// noise
 		bodyPanel.add(prepareFieldLabel("Change activity name prob. (‰)"));
@@ -227,7 +232,8 @@ public class NewLogDialog extends GeneralDialog {
 		this(candidateName, owner,
 			"Simulation Configuration",
 			"Use this dialog to configure the simulation of a process.",
-			ApplicationController.instance().getConfiguration(NewLogDialog.class.getCanonicalName()));
+			ApplicationController.instance().getConfiguration(NewLogDialog.class.getCanonicalName()),
+			true);
 	}
 	
 	/**

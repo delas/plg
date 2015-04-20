@@ -61,7 +61,7 @@ public class NewProcessDialog extends GeneralDialog {
 	 * @param configuration the configuration set to use for the dialog
 	 */
 	protected NewProcessDialog(String candidateProcessName, JFrame owner, String title, String help, final ConfigurationSet configuration) {
-		super(owner,title, help, configuration);
+		super(owner, title, help, configuration);
 		
 		// creates widgets
 		nameField = new JTextField(candidateProcessName);

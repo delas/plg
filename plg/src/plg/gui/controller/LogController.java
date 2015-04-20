@@ -18,6 +18,8 @@ import plg.gui.config.ConfigurationSet;
 import plg.gui.dialog.ErrorDialog;
 import plg.gui.dialog.GeneralDialog.RETURNED_VALUES;
 import plg.gui.dialog.NewLogDialog;
+import plg.gui.dialog.StreamConfigurationDialog;
+import plg.gui.dialog.StreamNoiseDialog;
 import plg.gui.panels.SingleProcessVisualizer;
 import plg.gui.util.FileFilterHelper;
 import plg.gui.util.RuntimeUtils;
@@ -100,6 +102,22 @@ public class LogController {
 					}
 				};
 				worker.execute();
+			}
+		}
+	}
+	
+	/**
+	 * This method is responsible of generating streams
+	 */
+	public void generateStream() {
+		StreamNoiseDialog nld = new StreamNoiseDialog(ApplicationController.instance().getMainFrame());
+		nld.setVisible(true);
+		if (RETURNED_VALUES.SUCCESS.equals(nld.returnedValue())) {
+			// ok, we now have a configuration for the generation of the noise of the stream
+			StreamConfigurationDialog scd = new StreamConfigurationDialog(ApplicationController.instance().getMainFrame());
+			scd.setVisible(true);
+			if (RETURNED_VALUES.SUCCESS.equals(scd.returnedValue())) {
+				
 			}
 		}
 	}

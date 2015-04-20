@@ -99,6 +99,13 @@ public class MainToolbar extends JToolBar {
 			}
 		});
 		
+		generateStream.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				ApplicationController.instance().log().generateStream();
+			}
+		});
+		
 		showConsole.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
