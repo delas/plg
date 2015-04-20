@@ -44,6 +44,7 @@ import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.mxConstants;
 import com.mxgraph.view.mxEdgeStyle;
 import com.mxgraph.view.mxGraph;
+import com.mxgraph.view.mxGraphView;
 import com.mxgraph.view.mxStylesheet;
 
 /**
@@ -442,5 +443,15 @@ public class BPMNVisualizer extends JPanel {
 		menu.add(dataObjIncoming);
 		
 		return menu;
+	}
+	
+	/**
+	 * This method fits the graph to the actual available size
+	 */
+	public void fit() {
+		mxGraphView view = graph.getView();
+		int compLen = getWidth();
+		int viewLen = (int)view.getGraphBounds().getWidth();
+		view.setScale((double)compLen/viewLen * view.getScale());
 	}
 }
