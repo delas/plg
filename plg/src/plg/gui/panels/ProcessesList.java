@@ -16,7 +16,6 @@ import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
@@ -81,7 +80,7 @@ public class ProcessesList extends MainWindowPanel {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				if (e.getKeyCode() == KeyEvent.VK_DELETE) {
-					deleteProcess(list.getSelectedIndex());
+					ApplicationController.instance().processes().deleteProcess(list.getSelectedIndex());
 				}
 			}
 		});
@@ -97,7 +96,7 @@ public class ProcessesList extends MainWindowPanel {
 					itemDelete.addActionListener(new ActionListener() {
 						@Override
 						public void actionPerformed(ActionEvent e) {
-							deleteProcess(list.getSelectedIndex());
+							ApplicationController.instance().processes().deleteProcess(list.getSelectedIndex());
 						}
 					});
 					itemEvolve.addActionListener(new ActionListener() {
@@ -130,30 +129,19 @@ public class ProcessesList extends MainWindowPanel {
 	}
 	
 	public void deleteProcess(int index) {
-		if (index >= 0) {
-			MultilineImageListEntry entry = dlm.get(index);
-			
-			int confirmation = JOptionPane.showConfirmDialog(
-					ApplicationController.instance().getMainFrame(),
-					"Are you sure to delete the selected process?",
-					"Confirm deletion",
-					JOptionPane.YES_NO_OPTION);
-			if (confirmation == JOptionPane.NO_OPTION || confirmation == JOptionPane.CLOSED_OPTION) {
-				return;
-			}
-			
-			dlm.remove(index);
-			Logger.instance().info("Removed process with id " + entry.getId());
-			
-			if (dlm.getSize() == 0) {
-				list.clearSelection();
-				ApplicationController.instance().processes().visualizeProcess(null);
+		MultilineImageListEntry entry = dlm.get(index);
+		
+		dlm.remove(index);
+		Logger.instance().info("Removed process with id " + entry.getId());
+		
+		if (dlm.getSize() == 0) {
+			list.clearSelection();
+			ApplicationController.instance().processes().visualizeProcess(null);
+		} else {
+			if (index == 0) {
+				list.setSelectedIndex(0);
 			} else {
-				if (index == 0) {
-					list.setSelectedIndex(0);
-				} else {
-					list.setSelectedIndex(index - 1);
-				}
+				list.setSelectedIndex(index - 1);
 			}
 		}
 	}

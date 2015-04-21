@@ -5,10 +5,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
 
-import javax.swing.AbstractAction;
-import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -16,12 +13,15 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.SpringLayout;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import plg.generator.log.SimulationConfiguration;
 import plg.gui.controller.ApplicationController;
+import plg.gui.controller.ProcessesController;
 import plg.gui.util.SpringUtilities;
+import plg.gui.util.collections.ImagesCollection;
 import plg.gui.widgets.StreamPreview;
 import plg.model.Process;
 import plg.stream.configuration.StreamConfiguration;
@@ -34,7 +34,7 @@ import plg.visualizer.BPMNVisualizer;
  *
  * @author Andrea Burattin
  */
-public class StreamDialog extends GeneralDialog {
+public class StreamDialog extends GeneralDialog implements ProcessesController.ProcessesListener {
 
 	private static final long serialVersionUID = -4781877672157619819L;
 	
@@ -85,6 +85,7 @@ public class StreamDialog extends GeneralDialog {
 		addFooterButton(stopButton, false);
 		addFooterButton(startButton, true);
 		
+		startButton.setIcon(ImagesCollection.ICON_PLAY);
 		startButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -97,12 +98,19 @@ public class StreamDialog extends GeneralDialog {
 				startButton.setEnabled(false);
 			}
 		});
+		stopButton.setIcon(ImagesCollection.ICON_STOP);
 		stopButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				streamer.endStream();
 				stopButton.setEnabled(false);
-				startButton.setEnabled(true);
+				SwingUtilities.invokeLater(new Runnable() {
+					
+					@Override
+					public void run() {
+						streamer.endStream();
+						startButton.setEnabled(true);
+					}
+				});
 			}
 		});
 		
@@ -119,19 +127,14 @@ public class StreamDialog extends GeneralDialog {
 			}
 		});
 		// process selector
-		for (Process p : ApplicationController.instance().processes().getProcesses()) {
-			ProcessSelector ps = new ProcessSelector(p);
-			processCombo.addItem(ps);
-			if (p.equals(process)) {
-				processCombo.setSelectedItem(ps);
-			}
-		}
 		processCombo.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				ProcessSelector ps = (ProcessSelector) processCombo.getSelectedItem();
-				Process selectedProcess = ps.process;
-				updateProcess(selectedProcess);
+				if (processCombo.isEnabled()) {
+					ProcessSelector ps = (ProcessSelector) processCombo.getSelectedItem();
+					Process selectedProcess = ps.process;
+					updateProcess(selectedProcess);
+				}
 			}
 		});
 		
@@ -194,6 +197,9 @@ public class StreamDialog extends GeneralDialog {
 		
 		// unregister listeners
 		getRootPane().getActionMap().remove("ESC_KEY_PRESSED");
+		
+		// register for processes list controller
+		ApplicationController.instance().processes().registerNewListener(this);
 	}
 	
 	protected void updateLabels() {
@@ -231,6 +237,21 @@ public class StreamDialog extends GeneralDialog {
 	protected void afterShowing() {
 		updateLabels();
 		updateProcess(process);
+		processListChanged();
+	}
+
+	@Override
+	public void processListChanged() {
+		processCombo.setEnabled(false);
+		processCombo.removeAllItems();
+		for (Process p : ApplicationController.instance().processes().getProcesses()) {
+			ProcessSelector ps = new ProcessSelector(p);
+			processCombo.addItem(ps);
+			if (p.equals(process)) {
+				processCombo.setSelectedItem(ps);
+			}
+		}
+		processCombo.setEnabled(true);
 	}
 	
 	private class ProcessSelector {

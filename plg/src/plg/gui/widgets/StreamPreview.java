@@ -93,6 +93,7 @@ public class StreamPreview extends JPanel {
 			
 			// draw the events
 			int eventsIncluded = 0;
+			long secLastEvent = 0;
 			boolean allEventsIncluded = true;
 			int eventSize = channelHeight - 8;
 			if (eventSize < 5) {
@@ -107,6 +108,7 @@ public class StreamPreview extends JPanel {
 				for (StreamEvent e : queue) {
 					long eventTime = e.getDate().getTime();
 					long timeRelative = (long) ((eventTime - firstEventTime) * streamConfiguration.timeMultiplier);
+					secLastEvent = timeRelative;
 					int x = (int) (width * timeRelative / 60000);
 					if (x <= width) {
 						// manage multiple events into the same point
@@ -163,7 +165,8 @@ public class StreamPreview extends JPanel {
 			// draw total frequency label
 			String eventsIncludedText = eventsIncluded + " events in the first minute";
 			if (allEventsIncluded) {
-				eventsIncludedText = "At least " + eventsIncludedText + " (estimated value)";
+				long tot = 60000 * eventsIncluded / secLastEvent;
+				eventsIncludedText = "About " + tot + " events in the first minute (estimated value)";
 			}
 			g2d.setColor(new Color(0, 0, 0, 200));
 			g2d.fillRoundRect(width - fm.stringWidth(eventsIncludedText) - 2 - marginRight, marginTop, fm.stringWidth(eventsIncludedText) + 3, fm.getHeight(), 10, 10);

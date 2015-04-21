@@ -25,4 +25,8 @@ public class ImagesCollection {
 	public static final ImageIcon ICON_LOG = ImageUtils.loadImage("/plg/resources/icons/famfamfam/table_go.png");
 	public static final ImageIcon ICON_STREAM = ImageUtils.loadImage("/plg/resources/icons/famfamfam/transmit_go.png");
 	public static final ImageIcon ICON_CONSOLE = ImageUtils.loadImage("/plg/resources/icons/famfamfam/application_xp_terminal.png");
+	
+	// Other icons
+	public static final ImageIcon ICON_PLAY = ImageUtils.loadImage("/plg/resources/icons/famfamfam/control_play_blue.png");
+	public static final ImageIcon ICON_STOP = ImageUtils.loadImage("/plg/resources/icons/famfamfam/control_stop_blue.png");
 }

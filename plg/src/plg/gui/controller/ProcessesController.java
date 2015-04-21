@@ -1,10 +1,13 @@
 package plg.gui.controller;
 
 import java.io.File;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -35,6 +38,7 @@ public class ProcessesController {
 	private static int GENERATED_PROCESSES = 1;
 	private static final String KEY_PROCESS_LOCATION = "PROCESS_LOCATION";
 	
+	private Set<ProcessesListener> listeners;
 	private ApplicationController applicationController;
 	private ProcessesList processesList;
 	private SingleProcessVisualizer singleProcessVisualizer;
@@ -46,6 +50,7 @@ public class ProcessesController {
 	 * @param applicationController the main application controller 
 	 */
 	protected ProcessesController(ApplicationController applicationController) {
+		this.listeners = new HashSet<ProcessesController.ProcessesListener>();
 		this.applicationController = applicationController;
 		this.processesList = applicationController.getMainWindow().getProcessesList();
 		this.singleProcessVisualizer = applicationController.getMainWindow().getSingleProcessVisualizer();
@@ -69,6 +74,7 @@ public class ProcessesController {
 			
 			GENERATED_PROCESSES++;
 			processesList.storeNewProcess(GENERATED_PROCESSES, p.getName(), generateProcessSubtitle(p), p);
+			notifyChangeProcessesList();
 		}
 	}
 	
@@ -98,6 +104,7 @@ public class ProcessesController {
 					try {
 						Process p = get();
 						processesList.storeNewProcess(GENERATED_PROCESSES, p.getName(), generateProcessSubtitle(p), p);
+						notifyChangeProcessesList();
 					} catch (ExecutionException | InterruptedException e) {
 						e.printStackTrace();
 					}
@@ -136,6 +143,27 @@ public class ProcessesController {
 	}
 	
 	/**
+	 * This method deletes a process from the process list
+	 * 
+	 * @param index the process index
+	 */
+	public void deleteProcess(int index) {
+		if (index >= 0) {
+			int confirmation = JOptionPane.showConfirmDialog(
+					ApplicationController.instance().getMainFrame(),
+					"Are you sure to delete the selected process?",
+					"Confirm deletion",
+					JOptionPane.YES_NO_OPTION);
+			if (confirmation == JOptionPane.NO_OPTION || confirmation == JOptionPane.CLOSED_OPTION) {
+				return;
+			}
+			
+			processesList.deleteProcess(index);
+			notifyChangeProcessesList();
+		}
+	}
+	
+	/**
 	 * This method evolves the currently selected process
 	 */
 	public void evolveProcess() {
@@ -147,6 +175,7 @@ public class ProcessesController {
 			GENERATED_PROCESSES++;
 			Process evolution = EvolutionGenerator.evolveProcess(p, ed.getConfiguredValues());
 			processesList.storeNewProcess(GENERATED_PROCESSES, evolution.getName(), generateProcessSubtitle(evolution), evolution);
+			notifyChangeProcessesList();
 		}
 	}
 	
@@ -170,8 +199,31 @@ public class ProcessesController {
 		applicationController.getMainWindow().getToolbar().setProcessSelected((process != null));
 	}
 	
+	/**
+	 * This method returns the list of processes
+	 * 
+	 * @return the list of processes
+	 */
 	public List<Process> getProcesses() {
 		return processesList.getProcesses();
+	}
+	
+	/**
+	 * This method registers a new listers to the process controller
+	 * 
+	 * @param listener the listener to register
+	 */
+	public void registerNewListener(ProcessesListener listener) {
+		listeners.add(listener);
+	}
+	
+	/**
+	 * This method notifies to all listeners a change in processes list
+	 */
+	private void notifyChangeProcessesList() {
+		for (ProcessesListener listener : listeners) {
+			listener.processListChanged();
+		}
 	}
 	
 	/**
@@ -192,5 +244,9 @@ public class ProcessesController {
 			sLine += (p.getGateways().size() > 1)? "gateways" : "gateway";
 		}
 		return sLine;
+	}
+	
+	public interface ProcessesListener {
+		public void processListChanged();
 	}
 }
