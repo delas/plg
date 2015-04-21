@@ -179,12 +179,12 @@ public class Streamer extends Thread {
 		StreamEvent toStream = buffer.getEventToStream();
 		
 		// define the amount of time to wait
+		long timeNewEvent = toStream.getDate().getTime();
 		long timeToWait = 0;
 		if (timeLastEvent > 0) {
-			long timeNewEvent = toStream.getDate().getTime();
 			timeToWait = (long) ((timeNewEvent - timeLastEvent) * configuration.timeMultiplier);
-			timeLastEvent = timeNewEvent;
 		}
+		timeLastEvent = timeNewEvent;
 		
 		// update the event time to use the current time
 		toStream.setDate(new Date());
@@ -198,7 +198,9 @@ public class Streamer extends Thread {
 		// now we have to sleep for the provided amount of time
 		try {
 			Thread.sleep(timeToWait);
-		} catch (InterruptedException e1) { }
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
+		}
 	}
 	
 	@Override
