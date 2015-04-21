@@ -167,6 +167,8 @@ public class Streamer extends Thread {
 	public synchronized void updateProcess(Process process) {
 		if (process != null) {
 			this.process = process;
+			this.buffer.clearQueues();
+			populateBuffer();
 		}
 	}
 	
@@ -183,6 +185,10 @@ public class Streamer extends Thread {
 		long timeToWait = 0;
 		if (timeLastEvent > 0) {
 			timeToWait = (long) ((timeNewEvent - timeLastEvent) * configuration.timeMultiplier);
+		}
+		if (timeToWait < 0) {
+			// this situation can happen when the process is changed
+			timeToWait = 0;
 		}
 		timeLastEvent = timeNewEvent;
 		

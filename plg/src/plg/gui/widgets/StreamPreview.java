@@ -11,6 +11,7 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.lang.ref.SoftReference;
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedDeque;
@@ -36,6 +37,8 @@ import plg.utils.Pair;
 public class StreamPreview extends JPanel {
 
 	private static final long serialVersionUID = -4021692478818224626L;
+	private static DecimalFormat formatter = new DecimalFormat("#0.00");
+	
 	private SoftReference<BufferedImage> buffer = null;
 	private StreamBuffer streamBuffer;
 	private StreamConfiguration streamConfiguration;
@@ -74,8 +77,8 @@ public class StreamPreview extends JPanel {
 		
 		// draw the vertical lines
 		g2d.setColor(Color.BLACK);
-		int verticalColumnsWidth = width / 6;
-		for (int i = 0; i < 6; i++) {
+		int verticalColumnsWidth = width / 3;
+		for (int i = 0; i < 3; i++) {
 			int x = verticalColumnsWidth * i;
 			g2d.fillRect(x, 0, 1, height);
 		}
@@ -108,8 +111,8 @@ public class StreamPreview extends JPanel {
 				for (StreamEvent e : queue) {
 					long eventTime = e.getDate().getTime();
 					long timeRelative = (long) ((eventTime - firstEventTime) * streamConfiguration.timeMultiplier);
-					secLastEvent = timeRelative;
-					int x = (int) (width * timeRelative / 60000);
+					secLastEvent = Math.max(secLastEvent, timeRelative);
+					int x = (int) (width * timeRelative /30000);
 					if (x <= width) {
 						// manage multiple events into the same point
 						Pair<Integer, Integer> coords = new Pair<Integer, Integer>(x, y);
@@ -163,15 +166,26 @@ public class StreamPreview extends JPanel {
 			}
 			
 			// draw total frequency label
-			String eventsIncludedText = eventsIncluded + " events in the first minute";
+			String eventsIncludedText = eventsIncluded + " events in 30 secs";
 			if (allEventsIncluded) {
-				long tot = 60000 * eventsIncluded / secLastEvent;
-				eventsIncludedText = "About " + tot + " events in the first minute (estimated value)";
+				long tot = 30000 * eventsIncluded / secLastEvent;
+				eventsIncludedText = "About " + tot + " events in 30 secs (estimated value)";
 			}
 			g2d.setColor(new Color(0, 0, 0, 200));
 			g2d.fillRoundRect(width - fm.stringWidth(eventsIncludedText) - 2 - marginRight, marginTop, fm.stringWidth(eventsIncludedText) + 3, fm.getHeight(), 10, 10);
 			g2d.setColor(Color.WHITE);
 			g2d.drawString(eventsIncludedText, width - fm.stringWidth(eventsIncludedText) - marginRight, fm.getHeight() - 4 + marginTop);
+			
+			// draw speed
+			String speed = formatter.format(eventsIncluded / 30d) + " ev/sec";
+			if (allEventsIncluded) {
+				long tot = 30000 * eventsIncluded / secLastEvent;
+				speed = "About " + formatter.format(tot/30d) + " ev/sec";
+			}
+			g2d.setColor(new Color(0, 0, 0, 200));
+			g2d.fillRoundRect(width - fm.stringWidth(speed) - 2 - marginRight, height - fm.getHeight() - marginBottom, fm.stringWidth(speed) + 3, fm.getHeight(), 10, 10);
+			g2d.setColor(Color.WHITE);
+			g2d.drawString(speed, width - fm.stringWidth(speed) - marginRight, height - 4 - marginBottom);
 		}
 		
 		// final paint stuff

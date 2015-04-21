@@ -88,7 +88,7 @@ public class StreamDialog extends GeneralDialog implements ProcessesController.P
 		portLabel = prepareFieldLabel("");
 		parallelInstancesLabel = prepareFieldLabel("");
 		timeFractionLabel = prepareFieldLabel("");
-		timeMultiplierSlider = new JSlider(1, 200);
+		timeMultiplierSlider = new JSlider(1, 2000);
 		
 		// buttons
 		startButton = new JButton("Start stream");
@@ -130,11 +130,11 @@ public class StreamDialog extends GeneralDialog implements ProcessesController.P
 		
 		// widgets configuration
 		// time slider
-		timeMultiplierSlider.setValue((int) (streamConfiguration.timeMultiplier * 10000d));
+		timeMultiplierSlider.setValue((int) (streamConfiguration.timeMultiplier * 100000d));
 		timeMultiplierSlider.addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent e) {
-				double val = (double) timeMultiplierSlider.getValue() / 10000d;
+				double val = (double) timeMultiplierSlider.getValue() / 100000d;
 				StreamDialog.this.streamConfiguration.timeMultiplier = val;
 				streamPreview.updateUI();
 				StreamDialog.this.streamConfiguration.timeMultiplier = val;
@@ -185,6 +185,7 @@ public class StreamDialog extends GeneralDialog implements ProcessesController.P
 		GridBagConstraints c = new GridBagConstraints();
 		c.gridx = 0;
 		c.gridy = 0;
+		c.weightx = 0;
 		c.insets = new Insets(0, 0, 0, 5);
 		bodyPanel.add(parameters, c);
 		
@@ -246,13 +247,15 @@ public class StreamDialog extends GeneralDialog implements ProcessesController.P
 		
 		// update the actual process
 		this.process = process;
+		if (streamer != null) {
+			streamer.updateProcess(process);
+		}
 		
 		// update the streamer preview
 		streamerForPreview.updateProcess(process);
 		streamerForPreview.clearBuffer();
 		streamerForPreview.initialBufferPopulation();
 		streamPreview.updateUI();
-		
 	}
 	
 	@Override
@@ -284,7 +287,7 @@ public class StreamDialog extends GeneralDialog implements ProcessesController.P
 		public Process process;
 		
 		public ProcessSelector(Process process) {
-			this.name = process.getName();
+			this.name = process.getName().substring(0, Math.min(process.getName().length(), 20));
 			this.process = process;
 		}
 		
