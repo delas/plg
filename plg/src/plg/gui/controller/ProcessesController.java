@@ -1,6 +1,7 @@
 package plg.gui.controller;
 
 import java.io.File;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.JFileChooser;
@@ -167,6 +168,10 @@ public class ProcessesController {
 		
 		// update toolbar buttons depending on the selected process or not
 		applicationController.getMainWindow().getToolbar().setProcessSelected((process != null));
+	}
+	
+	public List<Process> getProcesses() {
+		return processesList.getProcesses();
 	}
 	
 	/**

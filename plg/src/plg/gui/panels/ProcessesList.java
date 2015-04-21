@@ -9,6 +9,8 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
@@ -154,5 +156,14 @@ public class ProcessesList extends MainWindowPanel {
 				}
 			}
 		}
+	}
+	
+	public List<Process> getProcesses() {
+		List<Process> processes = new LinkedList<Process>();
+		for (int i = 0; i < dlm.size(); i++) {
+			MultilineImageListEntry entry = dlm.get(i);
+			processes.add((Process) entry.getItem());
+		}
+		return processes;
 	}
 }

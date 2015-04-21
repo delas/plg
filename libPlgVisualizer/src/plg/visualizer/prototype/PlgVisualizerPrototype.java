@@ -21,17 +21,18 @@ public class PlgVisualizerPrototype {
 		Process p = new Process("test");
 		p = generateProcess();
 //		ProcessGenerator.randomizeProcess(p, RandomizationConfiguration.BASIC_VALUES);
+		BPMNVisualizer v = new BPMNVisualizer(p);
 		
 		JFrame f = new JFrame("Test Frame");
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		f.setSize(800, 600);
+		f.setSize(800, 300);
 		f.setLayout(new BorderLayout());
-		f.add(new BPMNVisualizer(p), BorderLayout.CENTER);
+		f.add(v, BorderLayout.CENTER);
 		f.setVisible(true);
+		v.fit();
 	}
 	
-	private static Process generateProcess() throws IllegalSequenceException,
-	InvalidProcessException {
+	private static Process generateProcess() throws IllegalSequenceException, InvalidProcessException {
 		Process p = new Process("test");
 		StartEvent start = p.newStartEvent();
 		EndEvent end = p.newEndEvent();

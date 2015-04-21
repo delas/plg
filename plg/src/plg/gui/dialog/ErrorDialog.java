@@ -26,7 +26,7 @@ public class ErrorDialog extends GeneralDialog {
 	private JTextArea details;
 
 	public ErrorDialog(JFrame owner, Exception e) {
-		super(owner, "Exception thrown", e.getMessage(), ApplicationController.instance().getConfiguration(EvolutionDialog.class.getCanonicalName()), false);
+		super(owner, "Exception thrown", e.getMessage(), ApplicationController.instance().getConfiguration(EvolutionDialog.class.getCanonicalName()), false, true);
 		this.exception = e;
 
 		bodyPanel.setLayout(new GridBagLayout());

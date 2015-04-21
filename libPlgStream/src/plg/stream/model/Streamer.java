@@ -52,12 +52,8 @@ public class Streamer extends Thread {
 		this.process = process;
 		this.simulationParameters = simulationParameters;
 		this.buffer = new StreamBuffer(configuration);
-		this.broadcaster = new BroadcastService(configuration);
 		
-		// initial population of the buffer
-		for(int i = 0; i < configuration.maximumParallelInstances * 3; i++) {
-			populateBuffer();
-		}
+		initialBufferPopulation();
 	}
 	
 	/**
@@ -67,6 +63,7 @@ public class Streamer extends Thread {
 		if (!enabled) {
 			enabled = true;
 			
+			broadcaster = new BroadcastService(configuration);
 			// start the broadcast service
 			try {
 				broadcaster.open();
@@ -115,6 +112,23 @@ public class Streamer extends Thread {
 	}
 	
 	/**
+	 * This method clears up the buffer
+	 */
+	public synchronized void clearBuffer() {
+		buffer.clearQueues();
+	}
+	
+	/**
+	 * This method performs the initial population of the buffer
+	 */
+	public synchronized void initialBufferPopulation() {
+		// initial population of the buffer
+		for(int i = 0; i < configuration.maximumParallelInstances * 3; i++) {
+			populateBuffer();
+		}
+	}
+	
+	/**
 	 * This method is responsible of the generation of new traces to populate
 	 * the {@link StreamBuffer}
 	 */
@@ -142,6 +156,18 @@ public class Streamer extends Thread {
 	 */
 	public synchronized StreamBuffer getBuffer() {
 		return buffer;
+	}
+	
+	/**
+	 * This method can be used to update the current process. This method can be
+	 * called while the streaming is ongoing.
+	 * 
+	 * @param process the new process
+	 */
+	public synchronized void updateProcess(Process process) {
+		if (process != null) {
+			this.process = process;
+		}
 	}
 	
 	/**
@@ -173,18 +199,6 @@ public class Streamer extends Thread {
 		try {
 			Thread.sleep(timeToWait);
 		} catch (InterruptedException e1) { }
-	}
-	
-	/**
-	 * This method can be used to update the current process. This method can be
-	 * called while the streaming is ongoing.
-	 * 
-	 * @param process the new process
-	 */
-	protected synchronized void updateProcess(Process process) {
-		if (process != null) {
-			this.process = process;
-		}
 	}
 	
 	@Override

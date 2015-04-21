@@ -28,7 +28,7 @@ public class StreamConfiguration {
 	 * simulation time will be preserved during the streaming (i.e., if a trace
 	 * lasts for 10 days, the simulation will lasts 10 days as well).
 	 */
-	public double timeMultiplier = 0.5;
+	public double timeMultiplier = 0.01;
 	
 	/**
 	 * This parameter can be used to tune the time before the beginning of a new

@@ -70,50 +70,52 @@ public class StreamBuffer extends CopyOnWriteArrayList<ConcurrentLinkedDeque<Str
 	 */
 	public synchronized void enqueueTrace(XTrace trace) {
 		List<XTrace> events = XLogHelper.traceToEventsForStream(trace);
-		int targetChannel = channelToEnqueueEvents();
-		boolean noEvents = (targetChannel == -1) || get(targetChannel).isEmpty();
-		
-		if (targetChannel == -1) {
-			targetChannel = 0;
-		}
-		
-		// compute shifting information for the time
-		long timeShift = 0;
-		if (!noEvents) {
-			long startEvent = XLogHelper.getTimestamp(trace.get(0)).getTime();
-			long endEvent = XLogHelper.getTimestamp(trace.get(trace.size() - 1)).getTime();
-			long traceDuration = endEvent - startEvent;
-			if (traceDuration == 0) {
-				traceDuration = 1000*60*60;
-			}
-			long timeToWait = (long) (traceDuration * configuration.timeFractionBeforeNewTrace);
-			long timeLastEventOnChannel = get(targetChannel).peekLast().getDate().getTime();
-			timeShift = (timeLastEventOnChannel + timeToWait) - startEvent;
-		}
-		
-		// set the actual time of all events
-		int progress = 0;
-		for(XTrace t : events) {
-			// create the actual stream event
-			StreamEvent se = StreamEvent.wrap(t);
-			se.setInternalChannel(targetChannel);
+		if (events.size() > 0) {
+			int targetChannel = channelToEnqueueEvents();
+			boolean noEvents = (targetChannel == -1) || get(targetChannel).isEmpty();
 			
-			// add trace start/end marking, if necessary
-			if (configuration.markTraceBeginningEnd) {
-				if (progress == 0) {
-					se.setTraceLifecycle("start");
-				} else if (progress == t.size()) {
-					se.setTraceLifecycle("complete");
+			if (targetChannel == -1) {
+				targetChannel = 0;
+			}
+			
+			// compute shifting information for the time
+			long timeShift = 0;
+			if (!noEvents) {
+				long startEvent = XLogHelper.getTimestamp(trace.get(0)).getTime();
+				long endEvent = XLogHelper.getTimestamp(trace.get(trace.size() - 1)).getTime();
+				long traceDuration = endEvent - startEvent;
+				if (traceDuration == 0) {
+					traceDuration = 1000*60*60;
 				}
+				long timeToWait = (long) (traceDuration * configuration.timeFractionBeforeNewTrace);
+				long timeLastEventOnChannel = get(targetChannel).peekLast().getDate().getTime();
+				timeShift = (timeLastEventOnChannel + timeToWait) - startEvent;
 			}
 			
-			// fix the time of the event
-			long eventTime = XLogHelper.getTimestamp(t.get(0)).getTime();
-			se.setDate(new Date(eventTime + timeShift));
-			
-			// enqueue the stream event into the buffer
-			get(targetChannel).add(se);
-			progress++;
+			// set the actual time of all events
+			int progress = 0;
+			for(XTrace t : events) {
+				// create the actual stream event
+				StreamEvent se = StreamEvent.wrap(t);
+				se.setInternalChannel(targetChannel);
+				
+				// add trace start/end marking, if necessary
+				if (configuration.markTraceBeginningEnd) {
+					if (progress == 0) {
+						se.setTraceLifecycle("start");
+					} else if (progress == t.size()) {
+						se.setTraceLifecycle("complete");
+					}
+				}
+				
+				// fix the time of the event
+				long eventTime = XLogHelper.getTimestamp(t.get(0)).getTime();
+				se.setDate(new Date(eventTime + timeShift));
+				
+				// enqueue the stream event into the buffer
+				get(targetChannel).add(se);
+				progress++;
+			}
 		}
 	}
 	
@@ -153,6 +155,15 @@ public class StreamBuffer extends CopyOnWriteArrayList<ConcurrentLinkedDeque<Str
 			tot += get(i).size();
 		}
 		return tot;
+	}
+	
+	/**
+	 * This method clears all the queues of the buffer
+	 */
+	public synchronized void clearQueues() {
+		for (int i = 0; i < size(); i++) {
+			get(i).clear();
+		}
 	}
 	
 	/**

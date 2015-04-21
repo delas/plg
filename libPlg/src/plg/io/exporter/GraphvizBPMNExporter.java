@@ -110,7 +110,7 @@ digraph G {
 	// gateways
 	node [
 		shape="diamond",
-		fixedsize="true",
+		//fixedsize="true",
 		width="0.5",
 		height="0.5",
 		fontsize=20,

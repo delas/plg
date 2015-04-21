@@ -49,7 +49,7 @@ public class BroadcastService extends Thread {
 	 */
 	public void open() throws IOException {
 		socket = new ServerSocket(confiuguration.servicePort);
-		socket.setSoTimeout(1000);
+		socket.setSoTimeout(10);
 		start();
 	}
 	

@@ -70,6 +70,15 @@ public class BPMNVisualizer extends JPanel {
 	 * @param process the process graph to show
 	 */
 	public BPMNVisualizer(Process process) {
+		updateProcess(process);
+	}
+	
+	/**
+	 * This method updates the represented process
+	 * 
+	 * @param process
+	 */
+	public void updateProcess(Process process) {
 		this.process = process;
 		this.cellsToComponents = new HashMap<mxCell, Component>();
 		this.graph = new mxGraph();
@@ -451,7 +460,19 @@ public class BPMNVisualizer extends JPanel {
 	public void fit() {
 		mxGraphView view = graph.getView();
 		int compLen = getWidth();
-		int viewLen = (int)view.getGraphBounds().getWidth();
-		view.setScale((double)compLen/viewLen * view.getScale());
+		if (compLen == 0) {
+			compLen = getParent().getWidth() - 10;
+		}
+		int viewLen = (int) view.getGraphBounds().getWidth();
+		double scaleLen = Math.min((double) compLen / viewLen * view.getScale(), 1.0);
+		
+		int compHeight = getHeight();
+		if (compHeight == 0) {
+			compHeight = getParent().getHeight() - 10;
+		}
+		int viewHeight = (int) view.getGraphBounds().getHeight();
+		double scaleHeight = Math.min((double) compHeight / viewHeight * view.getScale(), 1.0);
+		
+		view.setScale(Math.min(scaleLen, scaleHeight));
 	}
 }

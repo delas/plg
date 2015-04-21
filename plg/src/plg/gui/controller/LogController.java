@@ -19,11 +19,13 @@ import plg.gui.dialog.ErrorDialog;
 import plg.gui.dialog.GeneralDialog.RETURNED_VALUES;
 import plg.gui.dialog.NewLogDialog;
 import plg.gui.dialog.StreamConfigurationDialog;
+import plg.gui.dialog.StreamDialog;
 import plg.gui.dialog.StreamNoiseDialog;
 import plg.gui.panels.SingleProcessVisualizer;
 import plg.gui.util.FileFilterHelper;
 import plg.gui.util.RuntimeUtils;
 import plg.model.Process;
+import plg.stream.configuration.StreamConfiguration;
 
 /**
  * This class represents the log controller, and is in charge of managing the
@@ -118,6 +120,12 @@ public class LogController {
 			scd.setVisible(true);
 			if (RETURNED_VALUES.SUCCESS.equals(scd.returnedValue())) {
 				
+				StreamDialog sd = new StreamDialog(
+						ApplicationController.instance().getMainFrame(),
+						scd.getConfiguredValues(),
+						nld.getConfiguredValues(),
+						singleProcessVisualizer.getCurrentlyVisualizedProcess());
+				sd.setVisible(true);
 			}
 		}
 	}

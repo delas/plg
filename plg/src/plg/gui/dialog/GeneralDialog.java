@@ -82,8 +82,9 @@ public abstract class GeneralDialog extends JDialog {
 	 * @param help a short text describing the dialog content
 	 * @param configuration the configuration set to use for the dialog
 	 * @param isBodyScrollable whether the dialog body is scrollable or not
+	 * @param isModal whether the dialog is modal or not
 	 */
-	public GeneralDialog(JFrame owner, String title, String help, ConfigurationSet configuration, boolean isBodyScrollable) {
+	public GeneralDialog(JFrame owner, String title, String help, ConfigurationSet configuration, boolean isBodyScrollable, boolean isModal) {
 		super(owner);
 		
 		this.isBodyScrollable = isBodyScrollable;
@@ -94,7 +95,7 @@ public abstract class GeneralDialog extends JDialog {
 		setTitle(title);
 		setSize(WIDTH, HEIGHT);
 		setLocationRelativeTo(owner);
-		setModal(true);
+		setModal(isModal);
 		
 		placeComponents();
 		
@@ -121,7 +122,7 @@ public abstract class GeneralDialog extends JDialog {
 	 * @param configuration the configuration set to use for the dialog
 	 */
 	public GeneralDialog(JFrame owner, String title, String help, ConfigurationSet configuration) {
-		this(owner, title, help, configuration, true);
+		this(owner, title, help, configuration, true, true);
 	}
 	
 	/**
@@ -264,5 +265,20 @@ public abstract class GeneralDialog extends JDialog {
 	 */
 	public RETURNED_VALUES returnedValue() {
 		return returnedValue;
+	}
+	
+	/**
+	 * This method is called immediately after the dialog is visualized
+	 */
+	protected void afterShowing() {
+		// by default, do nothing
+	}
+	
+	@Override
+	public void setVisible(boolean visibility) {
+		super.setVisible(visibility);
+		if (visibility) {
+			afterShowing();
+		}
 	}
 }
