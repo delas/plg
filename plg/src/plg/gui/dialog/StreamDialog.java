@@ -20,6 +20,7 @@ import javax.swing.event.ChangeListener;
 import plg.generator.log.SimulationConfiguration;
 import plg.gui.controller.ApplicationController;
 import plg.gui.controller.ProcessesController;
+import plg.gui.controller.ProcessesController.ProcessesListener;
 import plg.gui.util.SpringUtilities;
 import plg.gui.util.collections.ImagesCollection;
 import plg.gui.widgets.StreamPreview;
@@ -30,7 +31,12 @@ import plg.stream.model.Streamer;
 import plg.visualizer.BPMNVisualizer;
 
 /**
- * This class contains the dialog to manage the stream
+ * This class contains the dialog to manage the stream. This dialog is also a
+ * {@link ProcessesListener} since it is capable of receiving updates from the
+ * {@link ProcessesController}.
+ * 
+ * <p> This dialog is not modal: it is possible to change the underlying list of
+ * processes in order to do perform concept drifts.
  *
  * @author Andrea Burattin
  */
@@ -55,6 +61,14 @@ public class StreamDialog extends GeneralDialog implements ProcessesController.P
 	protected JButton startButton;
 	protected JButton stopButton;
 	
+	/**
+	 * Main dialog constructor
+	 * 
+	 * @param owner the owner of the dialog
+	 * @param streamConfiguration the stream configuration
+	 * @param simulationConfiguration the simulation configuration
+	 * @param process the initial process to stream
+	 */
 	public StreamDialog(JFrame owner, StreamConfiguration streamConfiguration, SimulationConfiguration simulationConfiguration, Process process) {
 		super(owner,
 			"Stream Process",
@@ -202,12 +216,20 @@ public class StreamDialog extends GeneralDialog implements ProcessesController.P
 		ApplicationController.instance().processes().registerNewListener(this);
 	}
 	
+	/**
+	 * This method updates the dialog labels
+	 */
 	protected void updateLabels() {
 		portLabel.setText("" + streamConfiguration.servicePort);
 		parallelInstancesLabel.setText("" + streamConfiguration.maximumParallelInstances);
 		timeFractionLabel.setText("" + streamConfiguration.timeFractionBeforeNewTrace);
 	}
 	
+	/**
+	 * This method updates the process to be streamed
+	 * 
+	 * @param process the new process to use for the streaming
+	 */
 	protected void updateProcess(Process process) {
 		// update the preview
 		GridBagConstraints c = new GridBagConstraints();
@@ -254,6 +276,9 @@ public class StreamDialog extends GeneralDialog implements ProcessesController.P
 		processCombo.setEnabled(true);
 	}
 	
+	/**
+	 * This class contains the values on the processes combo box
+	 */
 	private class ProcessSelector {
 		public String name;
 		public Process process;
