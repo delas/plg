@@ -91,5 +91,13 @@ public class StreamConfigurationDialog extends GeneralDialog {
 			"Configuration of the stream parameters.",
 			ApplicationController.instance().getConfiguration(NewProcessDialog.class.getCanonicalName()));
 	}
-
+	
+	/**
+	 * This method returns the configuration set up by the user
+	 * 
+	 * @return the configuration set
+	 */
+	public StreamConfiguration getConfiguredValues() {
+		return currentConfiguration;
+	}
 }
