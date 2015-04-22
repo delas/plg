@@ -1,6 +1,7 @@
 package plg.gui.controller;
 
 import java.io.File;
+import java.util.concurrent.ExecutionException;
 
 import javax.swing.JFileChooser;
 import javax.swing.SwingWorker;
@@ -21,6 +22,7 @@ import plg.gui.dialog.NewLogDialog;
 import plg.gui.dialog.StreamConfigurationDialog;
 import plg.gui.dialog.StreamDialog;
 import plg.gui.dialog.StreamNoiseDialog;
+import plg.gui.panels.Progress;
 import plg.gui.panels.SingleProcessVisualizer;
 import plg.gui.util.FileFilterHelper;
 import plg.gui.util.RuntimeUtils;
@@ -111,20 +113,43 @@ public class LogController {
 	 * This method is responsible of generating streams
 	 */
 	public void generateStream() {
-		StreamNoiseDialog nld = new StreamNoiseDialog(ApplicationController.instance().getMainFrame());
+		final StreamNoiseDialog nld = new StreamNoiseDialog(ApplicationController.instance().getMainFrame());
 		nld.setVisible(true);
+		
 		if (RETURNED_VALUES.SUCCESS.equals(nld.returnedValue())) {
+			
 			// ok, we now have a configuration for the generation of the noise of the stream
-			StreamConfigurationDialog scd = new StreamConfigurationDialog(ApplicationController.instance().getMainFrame());
+			final StreamConfigurationDialog scd = new StreamConfigurationDialog(ApplicationController.instance().getMainFrame());
 			scd.setVisible(true);
+			
+			final Progress progress = ApplicationController.instance().getMainWindow().getProgressStack().askForNewProgress();
+			
 			if (RETURNED_VALUES.SUCCESS.equals(scd.returnedValue())) {
-				
-				StreamDialog sd = new StreamDialog(
-						ApplicationController.instance().getMainFrame(),
-						scd.getConfiguredValues(),
-						nld.getConfiguredValues(),
-						singleProcessVisualizer.getCurrentlyVisualizedProcess());
-				sd.setVisible(true);
+				SwingWorker<StreamDialog, Void> worker = new SwingWorker<StreamDialog, Void>() {
+					@Override
+					protected StreamDialog doInBackground() throws Exception {
+						progress.start();
+						progress.setIndeterminate(true);
+						return new StreamDialog(
+								ApplicationController.instance().getMainFrame(),
+								scd.getConfiguredValues(),
+								nld.getConfiguredValues(),
+								singleProcessVisualizer.getCurrentlyVisualizedProcess());
+					}
+					
+					@Override
+					protected void done() {
+						progress.finished();
+						try {
+							get().setVisible(true);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						} catch (ExecutionException e) {
+							e.printStackTrace();
+						}
+					}
+				};
+				worker.execute();
 			}
 		}
 	}
