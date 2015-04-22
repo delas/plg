@@ -15,6 +15,7 @@ import javax.swing.JFrame;
 import plg.gui.config.ConfigurationSet;
 import plg.gui.controller.ApplicationController;
 import plg.gui.util.collections.ImagesCollection;
+import plg.utils.PlgConstants;
 
 /**
  * This class contains the main frame of PLG
@@ -33,7 +34,7 @@ public class MainFrame extends JFrame {
 	private static final String KEY_WINDOW_MAXIMIZED = "WINDOW_MAXIMIZED";
 	
 	// default configuration values
-	private static final String FRAME_TITLE = "PLG - Processes and Logs Generator";
+	private static final String FRAME_TITLE = "PLG - Processes and Logs Generator (" + PlgConstants.libPLG_VERSION + ")";
 	private static final int DEFAULT_WIDTH = 1366;
 	private static final int DAFAULT_HEIGHT = 768;
 	private static final int MINIMUM_WIDTH = 800;

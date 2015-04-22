@@ -283,11 +283,15 @@ public class StreamDialog extends GeneralDialog implements ProcessesController.P
 	 * This class contains the values on the processes combo box
 	 */
 	private class ProcessSelector {
+		public static final int MAX_NAME_LENGTH = 25;
 		public String name;
 		public Process process;
 		
 		public ProcessSelector(Process process) {
-			this.name = process.getName().substring(0, Math.min(process.getName().length(), 20));
+			this.name = process.getName().substring(0, Math.min(process.getName().length(), MAX_NAME_LENGTH));
+			if (process.getName().length() > MAX_NAME_LENGTH) {
+				this.name += "...";
+			}
 			this.process = process;
 		}
 		
