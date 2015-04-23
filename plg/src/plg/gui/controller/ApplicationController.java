@@ -44,9 +44,6 @@ public class ApplicationController {
 	private ApplicationController() {
 		configuration = UIConfiguration.master();
 		
-		// remote logging, if available
-		RemoteLogger.instance().log(REMOTE_MESSAGES.APPLICATION_STARTED).send();
-		
 		// creates gui
 		mainWindow = new MainWindow(this);
 		mainFrame = new MainFrame(this);

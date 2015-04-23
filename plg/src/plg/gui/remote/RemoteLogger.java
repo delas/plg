@@ -1,10 +1,19 @@
 package plg.gui.remote;
 
+import java.awt.Cursor;
+import java.awt.Desktop;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Scanner;
+
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.SwingWorker;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -18,6 +27,9 @@ import org.json.simple.JSONValue;
 import plg.generator.log.SimulationConfiguration;
 import plg.generator.log.noise.NoiseConfiguration;
 import plg.generator.process.RandomizationConfiguration;
+import plg.gui.config.ConfigurationSet;
+import plg.gui.config.UIConfiguration;
+import plg.gui.controller.ApplicationController;
 import plg.stream.configuration.StreamConfiguration;
 import plg.utils.CPUUtils;
 import plg.utils.OSUtils;
@@ -30,11 +42,11 @@ import plg.utils.PlgConstants;
  */
 public class RemoteLogger {
 
-	/**
-	 * This field can be used to turn on and off the logging mechanism.
-	 */
-	public static final boolean LOGGING_ENABLED = true;
+	protected static final String KEY_REMOTE_LOGGING_ENABLED = "REMOTE_LOGGING_ENABLED";
 	
+	/*
+	 * These are the URLs for the remote logging
+	 */
 	public static final String NEW_SESSION_URL = "http://plg.processmining.it/log/cmd.php?cmd=newsession&plg_version=%s&os=%s&cpus=%s";
 	public static final String CMD_URL = "http://plg.processmining.it/log/cmd.php?cmd=log&session_id=%s&token=%s&command=%s";
 	
@@ -43,6 +55,8 @@ public class RemoteLogger {
 	 */
 	private static RemoteLogger logger = new RemoteLogger();
 	
+	private ConfigurationSet configuration;
+	private boolean loggingEnabled = false;
 	private String sessionId = null;
 	private String token = null;
 	
@@ -52,24 +66,95 @@ public class RemoteLogger {
 	 * allow new instances of the class.
 	 */
 	protected RemoteLogger() {
-		if (LOGGING_ENABLED) {
-			// ask for a new session id
-			String newSessionUrl = String.format(NEW_SESSION_URL,
-					PlgConstants.libPLG_VERSION,
-					OSUtils.determineOS(),
-					CPUUtils.CPUAvailable());
-			JSONObject sessionObj = httpRequestToJson(newSessionUrl);
-			if (sessionObj != null) {
-				this.sessionId = sessionObj.get("session_id").toString();
-				this.token = sessionObj.get("token").toString();
-			}
-		}
+		this.configuration = UIConfiguration.master().getChild(RemoteLogger.class.getCanonicalName());
+		
+		initializeRemoteSession();
 	}
 	
-	protected void send(RemoteLogBlob blob) {
-		if (LOGGING_ENABLED) {
+	/**
+	 * This method returns a new instance of the remote logger
+	 * 
+	 * @return a logger instance
+	 */
+	public static RemoteLogger instance() {
+		return logger;
+	}
+	
+	protected void initializeLogger() {
+		if (!configuration.containsKey(KEY_REMOTE_LOGGING_ENABLED)) {
+			try {
+				// let's wait for some time, and hope the gui goes up in the meanwhile
+				Thread.sleep(500);
+			} catch (InterruptedException e) { }
+			
+			JLabel message = new JLabel("<html>Would you like to help us reporting anonymous usage statistics?<br>"
+					+ "No information on actual processes or simulations will be reported (<a href=\"http://www.google.com\">info</a>).<br><br></html>");
+			message.addMouseListener(new MouseAdapter() {
+				public void mouseReleased(MouseEvent e) {
+					if (Desktop.isDesktopSupported()) {
+						try {
+							Desktop.getDesktop().browse(new URI("http://plg.processmining.it/help/UsageStatistics"));
+						} catch (IOException | URISyntaxException ex) { }
+					}
+				}
+			});
+			message.setToolTipText("Open URL with more information");
+			message.setCursor(new Cursor(Cursor.HAND_CURSOR));
+			JCheckBox checkbox = new JCheckBox("Do not show this message again.");
+			Object[] params = {message, checkbox};
+			
+			int result = JOptionPane.showConfirmDialog(ApplicationController.instance().getMainFrame(), params, "PLG Usage", JOptionPane.YES_NO_OPTION);
+			boolean response = (result == JOptionPane.YES_OPTION);
+			boolean permanent = checkbox.isSelected();
+			
+			// set the values
+			loggingEnabled = response;
+			if (permanent) {
+				configuration.setBoolean(KEY_REMOTE_LOGGING_ENABLED, response);
+			}
+		}
+		loggingEnabled = configuration.getBoolean(KEY_REMOTE_LOGGING_ENABLED);
+	}
+	
+	protected void initializeRemoteSession() {
+			new SwingWorker<Void, Void>() {
+				@Override
+				protected Void doInBackground() throws Exception {
+					initializeLogger();
+					
+					if (loggingEnabled) {
+						// ask for a new session id
+						String newSessionUrl = String.format(NEW_SESSION_URL,
+								PlgConstants.libPLG_VERSION,
+								OSUtils.determineOS(),
+								CPUUtils.CPUAvailable());
+						JSONObject sessionObj = httpRequestToJson(newSessionUrl);
+						if (sessionObj != null) {
+							RemoteLogger.this.sessionId = sessionObj.get("session_id").toString();
+							RemoteLogger.this.token = sessionObj.get("token").toString();
+						}
+					}
+					return null;
+				}
+				
+				@Override
+				protected void done() {
+					// register open application
+					log(REMOTE_MESSAGES.APPLICATION_STARTED).send();
+				};
+			}.execute();
+	}
+	
+	protected void send(final RemoteLogBlob blob) {
+		if (loggingEnabled) {
 			if (sessionId != null && token != null) {
-				httpRequest(blob.getURL(), "parameters", blob.getParameters());
+				new SwingWorker<Void, Void>() {
+					@Override
+					protected Void doInBackground() throws Exception {
+						httpRequest(blob.getURL(), "parameters", blob.getParameters());
+						return null;
+					}
+				}.execute();
 			}
 		}
 	}
@@ -120,15 +205,6 @@ public class RemoteLogger {
 		return toReturn;
 	}
 	
-	/**
-	 * This method returns a new instance of the remote logger
-	 * 
-	 * @return a logger instance
-	 */
-	public static RemoteLogger instance() {
-		return logger;
-	}
-	
 	public RemoteLogBlob log(String activity) {
 		return new RemoteLogBlob(REMOTE_MESSAGES.CUSTOM_MESSAGE).add("activity", activity);
 	}
@@ -137,6 +213,9 @@ public class RemoteLogger {
 		return new RemoteLogBlob(activity);
 	}
 	
+	/**
+	 * 
+	 */
 	public class RemoteLogBlob extends ArrayList<Pair<String, String>> {
 		
 		private static final long serialVersionUID = -4194742473778496871L;
