@@ -16,7 +16,6 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 
 import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.methods.RequestBuilder;
@@ -181,12 +180,8 @@ public class RemoteLogger {
 			Scanner s = new Scanner(response.getEntity().getContent());
 			toReturn = s.nextLine();
 			s.close();
-		} catch (ClientProtocolException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
+		} catch (IOException | URISyntaxException e) {
+			System.err.println("Network error (" + e.toString() + "), too bad but I can live with it...");
 		}
 		return toReturn;
 	}
