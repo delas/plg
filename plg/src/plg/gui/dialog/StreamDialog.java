@@ -21,6 +21,8 @@ import plg.generator.log.SimulationConfiguration;
 import plg.gui.controller.ApplicationController;
 import plg.gui.controller.ProcessesController;
 import plg.gui.controller.ProcessesController.ProcessesListener;
+import plg.gui.remote.REMOTE_MESSAGES;
+import plg.gui.remote.RemoteLogger;
 import plg.gui.util.SpringUtilities;
 import plg.gui.util.collections.ImagesCollection;
 import plg.gui.widgets.StreamPreview;
@@ -110,6 +112,9 @@ public class StreamDialog extends GeneralDialog implements ProcessesController.P
 				streamer.startStream();
 				stopButton.setEnabled(true);
 				startButton.setEnabled(false);
+				
+				// remote logging, if available
+				RemoteLogger.instance().log(REMOTE_MESSAGES.STREAM_STARTED).send();
 			}
 		});
 		stopButton.setIcon(ImagesCollection.ICON_STOP);
@@ -123,6 +128,9 @@ public class StreamDialog extends GeneralDialog implements ProcessesController.P
 					public void run() {
 						streamer.endStream();
 						startButton.setEnabled(true);
+						
+						// remote logging, if available
+						RemoteLogger.instance().log(REMOTE_MESSAGES.STREAM_STOPPED).send();
 					}
 				});
 			}

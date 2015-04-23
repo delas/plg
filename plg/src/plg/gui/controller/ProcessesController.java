@@ -19,6 +19,8 @@ import plg.gui.dialog.GeneralDialog.RETURNED_VALUES;
 import plg.gui.dialog.NewProcessDialog;
 import plg.gui.panels.ProcessesList;
 import plg.gui.panels.SingleProcessVisualizer;
+import plg.gui.remote.REMOTE_MESSAGES;
+import plg.gui.remote.RemoteLogger;
 import plg.gui.util.FileFilterHelper;
 import plg.gui.util.RuntimeUtils;
 import plg.io.exporter.IFileExporter;
@@ -75,6 +77,9 @@ public class ProcessesController {
 			GENERATED_PROCESSES++;
 			processesList.storeNewProcess(GENERATED_PROCESSES, p.getName(), generateProcessSubtitle(p), p);
 			notifyChangeProcessesList();
+			
+			// remote logging, if available
+			RemoteLogger.instance().log(REMOTE_MESSAGES.PROCESS_RANDOMIZED).add(npd.getConfiguredValues()).send();
 		}
 	}
 	
@@ -105,6 +110,9 @@ public class ProcessesController {
 						Process p = get();
 						processesList.storeNewProcess(GENERATED_PROCESSES, p.getName(), generateProcessSubtitle(p), p);
 						notifyChangeProcessesList();
+						
+						// remote logging, if available
+						RemoteLogger.instance().log(REMOTE_MESSAGES.PROCESS_OPENED).add("filter", fc.getFileFilter().getDescription()).send();
 					} catch (ExecutionException | InterruptedException e) {
 						e.printStackTrace();
 					}
@@ -135,6 +143,9 @@ public class ProcessesController {
 							singleProcessVisualizer.getCurrentlyVisualizedProcess(),
 							file,
 							ApplicationController.instance().getMainWindow().getProgressStack().askForNewProgress());
+					
+					// remote logging, if available
+					RemoteLogger.instance().log(REMOTE_MESSAGES.PROCESS_SAVED).add("filter", fc.getFileFilter().getDescription()).send();
 					return null;
 				}
 			};
@@ -160,6 +171,9 @@ public class ProcessesController {
 			
 			processesList.deleteProcess(index);
 			notifyChangeProcessesList();
+			
+			// remote logging, if available
+			RemoteLogger.instance().log(REMOTE_MESSAGES.PROCESS_DELETED).send();
 		}
 	}
 	
@@ -176,6 +190,9 @@ public class ProcessesController {
 			Process evolution = EvolutionGenerator.evolveProcess(p, ed.getConfiguredValues());
 			processesList.storeNewProcess(GENERATED_PROCESSES, evolution.getName(), generateProcessSubtitle(evolution), evolution);
 			notifyChangeProcessesList();
+			
+			// remote logging, if available
+			RemoteLogger.instance().log(REMOTE_MESSAGES.PROCESS_EVOLVED).add(ed.getConfiguredValues()).send();
 		}
 	}
 	

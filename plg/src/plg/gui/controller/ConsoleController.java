@@ -10,6 +10,8 @@ import javax.swing.text.StyledDocument;
 
 import plg.gui.config.ConfigurationSet;
 import plg.gui.panels.Console;
+import plg.gui.remote.REMOTE_MESSAGES;
+import plg.gui.remote.RemoteLogger;
 import plg.utils.Logger;
 
 /**
@@ -55,6 +57,9 @@ public class ConsoleController {
 		configuration.setBoolean(KEY_CONSOLE_VISIBLE, visible);
 		applicationController.getMainWindow().getToolbar().setShowConsoleSelected(visible);
 		applicationController.getMainWindow().getConsole().setVisible(visible);
+		
+		// remote logging, if available
+		RemoteLogger.instance().log(REMOTE_MESSAGES.CHANGED_CONSOLE_VISIBILITY).add("visibility", visible).send();
 	}
 	
 	/**

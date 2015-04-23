@@ -4,6 +4,8 @@ import java.io.IOException;
 
 import plg.gui.config.ConfigurationSet;
 import plg.gui.config.UIConfiguration;
+import plg.gui.remote.REMOTE_MESSAGES;
+import plg.gui.remote.RemoteLogger;
 import plg.gui.window.MainFrame;
 import plg.gui.window.MainWindow;
 
@@ -41,6 +43,9 @@ public class ApplicationController {
 	 */
 	private ApplicationController() {
 		configuration = UIConfiguration.master();
+		
+		// remote logging, if available
+		RemoteLogger.instance().log(REMOTE_MESSAGES.APPLICATION_STARTED).send();
 		
 		// creates gui
 		mainWindow = new MainWindow(this);
@@ -115,6 +120,9 @@ public class ApplicationController {
 	 */
 	public void close() throws IOException {
 		UIConfiguration.save();
+		
+		// remote logging, if available
+		RemoteLogger.instance().log(REMOTE_MESSAGES.APPLICATION_CLOSED).send();
 	}
 	
 	/**

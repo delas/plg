@@ -15,6 +15,7 @@ import org.deckfour.xes.out.XesXmlGZIPSerializer;
 import org.deckfour.xes.out.XesXmlSerializer;
 
 import plg.generator.log.LogGenerator;
+import plg.generator.log.SimulationConfiguration;
 import plg.gui.config.ConfigurationSet;
 import plg.gui.dialog.ErrorDialog;
 import plg.gui.dialog.GeneralDialog.RETURNED_VALUES;
@@ -24,6 +25,8 @@ import plg.gui.dialog.StreamDialog;
 import plg.gui.dialog.StreamNoiseDialog;
 import plg.gui.panels.Progress;
 import plg.gui.panels.SingleProcessVisualizer;
+import plg.gui.remote.REMOTE_MESSAGES;
+import plg.gui.remote.RemoteLogger;
 import plg.gui.util.FileFilterHelper;
 import plg.gui.util.RuntimeUtils;
 import plg.model.Process;
@@ -77,11 +80,15 @@ public class LogController {
 				final String file = FileFilterHelper.fixFileName(fileName, (FileNameExtensionFilter) selectedFilter);
 				configuration.set(KEY_LOG_LOCATION, fileName.substring(0, fileName.lastIndexOf(File.separator)));
 				
+				SimulationConfiguration sc = nld.getConfiguredValues();
 				Process process = singleProcessVisualizer.getCurrentlyVisualizedProcess();
 				final LogGenerator lg = new LogGenerator(
 						process,
-						nld.getConfiguredValues(),
+						sc,
 						ApplicationController.instance().getMainWindow().getProgressStack().askForNewProgress());
+				
+				// remote logging, if available
+				RemoteLogger.instance().log(REMOTE_MESSAGES.LOG_GENERATED).add(sc).send();
 				
 				SwingWorker<XLog, Void> worker = new SwingWorker<XLog, Void>() {
 					@Override
@@ -123,6 +130,9 @@ public class LogController {
 			scd.setVisible(true);
 			
 			final Progress progress = ApplicationController.instance().getMainWindow().getProgressStack().askForNewProgress();
+			
+			// remote logging, if available
+			RemoteLogger.instance().log(REMOTE_MESSAGES.STREAM_CONFIGURED).add(scd.getConfiguredValues()).add(nld.getConfiguredValues()).send();
 			
 			if (RETURNED_VALUES.SUCCESS.equals(scd.returnedValue())) {
 				SwingWorker<StreamDialog, Void> worker = new SwingWorker<StreamDialog, Void>() {
