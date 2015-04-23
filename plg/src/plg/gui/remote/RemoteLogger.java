@@ -36,6 +36,9 @@ import plg.utils.Pair;
 import plg.utils.PlgConstants;
 
 /**
+ * This class encapsulates all the resources required for the remote logging.
+ * This class is, as much as possible, independent from the actual program GUI.
+ * The idea is that it should be fairly easy to use it into other projects.
  * 
  * @author Andrea Burattin
  */
@@ -43,15 +46,12 @@ public class RemoteLogger {
 
 	protected static final String KEY_REMOTE_LOGGING_ENABLED = "REMOTE_LOGGING_ENABLED";
 	
-	/*
-	 * These are the URLs for the remote logging
-	 */
+	/* These are the URLs for the remote logging */
 	public static final String NEW_SESSION_URL = "http://plg.processmining.it/log/cmd.php?cmd=newsession&plg_version=%s&os=%s&cpus=%s";
 	public static final String CMD_URL = "http://plg.processmining.it/log/cmd.php?cmd=log&session_id=%s&token=%s&command=%s";
+	public static final String HELP_URL = "http://plg.processmining.it/help/UsageStatistics";
 	
-	/**
-	 * The actual logging object.
-	 */
+	/* The actual logging object */
 	private static RemoteLogger logger = new RemoteLogger();
 	
 	private ConfigurationSet configuration;
@@ -71,7 +71,7 @@ public class RemoteLogger {
 	}
 	
 	/**
-	 * This method returns a new instance of the remote logger
+	 * This method returns the current instance of the remote logger
 	 * 
 	 * @return a logger instance
 	 */
@@ -79,6 +79,17 @@ public class RemoteLogger {
 		return logger;
 	}
 	
+	/**
+	 * This method initializes the logger. In particular, this method is
+	 * responsible of:
+	 * <ol>
+	 * 	<li>checking whether there is already a setting for enabling or not the
+	 * 		remote logging;</li>
+	 * 	<li>in case such configuration is not there, showing a dialog with the
+	 * 		request to the user;</li>
+	 * 	<li>store (or retrieve) the user-provided configuration.</li>
+	 * </ol>
+	 */
 	protected void initializeLogger() {
 		if (!configuration.containsKey(KEY_REMOTE_LOGGING_ENABLED)) {
 			try {
@@ -87,12 +98,12 @@ public class RemoteLogger {
 			} catch (InterruptedException e) { }
 			
 			JLabel message = new JLabel("<html>Would you like to help us reporting anonymous usage statistics?<br>"
-					+ "No information on actual processes or simulations will be reported (<a href=\"http://www.google.com\">info</a>).<br><br></html>");
+					+ "No information on actual processes or simulations will be reported (<a href=\"http://"+ HELP_URL +"\">info</a>).<br><br></html>");
 			message.addMouseListener(new MouseAdapter() {
 				public void mouseReleased(MouseEvent e) {
 					if (Desktop.isDesktopSupported()) {
 						try {
-							Desktop.getDesktop().browse(new URI("http://plg.processmining.it/help/UsageStatistics"));
+							Desktop.getDesktop().browse(new URI(HELP_URL));
 						} catch (IOException | URISyntaxException ex) { }
 					}
 				}
@@ -115,6 +126,11 @@ public class RemoteLogger {
 		loggingEnabled = configuration.getBoolean(KEY_REMOTE_LOGGING_ENABLED);
 	}
 	
+	/**
+	 * This method is responsible of retrieving the new session id and the
+	 * token, and to send the {@link REMOTE_MESSAGES#APPLICATION_STARTED}
+	 * message.
+	 */
 	protected void initializeRemoteSession() {
 			new SwingWorker<Void, Void>() {
 				@Override
@@ -144,13 +160,20 @@ public class RemoteLogger {
 			}.execute();
 	}
 	
-	protected void send(final RemoteLogBlob blob) {
+	/**
+	 * This method, if the remote logging is enabled, will send the provided
+	 * {@link RemoteLogEntity} with all its parameters.
+	 * 
+	 * @param blob the remote log to send
+	 */
+	protected void send(final RemoteLogEntity blob) {
 		if (loggingEnabled) {
 			if (sessionId != null && token != null) {
 				new SwingWorker<Void, Void>() {
 					@Override
 					protected Void doInBackground() throws Exception {
-						httpRequest(blob.getURL(), "parameters", blob.getParameters());
+						String url = String.format(CMD_URL, sessionId, token, blob.message.toString());
+						httpRequest(url, "parameters", blob.getParameters());
 						return null;
 					}
 				}.execute();
@@ -158,6 +181,17 @@ public class RemoteLogger {
 		}
 	}
 	
+	/**
+	 * This method runs the provided configuration with the provided post
+	 * variable name and configuration. If <tt>postName</tt> or
+	 * <tt>postVariable</tt> are <tt>null</tt> the the connection will perform
+	 * a GET request.
+	 * 
+	 * @param url the remote url
+	 * @param postName the name of the post variable
+	 * @param postValue the value for the post variable
+	 * @return a string representation of the first line of the result
+	 */
 	private String httpRequest(String url, String postName, String postValue) {
 		String toReturn = "";
 		try {
@@ -186,10 +220,25 @@ public class RemoteLogger {
 		return toReturn;
 	}
 	
+	/**
+	 * Perform a GET request to the provided url
+	 * 
+	 * @param url the url target of the GET request
+	 * @return a string representation of the first line of the result
+	 */
 	private String httpRequest(String url) {
 		return httpRequest(url, null, null);
 	}
 	
+	/**
+	 * This method performs a GET request to the provided url and returns a
+	 * {@link JSONObject} representation of the answer. This method also checks
+	 * whether the result contains an attribute named <tt>response</tt> with
+	 * value <tt>OK</tt>
+	 * 
+	 * @param url the url target of the GET request
+	 * @return a JSON representation of the answer
+	 */
 	private JSONObject httpRequestToJson(String url) {
 		JSONObject toReturn = null;
 		String request = httpRequest(url);
@@ -200,48 +249,108 @@ public class RemoteLogger {
 		return toReturn;
 	}
 	
-	public RemoteLogBlob log(String activity) {
-		return new RemoteLogBlob(REMOTE_MESSAGES.CUSTOM_MESSAGE).add("activity", activity);
-	}
-	
-	public RemoteLogBlob log(REMOTE_MESSAGES activity) {
-		return new RemoteLogBlob(activity);
+	/**
+	 * This method builds a new {@link RemoteLogEntity} starting from a
+	 * {@link REMOTE_MESSAGES#CUSTOM_MESSAGE}.
+	 * 
+	 * @param activity the name of the activity for the custom message
+	 * @return the generated remote log entity
+	 */
+	public RemoteLogEntity log(String activity) {
+		return new RemoteLogEntity(REMOTE_MESSAGES.CUSTOM_MESSAGE).add("activity", activity);
 	}
 	
 	/**
+	 * This method builds a new {@link RemoteLogEntity} with the provided
+	 * message
 	 * 
+	 * @param activity the activity to log
+	 * @return the generated remote log entity
 	 */
-	public class RemoteLogBlob extends ArrayList<Pair<String, String>> {
+	public RemoteLogEntity log(REMOTE_MESSAGES activity) {
+		return new RemoteLogEntity(activity);
+	}
+	
+	/**
+	 * This class represents a remote log entry. Each remote log entry is made
+	 * of a main message and a list of parameters (each parameter is a name-
+	 * value pair).
+	 */
+	public class RemoteLogEntity extends ArrayList<Pair<String, String>> {
 		
 		private static final long serialVersionUID = -4194742473778496871L;
 		protected REMOTE_MESSAGES message;
 		
-		public RemoteLogBlob(REMOTE_MESSAGES message) {
+		/**
+		 * Protected constructor. To create a new {@link RemoteLogEntity}, you
+		 * should use {@link RemoteLogger#log(String)} or
+		 * {@link RemoteLogger#log(REMOTE_MESSAGES)}.
+		 * 
+		 * @param message the message for the new remote log entity
+		 */
+		protected RemoteLogEntity(REMOTE_MESSAGES message) {
 			this.message = message;
 		}
 		
+		/**
+		 * This method sends the current remote log entity
+		 */
 		public void send() {
 			instance().send(this);
 		}
 		
-		public RemoteLogBlob add(String name, String value) {
+		/**
+		 * This method adds a parameter to the current remote log entity
+		 * 
+		 * @param name the name of the new parameter
+		 * @param value the value of the new parameter
+		 * @return the current entity
+		 */
+		public RemoteLogEntity add(String name, String value) {
 			add(new Pair<String, String>(name, value));
 			return this;
 		}
 		
-		public RemoteLogBlob add(String name, boolean value) {
+		/**
+		 * This method adds a parameter to the current remote log entity
+		 * 
+		 * @param name the name of the new parameter
+		 * @param value the value of the new parameter
+		 * @return the current entity
+		 */
+		public RemoteLogEntity add(String name, boolean value) {
 			return add(name, Boolean.toString(value));
 		}
 		
-		public RemoteLogBlob add(String name, int value) {
+		/**
+		 * This method adds a parameter to the current remote log entity
+		 * 
+		 * @param name the name of the new parameter
+		 * @param value the value of the new parameter
+		 * @return the current entity
+		 */
+		public RemoteLogEntity add(String name, int value) {
 			return add(name, Integer.toString(value));
 		}
 		
-		public RemoteLogBlob add(String name, double value) {
+		/**
+		 * This method adds a parameter to the current remote log entity
+		 * 
+		 * @param name the name of the new parameter
+		 * @param value the value of the new parameter
+		 * @return the current entity
+		 */
+		public RemoteLogEntity add(String name, double value) {
 			return add(name, Double.toString(value));
 		}
 		
-		public RemoteLogBlob add(SimulationConfiguration configuration) {
+		/**
+		 * This method adds a parameter to the current remote log entity
+		 * 
+		 * @param configuration the configuration to log
+		 * @return the current entity
+		 */
+		public RemoteLogEntity add(SimulationConfiguration configuration) {
 			add("SM.A", configuration.useMultithreading());
 			add("SM.B", configuration.getMaximumLoopCycles());
 			add("SM.C", configuration.getNumberOfTraces());
@@ -249,7 +358,13 @@ public class RemoteLogger {
 			return this;
 		}
 		
-		public RemoteLogBlob add(NoiseConfiguration configuration) {
+		/**
+		 * This method adds a parameter to the current remote log entity
+		 * 
+		 * @param configuration the configuration to log
+		 * @return the current entity
+		 */
+		public RemoteLogEntity add(NoiseConfiguration configuration) {
 			add("NS.A", configuration.getIntegerDataNoiseProbability() + "," + configuration.getIntegerDataNoiseDelta());
 			add("NS.B", configuration.getStringDataNoiseProbability());
 			add("NS.C", configuration.getActivityNameNoiseProbability());
@@ -261,8 +376,14 @@ public class RemoteLogger {
 			add("NS.I", configuration.getAlienEventNoiseProbability());
 			return this;
 		}
-
-		public RemoteLogBlob add(StreamConfiguration configuration) {
+		
+		/**
+		 * This method adds a parameter to the current remote log entity
+		 * 
+		 * @param configuration the configuration to log
+		 * @return the current entity
+		 */
+		public RemoteLogEntity add(StreamConfiguration configuration) {
 			add("ST.A", configuration.servicePort);
 			add("ST.B", configuration.maximumParallelInstances);
 			add("ST.C", configuration.timeMultiplier);
@@ -270,8 +391,14 @@ public class RemoteLogger {
 			add("ST.E", configuration.markTraceBeginningEnd);
 			return this;
 		}
-
-		public RemoteLogBlob add(RandomizationConfiguration configuration) {
+		
+		/**
+		 * This method adds a parameter to the current remote log entity
+		 * 
+		 * @param configuration the configuration to log
+		 * @return the current entity
+		 */
+		public RemoteLogEntity add(RandomizationConfiguration configuration) {
 			add("RP.A", configuration.getAndBranches());
 			add("RP.B", configuration.getXorBranches());
 			add("RP.C", configuration.getLoopWeight());
@@ -285,10 +412,12 @@ public class RemoteLogger {
 			return this;
 		}
 		
-		public String getURL() {
-			return String.format(CMD_URL, sessionId, token, message.toString());
-		}
-		
+		/**
+		 * This method returns a string representation (JSON based) of the
+		 * current entity parameters
+		 * 
+		 * @return a string representation of the parameters
+		 */
 		@SuppressWarnings("unchecked")
 		public String getParameters() {
 			JSONObject obj = new JSONObject();

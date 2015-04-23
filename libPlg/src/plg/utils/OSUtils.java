@@ -1,6 +1,8 @@
 package plg.utils;
 
 /**
+ * This class contains some utility methods to detect or identify of operative
+ * system of the user
  * 
  * @author Boudewijn van Dongen
  * @author Andrea Burattin
@@ -18,6 +20,11 @@ public class OSUtils {
 
 	private static String currentOs = null;
 
+	/**
+	 * This method determines the running operative system
+	 * 
+	 * @return a string representation of the running operative system
+	 */
 	public static String determineOS() {
 		if (currentOs == null) {
 			String osString = System.getProperty("os.name").trim().toLowerCase();
@@ -45,30 +52,5 @@ public class OSUtils {
 			}
 		}
 		return currentOs;
-	}
-
-	public static boolean is64Bit() {
-		return System.getProperty("sun.arch.data.model").equals("64");
-	}
-
-	public static boolean is32Bit() {
-		return System.getProperty("sun.arch.data.model").equals("32");
-	}
-
-	public static boolean isRunningWindows() {
-		return determineOS() == OS_WIN;
-	}
-
-	public static boolean isRunningMacOsX() {
-		return determineOS() == OS_MACOSX;
-	}
-
-	public static boolean isRunningLinux() {
-		return determineOS() == OS_LINUX;
-	}
-
-	public static boolean isRunningUnix() {
-		String os = determineOS();
-		return (os == OS_BSD) || (os == OS_LINUX) || (os == OS_MACOSX);
 	}
 }
