@@ -2,6 +2,8 @@ package plg.gui.dialog;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -10,7 +12,12 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -29,6 +36,7 @@ import javax.swing.SpringLayout;
 
 import plg.gui.config.ConfigurationSet;
 import plg.gui.util.SpringUtilities;
+import plg.gui.util.collections.ImagesCollection;
 
 /**
  * This abstract class describes a general dialog in PLG. The dialog created
@@ -134,6 +142,29 @@ public abstract class GeneralDialog extends JDialog {
 		titleLabel.setFont(titleLabel.getFont().deriveFont(Font.BOLD));
 		JLabel helpLabel = new JLabel(help);
 		helpLabel.setFont(helpLabel.getFont().deriveFont(Font.PLAIN));
+		// help button
+		final JLabel remoteHelpLabel = new JLabel("Read Online Help");
+		remoteHelpLabel.setIcon(ImagesCollection.HELP_ICON);
+		remoteHelpLabel.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				remoteHelpLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+				remoteHelpLabel.setForeground(Color.BLUE);
+			}
+			@Override
+			public void mouseExited(MouseEvent e) {
+				remoteHelpLabel.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+				remoteHelpLabel.setForeground(Color.BLACK);
+			}
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				if (Desktop.isDesktopSupported()) {
+					try {
+						Desktop.getDesktop().browse(new URI("http://plg.processmining.it/help/Dialog" + title.replace(" ", "")));
+					} catch (IOException | URISyntaxException ex) { }
+				}
+			}
+		});
 		
 		titlePanel = new JPanel(new GridBagLayout());
 		titlePanel.setBorder(BorderFactory.createEmptyBorder());
@@ -154,10 +185,11 @@ public abstract class GeneralDialog extends JDialog {
 		c.fill = GridBagConstraints.HORIZONTAL;
 		titlePanel.add(helpLabel, c);
 		c = new GridBagConstraints();
-		c.gridx = 0;
-		c.gridy = 2;
-		c.weightx = 1;
-		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 1;
+		c.gridy = 0;
+		c.gridheight = 2;
+		c.insets = new Insets(0, 10, 0, 10);
+		titlePanel.add(remoteHelpLabel, c);
 		
 		// body
 		bodyPanel = new JPanel(new SpringLayout());
