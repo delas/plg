@@ -34,6 +34,7 @@ public class Streamer extends Thread {
 	
 	private BroadcastService broadcaster;
 	private StreamBuffer buffer;
+	private long streamedEvents = 0;
 	private long generatedInstances = 0;
 	private long timeLastEvent = -1;
 	
@@ -75,7 +76,7 @@ public class Streamer extends Thread {
 			infoTimer = new Timer(2500, new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					Logger.instance().debug("Stream buffer size: " + buffer.eventsInQueue() + ", traces generated: " + generatedInstances);
+					Logger.instance().debug("Stream buffer size: " + buffer.eventsInQueue() + ", traces generated: " + generatedInstances + ", events sent: " + streamedEvents);
 				}
 			});
 			infoTimer.start();
@@ -195,6 +196,7 @@ public class Streamer extends Thread {
 		// update the event time to use the current time
 		toStream.setDate(new Date());
 		broadcaster.send(toStream);
+		streamedEvents++;
 		
 		// if necessary, update the buffer
 		if (buffer.needsTraces()) {
