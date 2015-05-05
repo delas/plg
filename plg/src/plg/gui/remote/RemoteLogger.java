@@ -9,6 +9,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.concurrent.ExecutionException;
 
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -29,8 +30,10 @@ import plg.generator.process.RandomizationConfiguration;
 import plg.gui.config.ConfigurationSet;
 import plg.gui.config.UIConfiguration;
 import plg.gui.controller.ApplicationController;
+import plg.gui.util.collections.ImagesCollection;
 import plg.stream.configuration.StreamConfiguration;
 import plg.utils.CPUUtils;
+import plg.utils.Logger;
 import plg.utils.OSUtils;
 import plg.utils.Pair;
 import plg.utils.PlgConstants;
@@ -132,32 +135,92 @@ public class RemoteLogger {
 	 * message.
 	 */
 	protected void initializeRemoteSession() {
-			new SwingWorker<Void, Void>() {
-				@Override
-				protected Void doInBackground() throws Exception {
-					initializeLogger();
-					
-					if (loggingEnabled) {
-						// ask for a new session id
-						String newSessionUrl = String.format(NEW_SESSION_URL,
-								PlgConstants.libPLG_VERSION,
-								OSUtils.determineOS(),
-								CPUUtils.CPUAvailable());
-						JSONObject sessionObj = httpRequestToJson(newSessionUrl);
-						if (sessionObj != null) {
-							RemoteLogger.this.sessionId = sessionObj.get("session_id").toString();
-							RemoteLogger.this.token = sessionObj.get("token").toString();
-						}
+		new SwingWorker<JSONObject, Void>() {
+			@Override
+			protected JSONObject doInBackground() throws Exception {
+				initializeLogger();
+				JSONObject sessionObj = null;
+				
+				if (loggingEnabled) {
+					// ask for a new session id
+					String newSessionUrl = String.format(NEW_SESSION_URL,
+							PlgConstants.libPLG_VERSION,
+							OSUtils.determineOS(),
+							CPUUtils.CPUAvailable());
+					sessionObj = httpRequestToJson(newSessionUrl);
+					if (sessionObj != null) {
+						RemoteLogger.this.sessionId = sessionObj.get("session_id").toString();
+						RemoteLogger.this.token = sessionObj.get("token").toString();
 					}
-					return null;
+				}
+				return sessionObj;
+			}
+			
+			@Override
+			protected void done() {
+				// register open application
+				log(REMOTE_MESSAGES.APPLICATION_STARTED).send();
+				
+				try {
+					// check version
+					if (get() != null) {
+						parseLastVersion((JSONObject) get().get("last_version"));
+					}
+				} catch (InterruptedException | ExecutionException e) {
+					e.printStackTrace();
+				}
+			};
+		}.execute();
+	}
+	
+	/**
+	 * This method parses the version information passed and shows a dialog if
+	 * there is a new version of PLG available
+	 * 
+	 * @param versionInfo the JSON object with the updated information
+	 */
+	protected void parseLastVersion(JSONObject versionInfo) {
+		final String version = versionInfo.get("version").toString();
+		final String date = versionInfo.get("date").toString();
+		final String info = versionInfo.get("info").toString();
+		final String url = versionInfo.get("url").toString();
+		
+		new SwingWorker<Void, Void>() {
+			@Override
+			protected Void doInBackground() throws Exception {
+				if (!version.equals(PlgConstants.libPLG_VERSION)) {
+					JLabel message = new JLabel("<html>New version available: <b>" + version + "</b> (released on " + date + ").</html>");
+					JLabel releaseInfo = new JLabel("<html>Release info:<br>" + info + "</html>");
+					JLabel urlMessage = new JLabel("<html>Download URL: <a href=\"" + url + "\">" + url + "</a>.</html>");
+					urlMessage.addMouseListener(new MouseAdapter() {
+						public void mouseReleased(MouseEvent e) {
+							if (Desktop.isDesktopSupported()) {
+								try {
+									Desktop.getDesktop().browse(new URI(url));
+								} catch (IOException | URISyntaxException ex) { }
+							}
+						}
+					});
+					urlMessage.setToolTipText("Open " + url);
+					urlMessage.setCursor(new Cursor(Cursor.HAND_CURSOR));
+					
+					Object[] params = {message, releaseInfo, urlMessage};
+					
+					JOptionPane.showMessageDialog(ApplicationController.instance().getMainFrame(),
+							params,
+							"New version of PLG available",
+							JOptionPane.INFORMATION_MESSAGE,
+							ImagesCollection.UPDATES_ICON);
+					
+					Logger.instance().debug("A new version of PLG (" + version + ") is available");
+					
+				} else {
+					Logger.instance().debug("Your version of PLG (" + PlgConstants.libPLG_VERSION + ") is the latest available");
 				}
 				
-				@Override
-				protected void done() {
-					// register open application
-					log(REMOTE_MESSAGES.APPLICATION_STARTED).send();
-				};
-			}.execute();
+				return null;
+			}
+		}.execute();
 	}
 	
 	/**

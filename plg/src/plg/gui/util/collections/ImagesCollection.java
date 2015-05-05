@@ -16,6 +16,7 @@ public class ImagesCollection {
 	public static final ImageIcon PLG_ICON_SCALED = ImageUtils.loadImage("/plg/resources/icons/application-icon.png", 32, 32);
 	public static final ImageIcon ERROR_ICON = ImageUtils.loadImage("/plg/resources/icons/error.png");
 	public static final ImageIcon HELP_ICON = ImageUtils.loadImage("/plg/resources/icons/famfamfam/book_open.png");
+	public static final ImageIcon UPDATES_ICON = ImageUtils.loadImage("/plg/resources/icons/updates.png");
 	
 	// Toolbar icons
 	public static final ImageIcon ICON_NEW = ImageUtils.loadImage("/plg/resources/icons/famfamfam/page_add.png");
