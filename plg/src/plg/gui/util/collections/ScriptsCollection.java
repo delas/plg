@@ -1,7 +1,6 @@
 package plg.gui.util.collections;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.InputStream;
 import java.util.Scanner;
 
 /**
@@ -26,15 +25,13 @@ public class ScriptsCollection {
 	 */
 	public static String getFile(String resourceName) {
 		StringBuilder result = new StringBuilder("");
-		File file = new File(System.class.getResource(resourceName).getFile());
-		try (Scanner scanner = new Scanner(file)) {
+		InputStream is = System.class.getResourceAsStream(resourceName);
+		try (Scanner scanner = new Scanner(is)) {
 			while (scanner.hasNextLine()) {
 				String line = scanner.nextLine();
 				result.append(line).append("\n");
 			}
 			scanner.close();
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
 		return result.toString();
 	}
