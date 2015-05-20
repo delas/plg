@@ -173,7 +173,7 @@ public class TraceGenerator extends ThreadWithException<XTrace> {
 			FlowObject next = SetUtils.getRandomWeighted(outgoing);
 			if (next instanceof Task) {
 				Set<DataObject> dataObjs = ((Task) next).getDataObjects(DATA_OBJECT_DIRECTION.REQUIRED);
-				if (dataObjs.size() > 0 && trace.size() > 1) {
+				if (dataObjs.size() > 0 && trace.size() > 0) {
 					recordEventAttributes(trace, dataObjs, trace.get(trace.size() - 1));
 				}
 			}
