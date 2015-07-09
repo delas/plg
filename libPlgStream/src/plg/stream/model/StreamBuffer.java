@@ -8,6 +8,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.deckfour.xes.model.XTrace;
 
 import plg.stream.configuration.StreamConfiguration;
+import plg.utils.Random;
 import plg.utils.XLogHelper;
 
 /**
@@ -90,6 +91,8 @@ public class StreamBuffer extends CopyOnWriteArrayList<ConcurrentLinkedDeque<Str
 				long timeToWait = (long) (traceDuration * configuration.timeFractionBeforeNewTrace);
 				long timeLastEventOnChannel = get(targetChannel).peekLast().getDate().getTime();
 				timeShift = (timeLastEventOnChannel + timeToWait) - startEvent;
+				// add some more randomization to the trace beginning
+				timeShift += Random.nextInt(0, (int) traceDuration);
 			}
 			
 			// set the actual time of all events
@@ -110,6 +113,11 @@ public class StreamBuffer extends CopyOnWriteArrayList<ConcurrentLinkedDeque<Str
 				
 				// fix the time of the event
 				long eventTime = XLogHelper.getTimestamp(t.get(0)).getTime();
+				if (progress > 0) {
+					// add some more randomization to the actual event
+					long prevEventTime = XLogHelper.getTimestamp(events.get(progress - 1).get(0)).getTime();
+					eventTime += Random.nextInt(0, (int) (prevEventTime - eventTime) / 2);
+				}
 				se.setDate(new Date(eventTime + timeShift));
 				
 				// enqueue the stream event into the buffer
