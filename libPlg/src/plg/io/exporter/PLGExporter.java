@@ -65,7 +65,7 @@ public class PLGExporter extends FileExporter {
 			progress.inc();
 			
 			// process elements
-			process.addComment("This is the list of all actual process elementss");
+			process.addComment("This is the list of all actual process elements");
 			SXTag elements = process.addChildNode("elements");
 			
 			for(StartEvent se : model.getStartEvents()) {
