@@ -9,7 +9,8 @@ import javax.xml.transform.TransformerException;
 import plg.exceptions.IllegalSequenceException;
 import plg.exceptions.InvalidDataObject;
 import plg.exceptions.InvalidProcessException;
-import plg.io.exporter.GraphvizBPMNExporter;
+import plg.generator.process.ProcessGenerator;
+import plg.generator.process.RandomizationConfiguration;
 import plg.io.importer.PLGImporter;
 import plg.model.Process;
 import plg.model.activity.Task;
@@ -53,10 +54,14 @@ public class TestModel {
 //		XesXmlGZIPSerializer s = new XesXmlGZIPSerializer();
 //		s.serialize(l, new FileOutputStream("C:\\Users\\Andrea\\Desktop\\testlog.xes.gz"));
 		
-		GraphvizBPMNExporter e = new GraphvizBPMNExporter();
-		e.exportModel(p, "C:\\Users\\Andrea\\Desktop\\model.dot");
+//		GraphvizBPMNExporter e = new GraphvizBPMNExporter();
+//		e.exportModel(p, "C:\\Users\\Andrea\\Desktop\\model.dot");
 //		e.exportModel(p2, "C:\\Users\\Andrea\\Desktop\\model2.dot");
 		System.out.println("done");
+		
+//		Process p = new Process("test");
+		ProcessGenerator.randomizeProcess(p, RandomizationConfiguration.BASIC_VALUES);
+		
 		
 	}
 

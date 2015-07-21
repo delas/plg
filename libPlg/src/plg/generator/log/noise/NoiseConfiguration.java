@@ -241,7 +241,7 @@ public class NoiseConfiguration {
 	 * @return the value of the delta
 	 */
 	public int getIntegerDataNoiseDelta() {
-		return (int) config.get(NOISE_TYPE.DATA_INTEGER).getSecond();
+		return (Integer) config.get(NOISE_TYPE.DATA_INTEGER).getSecond();
 	}
 	
 	/**
@@ -323,7 +323,7 @@ public class NoiseConfiguration {
 	 * @return the head size
 	 */
 	public int getTraceMissingHeadSize() {
-		return (int) config.get(NOISE_TYPE.TRACE_MISSING_HEAD).getSecond();
+		return (Integer) config.get(NOISE_TYPE.TRACE_MISSING_HEAD).getSecond();
 	}
 	
 	/**
@@ -357,7 +357,7 @@ public class NoiseConfiguration {
 	 * @return the tail size
 	 */
 	public int getTraceMissingTailSize() {
-		return (int) config.get(NOISE_TYPE.TRACE_MISSING_TAIL).getSecond();
+		return (Integer) config.get(NOISE_TYPE.TRACE_MISSING_TAIL).getSecond();
 	}
 	
 	/**
@@ -391,7 +391,7 @@ public class NoiseConfiguration {
 	 * @return the episode size
 	 */
 	public int getTraceMissingEpisodeSize() {
-		return (int) config.get(NOISE_TYPE.TRACE_MISSING_EPISODE).getSecond();
+		return (Integer) config.get(NOISE_TYPE.TRACE_MISSING_EPISODE).getSecond();
 	}
 	
 	/**

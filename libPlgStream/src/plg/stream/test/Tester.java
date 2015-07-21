@@ -2,6 +2,8 @@ package plg.stream.test;
 
 import plg.exceptions.IllegalSequenceException;
 import plg.generator.log.SimulationConfiguration;
+import plg.generator.process.ProcessGenerator;
+import plg.generator.process.RandomizationConfiguration;
 import plg.io.exporter.GraphvizBPMNExporter;
 import plg.model.Process;
 import plg.model.activity.Task;
@@ -57,20 +59,21 @@ public class Tester {
 		
 		StreamConfiguration sc = new StreamConfiguration();
 		sc.servicePort = 1234;
-		sc.maximumParallelInstances = 10;
+		sc.maximumParallelInstances = 20;
 		sc.timeFractionBeforeNewTrace = 1;
 		sc.markTraceBeginningEnd = true;
+		sc.timeMultiplier = 0.0005;
 		
 		Process p = new Process("test");
-		StartEvent start = p.newStartEvent();
-		Task A = p.newTask("A"); p.newSequence(start, A);
-		Task B = p.newTask("B"); p.newSequence(A, B);
-		EndEvent end = p.newEndEvent(); p.newSequence(B, end);
-		DataObject do1 = new DataObject(p);
-		do1.set("do1", "10");
-		do1.setObjectOwner(A, DATA_OBJECT_DIRECTION.GENERATED);
+//		StartEvent start = p.newStartEvent();
+//		Task A = p.newTask("A"); p.newSequence(start, A);
+//		Task B = p.newTask("B"); p.newSequence(A, B);
+//		EndEvent end = p.newEndEvent(); p.newSequence(B, end);
+//		DataObject do1 = new DataObject(p);
+//		do1.set("do1", "10");
+//		do1.setObjectOwner(A, DATA_OBJECT_DIRECTION.GENERATED);
 		
-//		ProcessGenerator.randomizeProcess(p, RandomizationConfiguration.BASIC_VALUES);
+		ProcessGenerator.randomizeProcess(p, RandomizationConfiguration.BASIC_VALUES);
 		
 		GraphvizBPMNExporter e = new GraphvizBPMNExporter();
 		e.exportModel(p, "C:\\Users\\Andrea\\Desktop\\model.dot");
