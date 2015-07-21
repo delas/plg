@@ -1,6 +1,6 @@
 language: java
 jdk:
-  - oraclejdk7
+  - oraclejdk8
 
 script:
  - # bulding libPlg
@@ -8,6 +8,6 @@ script:
  - ant
  - cd ..
  - # building plg-cli
- - cp libPlg/dist/libPlg.jar plg-cli/lib/libPlg/
- - cd plg-cli
- - ant LogGenerator
+ - #cp libPlg/dist/libPlg.jar plg-cli/lib/libPlg/
+ - #cd plg-cli
+ - #ant LogGenerator
