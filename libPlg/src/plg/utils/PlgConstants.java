@@ -15,7 +15,7 @@ public class PlgConstants {
 	/**
 	 * Current version of libPlg
 	 */
-	public static final String libPLG_VERSION = "2.0.2";
+	public static final String libPLG_VERSION = "2.0.3";
 	
 	/**
 	 * Signature of the libPlg (typically name and version number)
