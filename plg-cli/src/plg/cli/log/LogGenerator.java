@@ -66,11 +66,9 @@ public class LogGenerator {
 	/**
 	 * 
 	 * @param args
-	 * @throws InvalidProcessException
-	 * @throws FileNotFoundException
-	 * @throws IOException
+	 * @throws Exception 
 	 */
-	public static void main(String[] args) throws InvalidProcessException, FileNotFoundException, IOException {
+	public static void main(String[] args) throws Exception {
 		
 		// CLI parameters parsing
 		CLIOptions parameters = new LogGenerator().new CLIOptions();

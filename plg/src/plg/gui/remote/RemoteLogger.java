@@ -59,6 +59,7 @@ public class RemoteLogger {
 	
 	private ConfigurationSet configuration;
 	private boolean loggingEnabled = false;
+	private boolean checkNewVersion = true;
 	private String sessionId = null;
 	private String token = null;
 	
@@ -163,7 +164,7 @@ public class RemoteLogger {
 				
 				try {
 					// check version
-					if (get() != null) {
+					if (get() != null && checkNewVersion) {
 						parseLastVersion((JSONObject) get().get("last_version"));
 					}
 				} catch (InterruptedException | ExecutionException e) {
@@ -332,6 +333,16 @@ public class RemoteLogger {
 	 */
 	public RemoteLogEntity log(REMOTE_MESSAGES activity) {
 		return new RemoteLogEntity(activity);
+	}
+	
+	/**
+	 * This methods sets whether the remote logger should also check is a new
+	 * version of the software is available
+	 * 
+	 * @param checkNewVersion
+	 */
+	public void checkNewVersion(boolean checkNewVersion) {
+		this.checkNewVersion = checkNewVersion;
 	}
 	
 	/**
