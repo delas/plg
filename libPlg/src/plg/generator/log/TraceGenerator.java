@@ -147,8 +147,11 @@ public class TraceGenerator extends ThreadWithException<XTrace> {
 		// different behavior depending of the element type
 		if (object instanceof Task ||
 			object instanceof ExclusiveGateway ||
-			object instanceof StartEvent) {
-			// sequence or xor gateways
+			object instanceof StartEvent ||
+			(object instanceof ParallelGateway && 
+					object.getOutgoingObjects().size() == 1 &&
+					object.getIncomingObjects().size() == 1)) {
+			// sequence or xor gateways or an and gateway with 1 incoming and 1 outgoing edge
 			
 			// we can consume the provided token
 			if (tokens != null) {
