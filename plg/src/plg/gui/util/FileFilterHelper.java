@@ -22,7 +22,7 @@ import plg.utils.RegisteredIO;
  */
 public class FileFilterHelper {
 
-	protected static String FILE_HELPER_DESCRIPTION = "%s (.*%s)";
+	protected static String FILE_HELPER_DESCRIPTION = "%s (*.%s)";
 	
 	/**
 	 * This class assigns, to the provided file chooser, the {@link FileFilter}s
