@@ -38,6 +38,7 @@ public class PetriNet {
 	public PetriNet(Process originalProcess) {
 		this.originalProcess = originalProcess;
 		convert();
+		optimize();
 	}
 	
 	public Set<Transition> getTransitions() {
@@ -50,6 +51,26 @@ public class PetriNet {
 	
 	public Set<Pair<Node, Node>> getEdges() {
 		return edges;
+	}
+	
+	public Set<Node> getIncomingNodes(Node target) {
+		Set<Node> in = new HashSet<Node>();
+		for(Pair<Node, Node> edge : edges) {
+			if (edge.getSecond().equals(target)) {
+				in.add(edge.getFirst());
+			}
+		}
+		return in;
+	}
+	
+	public Set<Node> getOutgoingNodes(Node source) {
+		Set<Node> out = new HashSet<Node>();
+		for(Pair<Node, Node> edge : edges) {
+			if (edge.getFirst().equals(source)) {
+				out.add(edge.getSecond());
+			}
+		}
+		return out;
 	}
 	
 	/**
@@ -146,6 +167,9 @@ public class PetriNet {
 		}
 		
 		// add all sequences
+		Set<Sequence> gatewayToGateway = new HashSet<Sequence>();
+		
+		// add all sequences except for the gateway to gateway
 		for(Sequence s : originalProcess.getSequences()) {
 			FlowObject source = s.getSource();
 			FlowObject sink = s.getSink();
@@ -185,13 +209,80 @@ public class PetriNet {
 				// start -> ?
 				connect(getComponent(source.getId()), getComponent(sink.getId()));
 				
-				
 			} else if (sink instanceof EndEvent) {
 				// ? -> end
 				connect(getComponent(source.getId()), getComponent(sink.getId()));
 				
+			} else if (source instanceof Gateway && sink instanceof Gateway) {
+				// gateway -> gateway
+				gatewayToGateway.add(s);
+				
 			}
 		}
+		
+		// add the sequences gateway to gateway
+		for(Sequence s : gatewayToGateway) {
+			FlowObject source = s.getSource();
+			FlowObject sink = s.getSink();
+			
+			if (source instanceof ExclusiveGateway && sink instanceof ExclusiveGateway) {
+				Transition t = newTransition("undef_" + source.getId() + "-" + sink.getId());
+				t.setSilent(true);
+				connect(getComponent(source.getId()), t);
+				connect(t, getComponent(sink.getId()));
+				
+			} else if (source instanceof ParallelGateway && sink instanceof ParallelGateway) {
+				Place p = newPlace("undef_" + source.getId() + "-" + sink.getId());
+				connect(getComponent(source.getId()), p);
+				connect(p, getComponent(sink.getId()));
+				
+			} else {
+				connect(getComponent(source.getId()), getComponent(sink.getId()));
+			}
+		}
+		
 		Logger.instance().debug("Conversion to Petri net complete");
+	}
+	
+	/**
+	 * This method removes useless double silent transitions
+	 */
+	private void optimize() {
+		Logger.instance().debug("Starting Petri net optimization");
+		
+		// merge sequences of silent transitions
+		Set<Place> toRemove = new HashSet<Place>();
+		for(Place p : places) {
+			Set<Node> inPlace = getIncomingNodes(p);
+			Set<Node> outPlace = getOutgoingNodes(p);
+			if (inPlace.size() == 1 && outPlace.size() == 1){
+				Transition before = (Transition) inPlace.iterator().next();
+				Transition after = (Transition) outPlace.iterator().next();
+				if (before.isSilent() && after.isSilent()) {
+					Set<Node> inTrans = getIncomingNodes(before);
+					Set<Node> outTrans = getOutgoingNodes(after);
+					if (inTrans.size() == 1 && outTrans.size() == 1) {
+						// let's go for merge
+						// new hidden transition with connections
+						Transition t = newTransition("merge_" + before.getReferenceId() + "-" + after.getReferenceId());
+						t.setSilent(true);
+						connect(inTrans.iterator().next(), t);
+						connect(t, outTrans.iterator().next());
+						// remove old sequences
+						edges.remove(new Pair<Node, Node>(inTrans.iterator().next(), before));
+						edges.remove(new Pair<Node, Node>(before, p));
+						edges.remove(new Pair<Node, Node>(p, after));
+						edges.remove(new Pair<Node, Node>(after, outTrans.iterator().next()));
+						// remove old transitions
+						transitions.remove(before);
+						transitions.remove(after);
+						toRemove.add(p);
+					}
+				}
+			}
+		}
+		places.removeAll(toRemove);
+		
+		Logger.instance().debug("Petri net optimization complete");
 	}
 }
