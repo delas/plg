@@ -5,6 +5,7 @@ import java.util.Set;
 
 import plg.model.event.EndEvent;
 import plg.model.sequence.Sequence;
+import plg.utils.Pair;
 
 /**
  * This class represents a "flowing object" of the process. A flowing object is
@@ -16,10 +17,14 @@ import plg.model.sequence.Sequence;
  * 
  * @author Andrea Burattin
  */
-public abstract class FlowObject extends Component {
+public abstract class FlowObject extends Component implements Displaceable {
 
 	private Set<FlowObject> incoming;
 	private Set<FlowObject> outgoing;
+	
+	// displacement attributes
+	private Pair<Integer, Integer> location = new Pair<Integer, Integer>(0, 0);
+	private Pair<Integer, Integer> dimension = new Pair<Integer, Integer>(0, 0);
 	
 	/**
 	 * This constructor creates a new flow object
@@ -139,5 +144,25 @@ public abstract class FlowObject extends Component {
 			}
 		}
 		return false;
+	}
+	
+	@Override
+	public Pair<Integer, Integer> getLocation() {
+		return location;
+	}
+	
+	@Override
+	public void setLocation(int x, int y) {
+		location = new Pair<Integer, Integer>(x, y);
+	}
+	
+	@Override
+	public Pair<Integer, Integer> getDimensions() {
+		return dimension;
+	}
+	
+	@Override
+	public void setDimensions(int width, int height) {
+		dimension = new Pair<Integer, Integer>(width, height);
 	}
 }

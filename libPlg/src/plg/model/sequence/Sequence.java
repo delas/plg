@@ -1,11 +1,15 @@
 package plg.model.sequence;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import plg.exceptions.IllegalSequenceException;
 import plg.model.Component;
 import plg.model.FlowObject;
 import plg.model.Process;
 import plg.model.event.EndEvent;
 import plg.model.event.StartEvent;
+import plg.utils.Pair;
 
 /**
  * This class represents a sequence connection between two flow objects.
@@ -18,6 +22,9 @@ public class Sequence extends Component {
 
 	private FlowObject source;
 	private FlowObject sink;
+	
+	// displacement attributes
+	private List<Pair<Integer, Integer>> sequenceOfPoints = new LinkedList<Pair<Integer, Integer>>();
 	
 	/**
 	 * This constructor creates a new sequence connection and register it to the
@@ -94,6 +101,14 @@ public class Sequence extends Component {
 			source.addOutgoing(sink);
 			sink.addIncomingObject(source);
 		}
+	}
+	
+	public void addPoint(int x, int y) {
+		sequenceOfPoints.add(new Pair<Integer, Integer>(x, y));
+	}
+	
+	public List<Pair<Integer, Integer>> getPoints() {
+		return sequenceOfPoints;
 	}
 	
 	@Override

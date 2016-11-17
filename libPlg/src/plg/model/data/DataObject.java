@@ -1,8 +1,10 @@
 package plg.model.data;
 
 import plg.model.Component;
+import plg.model.Displaceable;
 import plg.model.Process;
 import plg.model.data.IDataObjectOwner.DATA_OBJECT_DIRECTION;
+import plg.utils.Pair;
 
 /**
  * This class describes a general data object. Each data object must be
@@ -10,12 +12,16 @@ import plg.model.data.IDataObjectOwner.DATA_OBJECT_DIRECTION;
  * 
  * @author Andrea Burattin
  */
-public class DataObject extends Component implements IDataObject {
+public class DataObject extends Component implements IDataObject, Displaceable {
 
 	private IDataObjectOwner objectOwner;
 	private DATA_OBJECT_DIRECTION ownerDirection;
 	private String name;
 	private Object value;
+	
+	// displacement attributes
+	private Pair<Integer, Integer> location = new Pair<Integer, Integer>(0, 0);
+	private Pair<Integer, Integer> dimension = new Pair<Integer, Integer>(0, 0);
 	
 	/**
 	 * Class constructor that build a new data object associated to the current
@@ -127,5 +133,25 @@ public class DataObject extends Component implements IDataObject {
 	@Override
 	public String getComponentName() {
 		return "Data Object";
+	}
+	
+	@Override
+	public Pair<Integer, Integer> getLocation() {
+		return location;
+	}
+	
+	@Override
+	public void setLocation(int x, int y) {
+		location = new Pair<Integer, Integer>(x, y);
+	}
+	
+	@Override
+	public Pair<Integer, Integer> getDimensions() {
+		return dimension;
+	}
+	
+	@Override
+	public void setDimensions(int width, int height) {
+		dimension = new Pair<Integer, Integer>(width, height);
 	}
 }

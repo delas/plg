@@ -12,7 +12,6 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.Set;
 
-import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -21,6 +20,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
 import plg.model.Component;
+import plg.model.Displaceable;
 import plg.model.Process;
 import plg.model.activity.Task;
 import plg.model.data.DataObject;
@@ -37,14 +37,14 @@ import plg.visualizer.listeners.DataObjectListener;
 import plg.visualizer.listeners.TaskListener;
 import plg.visualizer.util.ImagesCollection;
 
-import com.mxgraph.layout.mxGraphLayout;
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.model.mxCell;
+import com.mxgraph.model.mxGeometry;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.mxConstants;
+import com.mxgraph.util.mxPoint;
 import com.mxgraph.view.mxEdgeStyle;
 import com.mxgraph.view.mxGraph;
-import com.mxgraph.view.mxGraphView;
 import com.mxgraph.view.mxStylesheet;
 
 /**
@@ -60,6 +60,7 @@ public class BPMNVisualizer extends JPanel {
 	protected Set<DataObjectListener> dataObjectListeners = new HashSet<DataObjectListener>();
 	protected Process process;
 	protected Map<mxCell, Component> cellsToComponents;
+	protected Map<mxCell, Sequence> cellsToSequences;
 	protected mxGraph graph;
 	protected Object parent;
 	protected mxStylesheet stylesheet;
@@ -81,12 +82,18 @@ public class BPMNVisualizer extends JPanel {
 	public void updateProcess(Process process) {
 		this.process = process;
 		this.cellsToComponents = new HashMap<mxCell, Component>();
-		this.graph = new mxGraph();
+		this.cellsToSequences = new HashMap<mxCell, Sequence>();
+		this.graph = new mxGraph() {
+//			public boolean isCellFoldable(Object cell, boolean collapse) {
+//				return false;
+//			}
+		};
 		this.parent = graph.getDefaultParent();
 		this.stylesheet = graph.getStylesheet();
 		
 		setupMxGraph();
 		redrawProcess();
+		fit();
 	}
 	
 	/**
@@ -94,9 +101,10 @@ public class BPMNVisualizer extends JPanel {
 	 */
 	public void redrawProcess() {
 		if (process != null) {
-		final mxGraphComponent graphComponent = updateGraph();
-			graphComponent.setBorder(BorderFactory.createEmptyBorder());
+			final mxGraphComponent graphComponent = updateGraph();
+//			graphComponent.setBorder(BorderFactory.createEmptyBorder());
 			graphComponent.getViewport().setBackground(Color.WHITE);
+//			graphComponent.zoomAndCenter();
 			
 			setLayout(new BorderLayout());
 			add(graphComponent, BorderLayout.CENTER);
@@ -163,7 +171,7 @@ public class BPMNVisualizer extends JPanel {
 		stylesheet.putCellStyle("EVENT_END", styleEventEnd);
 
 		Hashtable<String, Object> styleTask = new Hashtable<String, Object>();
-		styleTask.put(mxConstants.STYLE_SHAPE,mxConstants.SHAPE_RECTANGLE);
+		styleTask.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_RECTANGLE);
 		styleTask.put(mxConstants.STYLE_ROUNDED, true);
 		styleTask.put(mxConstants.STYLE_EDITABLE, false);
 		styleTask.put(mxConstants.STYLE_MOVABLE, false);
@@ -176,9 +184,29 @@ public class BPMNVisualizer extends JPanel {
 		styleTask.put(mxConstants.STYLE_FONTCOLOR, "#5a677b");
 		styleTask.put(mxConstants.STYLE_STROKECOLOR, "#5a677b");
 		stylesheet.putCellStyle("TASK", styleTask);
+		
+//		Hashtable<String, Object> styleTaskTime = new Hashtable<String, Object>();
+//		styleTaskTime.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_RECTANGLE);
+//		styleTaskTime.put(mxConstants.STYLE_ROUNDED, true);
+//		styleTaskTime.put(mxConstants.STYLE_EDITABLE, false);
+//		styleTaskTime.put(mxConstants.STYLE_MOVABLE, false);
+//		styleTaskTime.put(mxConstants.STYLE_SPACING_TOP, 5);
+//		styleTaskTime.put(mxConstants.STYLE_SPACING_RIGHT, 10);
+//		styleTaskTime.put(mxConstants.STYLE_SPACING_BOTTOM, 5);
+//		styleTaskTime.put(mxConstants.STYLE_SPACING_LEFT, 10);
+//		styleTaskTime.put(mxConstants.STYLE_FILLCOLOR, "#cedeef");
+//		styleTaskTime.put(mxConstants.STYLE_GRADIENTCOLOR, "ffffff");
+//		styleTaskTime.put(mxConstants.STYLE_FONTCOLOR, "#5a677b");
+//		styleTaskTime.put(mxConstants.STYLE_STROKECOLOR, "#5a677b");
+//		stylesheet.putCellStyle("TASK_TIME", styleTaskTime);
+		
+		Hashtable<String, Object> styleTimeIcon = new Hashtable<String, Object>();
+		styleTimeIcon.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_RECTANGLE);
+		styleTimeIcon.put(mxConstants.STYLE_FILLCOLOR, "#cedeef");
+		stylesheet.putCellStyle("TIME_ICON", styleTimeIcon);
 
 		Hashtable<String, Object> styleDataObject = new Hashtable<String, Object>();
-		styleDataObject.put(mxConstants.STYLE_SHAPE,mxConstants.SHAPE_RECTANGLE);
+		styleDataObject.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_RECTANGLE);
 		styleDataObject.put(mxConstants.STYLE_ROUNDED, false);
 		styleDataObject.put(mxConstants.STYLE_EDITABLE, false);
 		styleDataObject.put(mxConstants.STYLE_MOVABLE, false);
@@ -210,12 +238,15 @@ public class BPMNVisualizer extends JPanel {
 //		styleEdges.put(mxConstants.STYLE_EDGE, mxEdgeStyle.ElbowConnector);
 //		styleEdges.put(mxConstants.STYLE_ORTHOGONAL, true);
 //		styleEdges.put(mxConstants.STYLE_VERTICAL_ALIGN, mxConstants.ALIGN_MIDDLE);
+//		styleEdges.put(mxConstants.STYLE_ROUNDED, true);
+		styleEdges.put(mxConstants.STYLE_EDGE, mxEdgeStyle.ElbowConnector);
 		stylesheet.putCellStyle("EDGE", styleEdges);
 		
 		Map<String, Object> styleEdgesDobj = new Hashtable<String, Object>();
 		styleEdgesDobj.put(mxConstants.STYLE_EDGE, mxEdgeStyle.EntityRelation);
 		styleEdgesDobj.put(mxConstants.STYLE_STROKECOLOR, "#666666");
 		styleEdgesDobj.put(mxConstants.STYLE_DASHED, true);
+		styleEdgesDobj.put(mxConstants.STYLE_ROUNDED, true);
 		stylesheet.putCellStyle("EDGE_DOBJ", styleEdgesDobj);
 	}
 	
@@ -228,18 +259,35 @@ public class BPMNVisualizer extends JPanel {
 		
 		Object parent = graph.getDefaultParent();
 		graph.getModel().beginUpdate();
+		
+		Map<Component, Object> components = new HashMap<Component, Object>();
 		try {
-			Map<Component, Object> components = new HashMap<Component, Object>();
+//			Map<Component, Pair<Object, Object>> gatewaysInputOutput = new HashMap<Component, Pair<Object, Object>>();
+			
 			for (StartEvent se : process.getStartEvents()) {
-				Object obj = graph.insertVertex(parent, null, "Start", 20, 20, 20, 20, "EVENT_START");
+				mxCell obj = (mxCell) graph.insertVertex(parent, null, "Start", 20, 20, 20, 20, "EVENT_START");
 				components.put(se, obj);
+				cellsToComponents.put(obj, se);
 			}
 			for (EndEvent ee : process.getEndEvents()) {
-				Object obj = graph.insertVertex(parent, null, "End", 20, 20, 20, 20, "EVENT_END");
+				mxCell obj = (mxCell) graph.insertVertex(parent, null, "End", 20, 20, 20, 20, "EVENT_END");
 				components.put(ee, obj);
+				cellsToComponents.put(obj, ee);
 			}
 			for (Task fo : process.getTasks()) {
 				mxCell obj = (mxCell) graph.insertVertex(parent, fo.getId(), fo.getName(), 20, 20, 80, 30, "TASK");
+				
+				if (fo.getActivityScript() != null && !fo.getActivityScript().getScript().isEmpty()) {
+					
+					mxGeometry geo1 = new mxGeometry(0.5, 0.5, 5,5);
+					geo1.setRelative(true);
+					
+					mxCell time = new mxCell(null, geo1, "TIME_ICON");
+//					time.setVertex(true);
+					
+					graph.addCell(time, obj);
+				}
+				
 				graph.updateCellSize(obj);
 				components.put(fo, obj);
 				cellsToComponents.put(obj, fo);
@@ -249,14 +297,40 @@ public class BPMNVisualizer extends JPanel {
 				if (fo instanceof ParallelGateway) {
 					label = "+";
 				}
-				Object obj = graph.insertVertex(parent, null, label, 20, 20, 30, 30, "GATEWAY");
+				mxCell obj = (mxCell) graph.insertVertex(parent, null, label, 20, 20, 30, 30, "GATEWAY");
+				obj.setConnectable(false);
+				
+//				// incoming port
+//				mxGeometry geo1 = new mxGeometry(0, 0.5, 3,3);
+//				geo1.setRelative(true);
+//				mxCell port1 = new mxCell(null, geo1, null);
+//				port1.setVertex(true);
+//				graph.addCell(port1, obj);
+				
+//				// outgoing port
+//				mxGeometry geo2 = new mxGeometry(1.0, 0.5, 3,3);
+//				geo2.setRelative(true);
+//				mxCell port2 = new mxCell(null, geo2, null);
+//				port2.setVertex(true);
+//				graph.addCell(port2, obj);
+				
+//				gatewaysInputOutput.put(fo, new Pair<Object, Object>(port1, port2));
 				components.put(fo, obj);
+				cellsToComponents.put(obj, fo);
 			}
 			for (Sequence s : process.getSequences()) {
 				if (components.containsKey(s.getSource()) && components.containsKey(s.getSink())) {
 					Object source = components.get(s.getSource());
 					Object sink = components.get(s.getSink());
-					graph.insertEdge(parent, null, null, source, sink, "EDGE");
+					
+//					if (s.getSource() instanceof Gateway) {
+//						graph.insertEdge(parent, null, null, gatewaysInputOutput.get(s.getSource()).getFirst(), sink, "EDGE");
+//					} else if (s.getSink() instanceof Gateway) {
+//						graph.insertEdge(parent, null, null, source, gatewaysInputOutput.get(s.getSink()).getSecond(), "EDGE");
+//					} else {
+						mxCell edge = (mxCell) graph.insertEdge(parent, null, null, source, sink, "EDGE");
+//					}
+					cellsToSequences.put(edge, s);
 				}
 			}
 			for (DataObject dobj : process.getDataObjects()) {
@@ -268,7 +342,7 @@ public class BPMNVisualizer extends JPanel {
 				} else {
 					label += " = \"" + dobj.getValue() + "\"";
 				}
-				Object obj = graph.insertVertex(parent, null, label, 20, 20, 30, 30, "DATA_OBJECT");
+				mxCell obj = (mxCell) graph.insertVertex(parent, null, label, 20, 20, 30, 30, "DATA_OBJECT");
 				graph.updateCellSize((mxCell) obj);
 				components.put(dobj, obj);
 				
@@ -281,15 +355,33 @@ public class BPMNVisualizer extends JPanel {
 						graph.insertEdge(parent, null, null, components.get(owner), components.get(dobj), "EDGE_DOBJ");
 					}
 				}
+				cellsToComponents.put(obj, dobj);
 			}
 		} finally {
 			graph.getModel().endUpdate();
 		}
-		
 
-		mxGraphLayout layout = new mxHierarchicalLayout(graph, JLabel.WEST);
+		// do the layout
+		mxHierarchicalLayout layout = new mxHierarchicalLayout(graph, JLabel.WEST);
 		layout.execute(graph.getDefaultParent());
 		mxGraphComponent c = new mxGraphComponent(graph);
+		
+		// store the layout information
+		for (mxCell cell : cellsToComponents.keySet()) {
+			Component component = cellsToComponents.get(cell);
+			if (component instanceof Displaceable) {
+				mxGeometry g = cell.getGeometry();
+				((Displaceable) component).setLocation((int) g.getX(), (int) g.getY());
+				((Displaceable) component).setDimensions((int) g.getWidth(), (int) g.getHeight());
+			}
+		}
+		for (mxCell cell : cellsToSequences.keySet()) {
+			Sequence sequence = cellsToSequences.get(cell);
+			for (mxPoint p : graph.getView().getState(cell).getAbsolutePoints()) {
+				sequence.addPoint((int) p.getX(), (int) p.getY());
+			}
+		}
+		
 		return c;
 	}
 	
@@ -458,21 +550,21 @@ public class BPMNVisualizer extends JPanel {
 	 * This method fits the graph to the actual available size
 	 */
 	public void fit() {
-		mxGraphView view = graph.getView();
-		int compLen = getWidth();
-		if (compLen == 0) {
-			compLen = getParent().getWidth() - 10;
-		}
-		int viewLen = (int) view.getGraphBounds().getWidth();
-		double scaleLen = Math.min((double) compLen / viewLen * view.getScale(), 1.0);
-		
-		int compHeight = getHeight();
-		if (compHeight == 0) {
-			compHeight = getParent().getHeight() - 10;
-		}
-		int viewHeight = (int) view.getGraphBounds().getHeight();
-		double scaleHeight = Math.min((double) compHeight / viewHeight * view.getScale(), 1.0);
-		
-		view.setScale(Math.min(scaleLen, scaleHeight));
+//		mxGraphView view = graph.getView();
+//		int compLen = getWidth();
+//		if (compLen == 0) {
+//			compLen = getParent().getWidth() - 10;
+//		}
+//		int viewLen = (int) view.getGraphBounds().getWidth();
+//		double scaleLen = Math.min((double) compLen / viewLen * view.getScale(), 1.0);
+//		
+//		int compHeight = getHeight();
+//		if (compHeight == 0) {
+//			compHeight = getParent().getHeight() - 10;
+//		}
+//		int viewHeight = (int) view.getGraphBounds().getHeight();
+//		double scaleHeight = Math.min((double) compHeight / viewHeight * view.getScale(), 1.0);
+//		
+//		view.setScale(Math.min(scaleLen, scaleHeight));
 	}
 }
