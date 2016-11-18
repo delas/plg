@@ -1,35 +1,60 @@
-<!DOCTYPE html>
-<html lang="en-us">
+<!doctype html>
+<html>
   <head>
-    <meta charset="UTF-8">
-    <title>PLG 2 by delas</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
-    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>PLG2 by delas</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-light.css">
+    <meta name="viewport" content="width=device-width">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
   </head>
   <body>
-    <section class="page-header">
-      <h1 class="project-name">PLG 2</h1>
-      <h2 class="project-tagline">Multiperspective Processes Randomization and Simulation for Online and Offline Settings</h2>
-      <a href="https://github.com/delas/plg" class="btn">View on GitHub</a>
-      <a href="https://github.com/delas/plg/zipball/master" class="btn">Download .zip</a>
-      <a href="https://github.com/delas/plg/tarball/master" class="btn">Download .tar.gz</a>
-    </section>
+    <div class="wrapper">
+      <header>
+        <h1>PLG2</h1>
+        <p>Multiperspective Processes Randomization and Simulation for Online and Offline Settings</p>
 
-    <section class="main-content">
-      <h1>
-<a id="processes-and-logs-generator-" class="anchor" href="#processes-and-logs-generator-" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Processes and Logs Generator <a href="https://travis-ci.org/delas/plg"><img src="https://travis-ci.org/delas/plg.svg?branch=master" alt="Build Status"></a>
-</h1>
+        <p class="view"><a href="https://github.com/delas/plg">View the Project on GitHub <small>delas/plg</small></a></p>
 
-<p><a href="http://plg.processmining.it/">Process Log Generator</a> is a application capable to generate random business processes, starting from some general "complexity paramenters". PLG is also able to "execute" a given process model in order to generate a process log.</p>
+
+        <ul>
+          <li><a href="https://github.com/delas/plg/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/delas/plg/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/delas/plg">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+<a id="introduction" class="anchor" href="#introduction" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Introduction</h1>
+
+<p>Evaluating process mining algorithms could require the availability of a suite of real-world business processes and their execution logs, which hardly are available.</p>
+
+<p>Process Log Generator is a application capable to generate random business processes, starting from some general "complexity paramenters". PLG is also able to "execute" a given process model in order to generate a process log.</p>
 
 <p>This software is designed to help researchers in the construction of a large set of processes and corresponding execution logs. This software is released with a small library which could help in the programmatical creation of processes.</p>
 
-<p>More information at the project home page <a href="http://plg.processmining.it/">http://plg.processmining.it/</a>.</p>
+<h1>
+<a id="main-features" class="anchor" href="#main-features" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Main Features</h1>
 
-<p><strong>Attention:</strong> this repository is a complete rewriting of the project already available at this link: <a href="http://www.processmining.it/sw/plg">http://www.processmining.it/sw/plg</a>.</p>
+<ul>
+<li>Random generation and simulation of complex process models;</li>
+<li>Random generation and simulation of complex data objects;</li>
+<li>Detailed tweaking of activities time features;</li>
+<li>Random evolution of a process model, in order to generate a slightly different version of it (to simulate concept drifts);</li>
+<li>Deep control on the generated simulation noise;</li>
+<li>Event stream generation, and, while the stream is running, straightaway switch of the underlying simulated model, to simulate concept drifts;</li>
+<li>Process model import from PLG2 or BPMN XML files (designed with Signavio);</li>
+<li>Models export as BPMN 2.0 XML, BPMN/Petri net Graphviz Dot files, PNML and PLG2.</li>
+</ul>
+
+<h1>
+<a id="screencast-demo" class="anchor" href="#screencast-demo" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Screencast Demo</h1>
+
+<p><a href="https://www.youtube.com/watch?v=t-GMV4hU_vs"><img src="https://img.youtube.com/vi/t-GMV4hU_vs/0.jpg" alt="IMAGE ALT TEXT HERE"></a></p>
 
 <h2>
 <a id="help" class="anchor" href="#help" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Help</h2>
@@ -60,15 +85,13 @@
 <li>Andrea Burattin. "<a href="http://arxiv.org/abs/1506.08415">PLG2: Multiperspective Processes Randomization and Simulation for Online and Offline Settings</a>". In <em>CoRR</em> abs/1506.08415, Jun. 2015.</li>
 <li>Andrea Burattin and Alessandro Sperduti. "<a href="http://andrea.burattin.net/publications/2010-bpi">PLG: a Framework for the Generation of Business Process Models and their Execution Logs</a>". In <em>Proceedings of the 6th International Workshop on Business Process Intelligence</em> (BPI 2010); Stevens Institute of Technology; Hoboken, New Jersey, USA; September 13, <a href="http://dx.doi.org/10.1007/978-3-642-20511-8_20">2010.10.1007/978-3-642-20511-8_20</a>.</li>
 </ul>
-
-      <footer class="site-footer">
-        <span class="site-footer-owner"><a href="https://github.com/delas/plg">PLG 2</a> is maintained by <a href="https://github.com/delas">delas</a>.</span>
-
-        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/delas">delas</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
       </footer>
-
-    </section>
-
-  
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
   </body>
 </html>
