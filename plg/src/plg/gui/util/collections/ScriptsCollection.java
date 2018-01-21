@@ -11,9 +11,9 @@ import java.util.Scanner;
 public class ScriptsCollection {
 
 	// various scripts
-	public static final String TIME_SCRIPT = getFile("/plg/resources/scripts/taskTime.py");
-	public static final String STRING_DATA_OBJECT = getFile("/plg/resources/scripts/dataObjectString.py");
-	public static final String INTEGER_DATA_OBJECT = getFile("/plg/resources/scripts/dataObjectInteger.py");
+	public static final String TIME_SCRIPT = getFile("plg/resources/scripts/taskTime.py");
+	public static final String STRING_DATA_OBJECT = getFile("plg/resources/scripts/dataObjectString.py");
+	public static final String INTEGER_DATA_OBJECT = getFile("plg/resources/scripts/dataObjectInteger.py");
 	
 	/**
 	 * This method returns a string representation of the provided resource. The
@@ -25,7 +25,7 @@ public class ScriptsCollection {
 	 */
 	public static String getFile(String resourceName) {
 		StringBuilder result = new StringBuilder("");
-		InputStream is = System.class.getResourceAsStream(resourceName);
+		InputStream is = ClassLoader.getSystemResourceAsStream(resourceName);
 		try (Scanner scanner = new Scanner(is)) {
 			while (scanner.hasNextLine()) {
 				String line = scanner.nextLine();
