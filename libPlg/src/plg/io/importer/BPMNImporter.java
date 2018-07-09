@@ -36,8 +36,10 @@ import plg.model.sequence.Sequence;
 /**
  * This importing module works with process models represented as BPMN. In
  * particular, this class imports from XML files expresses using the
- * {@link http://schema.omg.org/spec/BPMN/2.0}.
+ * {@link http://schema.omg.org/spec/BPMN/2.0} or
+ * {@link http://www.omg.org/spec/BPMN/20100524/MODEL}.
  * 
+ * <p>
  * This class imports:
  * <ul>
  * 	<li>start and end events;</li>
@@ -49,12 +51,13 @@ import plg.model.sequence.Sequence;
  * @author Andrea Burattin
  */
 @Importer(
-	name = "Signavio BPMN files",
+	name = "BPMN files (from Signavio or Oryx)",
 	fileExtension = "bpmn"
 )
-public class SignavioBPMNImporter extends FileImporter {
+public class BPMNImporter extends FileImporter {
 
-	private static final Namespace ns = Namespace.getNamespace("http://www.omg.org/spec/BPMN/20100524/MODEL");
+	private static final Namespace nsSignavio = Namespace.getNamespace("http://www.omg.org/spec/BPMN/20100524/MODEL");
+	private static final Namespace nsOryx = Namespace.getNamespace("http://schema.omg.org/spec/BPMN/2.0");
 	private static final Pattern REGEX_SIMPLE = Pattern.compile("(\\S+)\\s*=\\s*(\\S+)");
 	private static final Pattern REGEX_INTEGER_SCRIPT = Pattern.compile("(?i)\\s*(\\S+)\\s*\\(\\s*Integer\\s*\\)\\s*");
 	private static final Pattern REGEX_STRING_SCRIPT = Pattern.compile("(?i)\\s*(\\S+)\\s*\\(\\s*String\\s*\\)\\s*");
@@ -77,6 +80,13 @@ public class SignavioBPMNImporter extends FileImporter {
 			SAXBuilder builder = new SAXBuilder();
 			Document document = (Document) builder.build(input);
 			Element definitions = document.getRootElement();
+			
+			// set correct namespace
+			Namespace ns = nsSignavio;
+			if (definitions.getChild("process", ns) == null) {
+				ns = nsOryx;
+			}
+			
 			Element process = definitions.getChild("process", ns);
 			p = new Process(process.getAttributeValue("id"));
 			
@@ -140,11 +150,11 @@ public class SignavioBPMNImporter extends FileImporter {
 				String doId = ds.getAttributeValue("id");
 				if (taskToDataObject.containsKey(doId)) {
 					for(Task t : taskToDataObject.get(doId)) {
-						parseDataObject(ds, t, DATA_OBJECT_DIRECTION.GENERATED, p);
+						parseDataObject(ds, t, DATA_OBJECT_DIRECTION.GENERATED, p, ns);
 					}
 				} else if (dataObjectToTask.containsKey(doId)) {
 					for(Task t : dataObjectToTask.get(doId)) {
-						parseDataObject(ds, t, DATA_OBJECT_DIRECTION.REQUIRED, p);
+						parseDataObject(ds, t, DATA_OBJECT_DIRECTION.REQUIRED, p, ns);
 					}
 					/*for(Task t : dataObjectToTask.get(doId)) {
 						for (FlowObject fo : t.getIncomingObjects()) {
@@ -153,7 +163,7 @@ public class SignavioBPMNImporter extends FileImporter {
 						}
 					}*/
 				} else {
-					parseDataObject(ds, null, null, p);
+					parseDataObject(ds, null, null, p, ns);
 				}
 			}
 			progress.inc();
@@ -176,7 +186,7 @@ public class SignavioBPMNImporter extends FileImporter {
 	 * @param process
 	 * @return
 	 */
-	private DataObject parseDataObject(Element dataObjectElement, IDataObjectOwner owner, DATA_OBJECT_DIRECTION direction, Process process) {
+	private DataObject parseDataObject(Element dataObjectElement, IDataObjectOwner owner, DATA_OBJECT_DIRECTION direction, Process process, Namespace ns) {
 		DataObject dataObject = null;
 		String name = dataObjectElement.getAttributeValue("name");
 		Matcher matcherSimple = REGEX_SIMPLE.matcher(name);

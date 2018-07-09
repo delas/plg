@@ -10,7 +10,7 @@ import org.deckfour.xes.out.XesXmlSerializer;
 import plg.generator.ProgressAdapter;
 import plg.generator.log.LogGenerator;
 import plg.generator.log.SimulationConfiguration;
-import plg.io.importer.SignavioBPMNImporter;
+import plg.io.importer.BPMNImporter;
 import plg.model.Process;
 
 public class LogGeneratorMain {
@@ -32,7 +32,7 @@ public class LogGeneratorMain {
 		System.out.println("No. of traces: " + noTraces);
 		
 		System.out.print("1. Importing model... ");
-		SignavioBPMNImporter importer = new SignavioBPMNImporter();
+		BPMNImporter importer = new BPMNImporter();
 		Process p = importer.importModel(modelFile, new ProgressAdapter());
 		System.out.println("done!");
 		
