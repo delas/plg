@@ -1,9 +1,7 @@
 package plg.cli.log;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 
 import org.deckfour.xes.model.XLog;
 import org.deckfour.xes.out.XMxmlSerializer;
@@ -13,10 +11,9 @@ import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 
-import plg.exceptions.InvalidProcessException;
 import plg.generator.ProgressAdapter;
 import plg.generator.log.SimulationConfiguration;
-import plg.io.importer.SignavioBPMNImporter;
+import plg.io.importer.BPMNImporter;
 import plg.model.Process;
 import plg.utils.PlgConstants;
 
@@ -107,7 +104,7 @@ public class LogGenerator {
 		
 		// model import
 		System.out.print("1. Importing model... ");
-		SignavioBPMNImporter importer = new SignavioBPMNImporter();
+		BPMNImporter importer = new BPMNImporter();
 		Process p = importer.importModel(parameters.modelFile.getAbsolutePath());
 		System.out.println("done!");
 		
