@@ -1,5 +1,7 @@
 package plg.generator.scriptexecuter;
 
+import org.python.core.Py;
+
 import plg.exceptions.InvalidScript;
 
 /**
@@ -23,6 +25,6 @@ public class IntegerScriptExecutor extends ScriptExecutor {
 		if (result == null) {
 			return null;
 		}
-		return (Integer) result.__tojava__(Integer.class);
+		return Py.py2int(result);
 	}
 }

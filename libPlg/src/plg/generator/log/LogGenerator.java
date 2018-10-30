@@ -111,7 +111,7 @@ public class LogGenerator {
 		progress.start();
 		
 		// define the number of CPU cores to use
-		int coresToUse = (parameters.useMultithreading())? CPUUtils.CPUAvailable() : 1;
+		int coresToUse = 1; //(parameters.useMultithreading())? CPUUtils.CPUAvailable() : 1;
 		Logger.instance().info("Starting simulation with " + coresToUse + " cores");
 		
 		// prepare the engine

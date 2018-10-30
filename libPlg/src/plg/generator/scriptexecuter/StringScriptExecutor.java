@@ -1,5 +1,7 @@
 package plg.generator.scriptexecuter;
 
+import org.python.antlr.adapter.AstAdapters;
+
 import plg.exceptions.InvalidScript;
 
 /**
@@ -23,6 +25,6 @@ public class StringScriptExecutor extends ScriptExecutor {
 		if (result == null) {
 			return null;
 		}
-		return (String) result.__tojava__(String.class);
+		return result.__tojava__(Object.class).toString();
 	}
 }

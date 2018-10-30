@@ -14,6 +14,7 @@ import org.kohsuke.args4j.Option;
 import plg.generator.ProgressAdapter;
 import plg.generator.log.SimulationConfiguration;
 import plg.io.importer.BPMNImporter;
+import plg.io.importer.PLGImporter;
 import plg.model.Process;
 import plg.utils.PlgConstants;
 
@@ -104,7 +105,8 @@ public class LogGenerator {
 		
 		// model import
 		System.out.print("1. Importing model... ");
-		BPMNImporter importer = new BPMNImporter();
+		//BPMNImporter importer = new BPMNImporter();
+		PLGImporter importer = new PLGImporter();
 		Process p = importer.importModel(parameters.modelFile.getAbsolutePath());
 		System.out.println("done!");
 		

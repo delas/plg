@@ -6,6 +6,8 @@ import javax.swing.JFrame;
 
 import plg.exceptions.IllegalSequenceException;
 import plg.exceptions.InvalidProcessException;
+import plg.generator.process.ProcessGenerator;
+import plg.generator.process.RandomizationConfiguration;
 import plg.model.Process;
 import plg.model.activity.Task;
 import plg.model.data.DataObject;
@@ -14,14 +16,15 @@ import plg.model.event.EndEvent;
 import plg.model.event.StartEvent;
 import plg.model.gateway.Gateway;
 import plg.visualizer.BPMNVisualizer;
+import plg.visualizer.BPMNVisualizer2;
 
 public class PlgVisualizerPrototype {
 
 	public static void main(String[] args) throws IllegalSequenceException, InvalidProcessException {
 		Process p = new Process("test");
-		p = generateProcess();
-//		ProcessGenerator.randomizeProcess(p, RandomizationConfiguration.BASIC_VALUES);
-		BPMNVisualizer v = new BPMNVisualizer(p);
+//		p = generateProcess();
+		ProcessGenerator.randomizeProcess(p, RandomizationConfiguration.BASIC_VALUES);
+		BPMNVisualizer2 v = new BPMNVisualizer2(p);
 		
 		JFrame f = new JFrame("Test Frame");
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -29,7 +32,6 @@ public class PlgVisualizerPrototype {
 		f.setLayout(new BorderLayout());
 		f.add(v, BorderLayout.CENTER);
 		f.setVisible(true);
-		v.fit();
 	}
 	
 	private static Process generateProcess() throws IllegalSequenceException, InvalidProcessException {
@@ -37,8 +39,8 @@ public class PlgVisualizerPrototype {
 		StartEvent start = p.newStartEvent();
 		EndEvent end = p.newEndEvent();
 		Gateway split = p.newParallelGateway();
-		Gateway join = p.newParallelGateway();
-		Task a = p.newTask("a");
+		Gateway join = p.newExclusiveGateway();
+		Task a = p.newTask("Test activity");
 		Task b = p.newTask("b");
 		Task c = p.newTask("c");
 		Task d = p.newTask("d");
