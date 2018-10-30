@@ -6,7 +6,9 @@ This software is designed to help researchers in the construction of a large set
 
 More information at the project home page http://plg.processmining.it/.
 
-**Attention:** this repository is a complete rewriting of the project already available at this link: http://www.processmining.it/sw/plg.
+**Attention:** this repository is a complete rewriting of the project already available at: https://github.com/delas/plg-old.
+
+![Screenshot](https://user-images.githubusercontent.com/867237/42452070-57e07272-8389-11e8-85d0-d97862211eb4.png)
 
 ## Help
 * Visit the [Wiki](https://github.com/delas/plg/wiki) for all information. Useful quick documentation:
