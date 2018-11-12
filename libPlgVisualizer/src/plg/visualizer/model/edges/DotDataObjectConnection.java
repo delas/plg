@@ -12,7 +12,7 @@ public class DotDataObjectConnection extends DotEdge {
 	public DotDataObjectConnection(DotNode source, DotNode target) {
 		super(source, target);
 		
-		setOption("color", "#666666");
+		setOption("color", "#303030");
 		setOption("style", "dashed");
 		setOption("arrowhead", "open");
 	}

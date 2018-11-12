@@ -18,21 +18,17 @@ public class DotGateway extends DotNode {
 		setSelectable(true);
 		
 		setOption("shape", "diamond");
-		setOption("style", "filled");
 		setOption("width", "0.4");
 		setOption("height", "0.4");
-		setOption("fontsize", "20");
-		setOption("fillcolor", "#ffff84:#ffffbd");
-		setOption("gradientangle", "270");
-		setOption("color", "#a6a855");
-		setOption("fontcolor", "#708041");
+		setOption("fontsize", "30");
+		setOption("fontcolor", "#000000");
 		setOption("fontname", "sans-serif");
 		setOption("fixedsize", "true");
 		
 		if (TYPE.PARALLEL.equals(type)) {
-			setLabel("+");
+			setLabel("<<table border='0'><tr><td></td></tr><tr><td valign='top'><font point-size='5' color='white'>_</font>+</td></tr></table>>");
 		} else {
-			setLabel("&times;");
+			setLabel("<<table border='0'><tr><td></td></tr><tr><td valign='top'><font point-size='7.5' color='white'>_</font>&times;</td></tr></table>>");
 		}
 	}
 

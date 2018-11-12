@@ -9,19 +9,21 @@ import org.processmining.plugins.graphviz.dot.DotNode;
 public class DotTask extends DotNode {
 
 	public DotTask(String label) {
-		super(label, null);
+		super(null, null);
 		
 		setSelectable(true);
 		
 		setOption("shape", "box");
 		setOption("style", "rounded,filled");
-		setOption("fillcolor", "#cedeef:#ffffff");
-		setOption("gradientangle", "270");
-		setOption("color", "#5a677b");
+		setOption("fillcolor", "#ffffff:#ffffcb");
+		setOption("gradientangle", "300");
+		setOption("color", "#303030");
 		setOption("width", "0.5");
-		setOption("fontcolor", "#5a677b");
+		setOption("fontcolor", "#303030");
 		setOption("fontname", "sans-serif");
-		setOption("fontsize", "14.0");
+		setOption("fontsize", "12");
 		setOption("penwidth", "1");
+		
+		setLabel("<<table border='0'><tr><td height='30'>" + label + "</td></tr></table>>");
 	}
 }

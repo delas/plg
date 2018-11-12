@@ -11,7 +11,7 @@ import plg.model.data.DataObject;
 public class DotDataObject extends DotNode {
 
 	public DotDataObject(DataObject node) {
-		super(node.getName(), null);
+		super(null, null);
 
 		setSelectable(true);
 
@@ -21,9 +21,11 @@ public class DotDataObject extends DotNode {
 		setOption("height", "0.5");
 		setOption("style", "filled");
 		setOption("fillcolor", "#ffffff");
-		setOption("color", "#666666");
-		setOption("fontcolor", "#666666");
+		setOption("color", "#303030");
+		setOption("fontcolor", "#303030");
 		setOption("fontname", "sans-serif");
+		
+		setLabel("<<table border='0'><tr><td width='80'>" + node.getName() + "</td></tr></table>>");
 	}
 
 }

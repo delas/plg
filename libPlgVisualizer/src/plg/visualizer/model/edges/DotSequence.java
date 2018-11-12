@@ -12,6 +12,6 @@ public class DotSequence extends DotEdge {
 	public DotSequence(DotNode source, DotNode target) {
 		super(source, target);
 		
-		setOption("color", "#5a677b");
+		setOption("color", "#303030");
 	}
 }

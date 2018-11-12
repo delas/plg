@@ -14,12 +14,8 @@ public class DotEndEvent extends DotNode {
 		setSelectable(true);
 		
 		setOption("shape", "circle");
-		setOption("style", "filled");
-		setOption("fillcolor", "#e46e60:#ffc5c1");
-		setOption("gradientangle", "270");
-		setOption("color", "#630000");
 		setOption("width", ".3");
-		setOption("fontcolor", "#630000");
+		setOption("fontcolor", "#000000");
 		setOption("fontname", "sans-serif");
 		setOption("fontsize", "12.0");
 		setOption("penwidth", "2");

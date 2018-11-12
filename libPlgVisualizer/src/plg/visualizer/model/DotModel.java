@@ -28,7 +28,8 @@ public class DotModel extends Dot {
 		this.model = model;
 		
 //		setOption("splines", "ortho");
-//		setOption("nodesep", "0.5");
+//		setOption("nodesep", "1.0");
+//		setOption("sep", "+4");
 		setOption("rankdir", "LR");
 		
 		realize();
