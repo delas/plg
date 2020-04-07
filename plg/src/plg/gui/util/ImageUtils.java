@@ -13,6 +13,8 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
+import plg.utils.Logger;
+
 /**
  * Collection of utilities methods to work with images.
  * 
@@ -51,8 +53,8 @@ public class ImageUtils {
 	public static ImageIcon loadImage(String imageFile) {
 		try {
 			return new ImageIcon(ImageIO.read(ClassLoader.getSystemResource(imageFile)));
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			System.err.println("An error has been reported while loading a picture (but should be fine, `" + e.getMessage() + "').");
 		}
 		return null;
 	}
