@@ -11,6 +11,7 @@ import plg.exceptions.InvalidDataObject;
 import plg.exceptions.InvalidProcessException;
 import plg.generator.process.ProcessGenerator;
 import plg.generator.process.RandomizationConfiguration;
+import plg.io.exporter.GraphvizBPMNExporter;
 import plg.io.importer.PLGImporter;
 import plg.model.Process;
 import plg.model.activity.Task;
@@ -43,10 +44,10 @@ public class TestModel {
 //		}
 		
 //		SignavioBPMNImporter i = new SignavioBPMNImporter();
-		PLGImporter i = new PLGImporter();
-//		Process p = generateProcess();
+//		PLGImporter i = new PLGImporter();
+		Process p = generateProcess();
 //		Process p2 = (Process) p.clone();
-		Process p = i.importModel("C:\\Users\\Andrea\\Desktop\\test.plg");
+//		Process p = i.importModel("C:\\Users\\Andrea\\Desktop\\test.plg");
 //		Process p = i.importModel("C:\\Users\\Andrea\\Desktop\\Hybrid-no-time.bpmn");
 		
 //		LogGenerator g = new LogGenerator(p, new SimulationConfiguration(1000));
@@ -54,8 +55,8 @@ public class TestModel {
 //		XesXmlGZIPSerializer s = new XesXmlGZIPSerializer();
 //		s.serialize(l, new FileOutputStream("C:\\Users\\Andrea\\Desktop\\testlog.xes.gz"));
 		
-//		GraphvizBPMNExporter e = new GraphvizBPMNExporter();
-//		e.exportModel(p, "C:\\Users\\Andrea\\Desktop\\model.dot");
+		GraphvizBPMNExporter e = new GraphvizBPMNExporter();
+		e.exportModel(p, "C:\\Users\\andbur\\Desktop\\model.dot");
 //		e.exportModel(p2, "C:\\Users\\Andrea\\Desktop\\model2.dot");
 		System.out.println("done");
 		

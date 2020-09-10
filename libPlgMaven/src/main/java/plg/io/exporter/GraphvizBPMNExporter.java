@@ -3,7 +3,6 @@ package plg.io.exporter;
 import java.io.File;
 import java.io.IOException;
 
-import org.adrianwalker.multilinestring.Multiline;
 import org.apache.commons.io.FileUtils;
 
 import plg.annotations.Exporter;
@@ -41,105 +40,101 @@ public class GraphvizBPMNExporter extends FileExporter {
 	 * (https://github.com/benelog/multiline) in order to populate our variable
 	 * with a very long and multiline string.
 	 */
-	/**
-digraph G {
-	graph [splines="ortho", nodesep="0.5"];
-	rankdir="LR";
-	
-	// start events
-	node [
-		label="",
-		shape="circle",
-		width="0.3",
-		style="filled",
-		fillcolor="#5dbd5a:#bafcc2",
-		gradientangle=270,
-		color="#20962f",
-		fontcolor="#20962f",
-		fontname="sans-serif",
-		fontsize="12.0",
-		penwidth=2
-	];
-### START EVENTS ###
-	
-	// end events
-	node [
-		label="",
-		shape="circle",
-		width="0.3",
-		style="filled",
-		fillcolor="#e46e60:#ffc5c1",
-		gradientangle=270,
-		color="#630000",
-		fontcolor="#630000",
-		fontname="sans-serif",
-		fontsize="12.0",
-		penwidth=2
-	];
-### END EVENTS ###
-
-	// activities
-	node [
-		shape="box",
-		style="filled",
-		fillcolor="#cedeef:#ffffff",
-		gradientangle=270,
-		color="#5a677b",
-		width="0.5",
-		fontcolor="#5a677b",
-		fontname="sans-serif",
-		fontsize="14.0",
-		penwidth=1
-	];
-### ACTIVITIES ###
-
-	// data objects
-	node [
-		shape="note",
-		fontsize=10,
-		width="0.5",
-		height="0.5",
-		style="filled",
-		fillcolor="#ffffff",
-		color="#666666",
-		fontcolor="#666666",
-		fontname="sans-serif"
-	];
-### DATAOBJECTS ###
-	
-	// gateways
-	node [
-		shape="diamond",
-		//fixedsize="true",
-		width="0.5",
-		height="0.5",
-		fontsize=20,
-		style="filled",
-		fillcolor="#ffff84:#ffffbd",
-		gradientangle=270,
-		color="#a6a855",
-		fontcolor="#708041",
-		fontname="sans-serif"
-	];
-### GATEWAYS ###
-
-	// edges
-	edge[
-		color="#5a677b"
-	];
-### EDGES ###
-
-	// data object connections
-	edge[
-		color="#666666",
-		style="dotted",
-		arrowhead="open"
-	];
-### DATAOBJECTSCONNECTIONS ###
-}
-*/
-	@Multiline
-	private String basic;
+	private String basic = "digraph G {\r\n" + 
+			"	graph [splines=\"ortho\", nodesep=\"0.5\"];\r\n" + 
+			"	rankdir=\"LR\";\r\n" + 
+			"	\r\n" + 
+			"	// start events\r\n" + 
+			"	node [\r\n" + 
+			"		label=\"\",\r\n" + 
+			"		shape=\"circle\",\r\n" + 
+			"		width=\"0.3\",\r\n" + 
+			"		style=\"filled\",\r\n" + 
+			"		fillcolor=\"#5dbd5a:#bafcc2\",\r\n" + 
+			"		gradientangle=270,\r\n" + 
+			"		color=\"#20962f\",\r\n" + 
+			"		fontcolor=\"#20962f\",\r\n" + 
+			"		fontname=\"sans-serif\",\r\n" + 
+			"		fontsize=\"12.0\",\r\n" + 
+			"		penwidth=2\r\n" + 
+			"	];\r\n" + 
+			"### START EVENTS ###\r\n" + 
+			"	\r\n" + 
+			"	// end events\r\n" + 
+			"	node [\r\n" + 
+			"		label=\"\",\r\n" + 
+			"		shape=\"circle\",\r\n" + 
+			"		width=\"0.3\",\r\n" + 
+			"		style=\"filled\",\r\n" + 
+			"		fillcolor=\"#e46e60:#ffc5c1\",\r\n" + 
+			"		gradientangle=270,\r\n" + 
+			"		color=\"#630000\",\r\n" + 
+			"		fontcolor=\"#630000\",\r\n" + 
+			"		fontname=\"sans-serif\",\r\n" + 
+			"		fontsize=\"12.0\",\r\n" + 
+			"		penwidth=2\r\n" + 
+			"	];\r\n" + 
+			"### END EVENTS ###\r\n" + 
+			"\r\n" + 
+			"	// activities\r\n" + 
+			"	node [\r\n" + 
+			"		shape=\"box\",\r\n" + 
+			"		style=\"filled\",\r\n" + 
+			"		fillcolor=\"#cedeef:#ffffff\",\r\n" + 
+			"		gradientangle=270,\r\n" + 
+			"		color=\"#5a677b\",\r\n" + 
+			"		width=\"0.5\",\r\n" + 
+			"		fontcolor=\"#5a677b\",\r\n" + 
+			"		fontname=\"sans-serif\",\r\n" + 
+			"		fontsize=\"14.0\",\r\n" + 
+			"		penwidth=1\r\n" + 
+			"	];\r\n" + 
+			"### ACTIVITIES ###\r\n" + 
+			"\r\n" + 
+			"	// data objects\r\n" + 
+			"	node [\r\n" + 
+			"		shape=\"note\",\r\n" + 
+			"		fontsize=10,\r\n" + 
+			"		width=\"0.5\",\r\n" + 
+			"		height=\"0.5\",\r\n" + 
+			"		style=\"filled\",\r\n" + 
+			"		fillcolor=\"#ffffff\",\r\n" + 
+			"		color=\"#666666\",\r\n" + 
+			"		fontcolor=\"#666666\",\r\n" + 
+			"		fontname=\"sans-serif\"\r\n" + 
+			"	];\r\n" + 
+			"### DATAOBJECTS ###\r\n" + 
+			"	\r\n" + 
+			"	// gateways\r\n" + 
+			"	node [\r\n" + 
+			"		shape=\"diamond\",\r\n" + 
+			"		//fixedsize=\"true\",\r\n" + 
+			"		width=\"0.5\",\r\n" + 
+			"		height=\"0.5\",\r\n" + 
+			"		fontsize=20,\r\n" + 
+			"		style=\"filled\",\r\n" + 
+			"		fillcolor=\"#ffff84:#ffffbd\",\r\n" + 
+			"		gradientangle=270,\r\n" + 
+			"		color=\"#a6a855\",\r\n" + 
+			"		fontcolor=\"#708041\",\r\n" + 
+			"		fontname=\"sans-serif\"\r\n" + 
+			"	];\r\n" + 
+			"### GATEWAYS ###\r\n" + 
+			"\r\n" + 
+			"	// edges\r\n" + 
+			"	edge[\r\n" + 
+			"		color=\"#5a677b\"\r\n" + 
+			"	];\r\n" + 
+			"### EDGES ###\r\n" + 
+			"\r\n" + 
+			"	// data object connections\r\n" + 
+			"	edge[\r\n" + 
+			"		color=\"#666666\",\r\n" + 
+			"		style=\"dotted\",\r\n" + 
+			"		arrowhead=\"open\"\r\n" + 
+			"	];\r\n" + 
+			"### DATAOBJECTSCONNECTIONS ###\r\n" + 
+			"}";
 	
 	@Override
 	public void exportModel(Process model, String filename, IProgressVisualizer progress) {

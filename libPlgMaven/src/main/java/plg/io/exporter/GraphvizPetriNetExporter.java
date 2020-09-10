@@ -3,7 +3,6 @@ package plg.io.exporter;
 import java.io.File;
 import java.io.IOException;
 
-import org.adrianwalker.multilinestring.Multiline;
 import org.apache.commons.io.FileUtils;
 
 import plg.annotations.Exporter;
@@ -35,27 +34,23 @@ public class GraphvizPetriNetExporter extends FileExporter {
 	 * (https://github.com/benelog/multiline) in order to populate our variable
 	 * with a very long and multiline string.
 	 */
-	/**
-digraph G {
-	ranksep=".3";
-	fontsize="10";
-	remincross=true;
-	margin="0.0,0.0";
- 	fontname="Arial";
-	rankdir="LR";
-	
-	edge [arrowsize="0.5"];
-	node [height=".2",width=".2",fontname="Arial",fontsize="10"];
-
-	### TRANSITIONS ###
-
-	### PLACES ###
-
-	### ARCS ###
-}
-*/
-	@Multiline
-	private String basic;
+	private String basic = "digraph G {\r\n" + 
+			"	ranksep=\".3\";\r\n" + 
+			"	fontsize=\"10\";\r\n" + 
+			"	remincross=true;\r\n" + 
+			"	margin=\"0.0,0.0\";\r\n" + 
+			" 	fontname=\"Arial\";\r\n" + 
+			"	rankdir=\"LR\";\r\n" + 
+			"	\r\n" + 
+			"	edge [arrowsize=\"0.5\"];\r\n" + 
+			"	node [height=\".2\",width=\".2\",fontname=\"Arial\",fontsize=\"10\"];\r\n" + 
+			"\r\n" + 
+			"	### TRANSITIONS ###\r\n" + 
+			"\r\n" + 
+			"	### PLACES ###\r\n" + 
+			"\r\n" + 
+			"	### ARCS ###\r\n" + 
+			"}";
 	
 	@Override
 	public void exportModel(Process model, String filename, IProgressVisualizer progress) {
