@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>plg</groupId>
+	<artifactId>libPlgStream</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name></name>
+	<description></description>
+	
+	<properties>
+		<maven.compiler.source>11</maven.compiler.source>
+		<maven.compiler.target>11</maven.compiler.target>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>plg</groupId>
+			<artifactId>libPlg</artifactId>
+			<version>[0.0.3,)</version>
+		</dependency>
+		<dependency>
+			<groupId>pmcep</groupId>
+			<artifactId>mqtt-xes</artifactId>
+			<version>[0.3,)</version>
+		</dependency>
+	</dependencies>
+	
+	<distributionManagement>
+		<repository>
+			<id>github</id>
+			<name>delas</name>
+			<url>https://maven.pkg.github.com/delas/plg</url>
+		</repository>
+	</distributionManagement>
+</project>
