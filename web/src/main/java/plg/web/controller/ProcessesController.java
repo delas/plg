@@ -19,6 +19,8 @@ import plg.generator.process.ProcessGenerator;
 import plg.generator.process.RandomizationConfiguration;
 import plg.io.exporter.BPMNExporter;
 import plg.io.exporter.GraphvizBPMNExporter;
+import plg.io.exporter.PNMLExporter;
+import plg.io.exporter.TPNExporter;
 import plg.model.Process;
 import plg.stream.configuration.StreamConfiguration;
 import plg.stream.model.Streamer;
@@ -59,6 +61,40 @@ public class ProcessesController {
 		return model;
 	}
 	
+	@PostMapping(path = RestAPIConfig.API_PREFIX + "/processes/plg2tpn")
+	public String plg2tpn(@RequestParam("plg") String plgModel) {
+		String model = "";
+		
+		try {
+			File fDot = File.createTempFile("model", "tpn");
+			Process p = ProcessUtils.plg2process(plgModel);
+			TPNExporter e = new TPNExporter();
+			e.exportModel(p, fDot.getAbsolutePath());
+			model = new String(Files.readAllBytes(fDot.toPath()));
+			fDot.delete();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return model;
+	}
+	
+	@PostMapping(path = RestAPIConfig.API_PREFIX + "/processes/plg2pnml")
+	public String plg2pnml(@RequestParam("plg") String plgModel) {
+		String model = "";
+		
+		try {
+			File fDot = File.createTempFile("model", "pnml");
+			Process p = ProcessUtils.plg2process(plgModel);
+			PNMLExporter e = new PNMLExporter();
+			e.exportModel(p, fDot.getAbsolutePath());
+			model = new String(Files.readAllBytes(fDot.toPath()));
+			fDot.delete();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return model;
+	}
+	
 	@PostMapping(path = RestAPIConfig.API_PREFIX + "/processes/plg2dot")
 	public String plg2graphviz(@RequestParam("plg") String plgModel) {
 		String model = "";
@@ -74,6 +110,11 @@ public class ProcessesController {
 			e.printStackTrace();
 		}
 		return model;
+	}
+	
+	@GetMapping(path = RestAPIConfig.API_PREFIX + "/processes/streaming/{processId}")
+	public String streaming(@PathVariable String processId) {
+		return streaming.contains(processId)? "true" : "false";
 	}
 	
 	@PostMapping(path = RestAPIConfig.API_PREFIX + "/processes/stream/{processName}")

@@ -15,7 +15,11 @@ function msgError(message) {
 function refreshProcessesList() {
 	$("#list-processes").html("");
 	for(var key in processes) {
-		$("#list-processes").append('<li class="nav-item"><a class="nav-link select-process" href="#" data-process="' + key + '"><i class="fa fa-file"></i> ' + key + '</a></li>');
+		streaming = "";
+//		if (processes[key]["simulation"] == true) {
+//			streaming = "streaming";
+//		}
+		$("#list-processes").append('<li class="nav-item"><a class="nav-link select-process '+ streaming +'" href="#" data-process="' + key + '"><i class="fa fa-file"></i> ' + key + '</a></li>');
 	}
 }
 
@@ -32,6 +36,23 @@ function renderProcess(name, dot) {
 	});
 }
 
+function saveAs(filename, data, mime) {
+	var blob = new Blob([data], {
+		type : mime
+	});
+	if (window.navigator.msSaveOrOpenBlob) {
+		window.navigator.msSaveBlob(blob, filename);
+	} else {
+		var elem = window.document.createElement('a');
+		elem.href = window.URL.createObjectURL(blob);
+		elem.download = filename;
+		document.body.appendChild(elem);
+		elem.click();
+		document.body.removeChild(elem);
+	}
+}
+
+
 
 // === EVENTS ===
 
@@ -46,6 +67,7 @@ $(document).on("click", "#randomize-process", function() {
 			var newProcessName = "Process " + processGenerationCounter;
 			processes[newProcessName] = {};
 			processes[newProcessName]["plg"] = String(data);
+			processes[newProcessName]["id"] = $(data).find("id").text();
 			processes[newProcessName]["simulation"] = false;
 			processGenerationCounter += 1;
 			refreshProcessesList();
@@ -78,11 +100,18 @@ $(document).on("click", ".select-process", function() {
 		renderProcess(selectedProcess, processes[selectedProcess]["dot"]);
 	}
 	
-	if (processes[selectedProcess]["simulation"] == false) {
-		$("#simulate-menu").removeClass("disabled");
-	} else {
-		$("#simulate-menu").addClass("disabled");
-	}
+	$.ajax({
+		url: "/api/v1/processes/streaming/" + processes[selectedProcess]["id"],
+		success: function(data){
+			processes[selectedProcess]["simulation"] = (data === true);
+			
+			if (processes[selectedProcess]["simulation"] == false) {
+				$("#simulate-menu").removeClass("disabled");
+			} else {
+				$("#simulate-menu").addClass("disabled");
+			}
+		}
+	});
 });
 
 $(document).on("click", ".select-process", function() {
@@ -139,6 +168,7 @@ $(document).on("click", "#simulate", function() {
 				} else {
 					msgError("This process is already being streamed");
 				}
+				refreshProcessesList();
 			}
 		});
 	} else {
@@ -148,10 +178,35 @@ $(document).on("click", "#simulate", function() {
 });
 
 $(document).on("click", "#export-plg", function(){
-	var popup = window.open();
-	popup.onload = function() {
-		$(popup.document.body).text(processes[selectedProcess]["plg"]);
-	};
+	saveAs(selectedProcess + ".plg", processes[selectedProcess]["plg"], "text/xml");
+});
+
+$(document).on("click", "#export-tpn", function(){
+	$.ajax({
+		type: "POST",
+		url: "/api/v1/processes/plg2tpn",
+		data: {
+			'plg': process
+		},
+		success: function(data){
+			processes[selectedProcess]["tpn"] = data;
+			saveAs(selectedProcess + ".tpn", data, "text/plain");
+		}
+	});
+});
+
+$(document).on("click", "#export-pnml", function(){
+	$.ajax({
+		type: "POST",
+		url: "/api/v1/processes/plg2pnml",
+		data: {
+			'plg': process
+		},
+		success: function(data){
+			processes[selectedProcess]["pnml"] = data;
+			saveAs(selectedProcess + ".pnml", data, "text/plain");
+		}
+	});
 });
 
 $(document).on("click", "#export-svg", function(){
@@ -166,12 +221,7 @@ $(document).on("click", "#export-svg", function(){
 		source = source.replace(/^<svg/, '<svg xmlns:xlink="http://www.w3.org/1999/xlink"');
 	}
 	source = '<?xml version="1.0" standalone="no"?>\r\n' + source;
-	//set url value to a element's href attribute.
-	//window.open(url);
-	var popup = window.open();
-	popup.onload = function() {
-		$(popup.document.body).html(source);
-	};
+	saveAs(selectedProcess + ".svg", source, "image/svg+xml");
 });
 
 $('#streamConfigModal').on('show.bs.modal', function (event) {

@@ -5,3 +5,4 @@
 /processes/plg2dot - plg file in post
 /processes/plg2bpmn - plg file in post
 /processes/stream/{process-name} - plg file in post, stream for 5 minutes
+/processes/streaming/{process-id} - if the process with the given id is streaming

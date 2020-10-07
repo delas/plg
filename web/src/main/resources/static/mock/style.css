@@ -14,3 +14,10 @@
 	-webkit-box-shadow: none !important;
 	box-shadow: none !important;
 }
+
+.streaming { }
+.streaming :after {
+	content: " \f144";
+	font-family: FontAwesome;
+	color: red !important;
+}

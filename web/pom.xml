@@ -6,7 +6,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>plg</groupId>
 	<artifactId>web</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.2.0</version>
 	<name>PLG Web</name>
 	<description>Web version of PLG</description>
 	
@@ -48,4 +48,27 @@
 			<version>[0.0.1-SNAPSHOT,)</version>
 		</dependency>
 	</dependencies>
+	
+	
+	
+	<build>
+	<plugins>
+		<plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-jar-plugin</artifactId>
+			<configuration>
+				<archive>
+					<manifest>
+						<mainClass>plg.web.PLGWeb</mainClass>
+					</manifest>
+				</archive>
+			</configuration>
+		</plugin>
+			
+			<!-- <plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin> -->
+		</plugins>
+	</build>
 </project>
