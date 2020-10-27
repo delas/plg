@@ -2,12 +2,15 @@ package plg.io.exporter;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 import org.camunda.bpm.model.bpmn.Bpmn;
 import org.camunda.bpm.model.bpmn.BpmnModelInstance;
 import org.camunda.bpm.model.bpmn.instance.BaseElement;
 import org.camunda.bpm.model.bpmn.instance.BpmnModelElementInstance;
+import org.camunda.bpm.model.bpmn.instance.DataObject;
 import org.camunda.bpm.model.bpmn.instance.Definitions;
 import org.camunda.bpm.model.bpmn.instance.EndEvent;
 import org.camunda.bpm.model.bpmn.instance.ExclusiveGateway;
@@ -82,10 +85,10 @@ public class BPMNExporter extends FileExporter {
 			if (node instanceof plg.model.gateway.ExclusiveGateway) {
 				element = createElement(process, "element" + node.getId(), ExclusiveGateway.class);
 			}
-			/*if (node instanceof plg.model.data.DataObject) {
+			if (node instanceof plg.model.data.DataObject) {
 				element = createElement(process, "element" + node.getId(), DataObject.class);
 				((DataObject) element).setName(((plg.model.data.DataObject) node).getName());
-			}*/
+			}
 
 			// add DI information
 			if (node instanceof Displaceable && !(node instanceof plg.model.data.DataObject)) {
@@ -117,32 +120,35 @@ public class BPMNExporter extends FileExporter {
 				FlowNode target = modelInstance.getModelElementById("element" + edge.getSink().getId());
 				
 				SequenceFlow sequenceFlow = createSequenceFlow(process, source, target);
-				sequenceFlow.setImmediate(true);
+//				sequenceFlow.setImmediate(true);
 	
-				BpmnEdge flowEdge = modelInstance.newInstance(BpmnEdge.class);
-				flowEdge.setId("flowEdge" + source.getId() + "-" + target.getId());
-				flowEdge.setBpmnElement(sequenceFlow);
-				processPlane.getDiagramElements().add(flowEdge);
+//				BpmnEdge flowEdge = modelInstance.newInstance(BpmnEdge.class);
+//				flowEdge.setId("flowEdge" + source.getId() + "-" + target.getId());
+//				flowEdge.setBpmnElement(sequenceFlow);
+//				processPlane.getDiagramElements().add(flowEdge);
 	
 				// copy the bend points GEF computed, #584
-				for (Pair<Integer, Integer> p : edge.getPoints()) {
-					Waypoint waypoint = modelInstance.newInstance(Waypoint.class);
-					waypoint.setX(p.getFirst());
-					waypoint.setY(p.getSecond());
-	
-					flowEdge.getWaypoints().add(waypoint);
-				}
+//				for (Pair<Integer, Integer> p : edge.getPoints()) {
+//					Waypoint waypoint = modelInstance.newInstance(Waypoint.class);
+//					waypoint.setX(p.getFirst());
+//					waypoint.setY(p.getSecond());
+//	
+//					flowEdge.getWaypoints().add(waypoint);
+//				}
 				progress.inc();
 			}
 		}
 		Logger.instance().debug("Sequences exported");
 		progress.setIndeterminate(true);
 
-		try {
-			FileUtils.writeStringToFile(new File(filename), IoUtil.convertXmlDocumentToString(modelInstance.getDocument()));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		Bpmn.validateModel(modelInstance);
+		File file = new File(filename);
+		Bpmn.writeModelToFile(file, modelInstance);
+//		try {
+//			FileUtils.writeStringToFile(new File(filename), IoUtil.convertXmlDocumentToString(modelInstance.getDocument()));
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
 		Logger.instance().info("Process exportation complete");
 		
 		progress.finished();
@@ -157,7 +163,12 @@ public class BPMNExporter extends FileExporter {
 		definitions = modelInstance.newInstance(Definitions.class);
 		definitions.setTargetNamespace("http://plg.processmining.it/");
 		modelInstance.setDefinitions(definitions);
-		process = createElement(definitions, processId, org.camunda.bpm.model.bpmn.instance.Process.class);
+		
+//		process = createElement(definitions, processId, org.camunda.bpm.model.bpmn.instance.Process.class);
+		process = modelInstance.newInstance(org.camunda.bpm.model.bpmn.instance.Process.class);
+		process.setId("process");
+		definitions.addChildElement(process);
+
 
 		bpmnDiagram = modelInstance.newInstance(BpmnDiagram.class);
 		bpmnDiagram.setId("diagram");

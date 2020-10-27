@@ -230,13 +230,13 @@ public class Process {
 	 * @param component the component to remove
 	 */
 	public void removeComponent(Component component) {
-		if (component instanceof FlowObject) {
-			for(Sequence s : sequences) {
-				if(s.getSource().equals(component) || s.getSink().equals(component)) {
-					removeComponent(s);
-				}
-			}
-		}
+//		if (component instanceof FlowObject) {
+//			for(Sequence s : sequences) {
+//				if(s.getSource().equals(component) || s.getSink().equals(component)) {
+//					removeComponent(s);
+//				}
+//			}
+//		}
 		
 		if (component instanceof StartEvent) {
 			startEvents.remove((StartEvent) component);
@@ -260,6 +260,7 @@ public class Process {
 			dataObjects.remove((DataObject) component);
 			valid = false;
 		}
+		components.remove(component);
 	}
 	
 	/**
