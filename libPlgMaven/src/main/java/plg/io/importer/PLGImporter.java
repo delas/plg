@@ -42,6 +42,8 @@ import plg.utils.ZipHelper;
 )
 public class PLGImporter extends FileImporter {
 
+	protected boolean importPythonScript = true;
+	
 	@Override
 	public Process importModel(String filename, IProgressVisualizer progress) {
 		progress.setIndeterminate(true);
@@ -67,7 +69,7 @@ public class PLGImporter extends FileImporter {
 	}
 	
 	/**
-	 * This method imports a PLG v.1 file. Still uncomplete.
+	 * This method imports a PLG v.1 file. Still incomplete.
 	 * 
 	 * @param filename
 	 * @return
@@ -114,32 +116,40 @@ public class PLGImporter extends FileImporter {
 			if (type.equals("DataObject")) {
 				d = new DataObject(p);
 				d.setValue(ss.getAttributeValue("value"));
-			} else if (type.equals("StringDataObject")) {
+			} else if (importPythonScript && type.equals("StringDataObject")) {
 				String script = ss.getChildText("script").trim();
 				StringScriptExecutor executor = new StringScriptExecutor(script);
 				d = new StringDataObject(p, executor);
-			} else if (type.equals("IntegerDataObject")) {
+			} else if (importPythonScript && type.equals("IntegerDataObject")) {
 				String script = ss.getChildText("script").trim();
 				IntegerScriptExecutor executor = new IntegerScriptExecutor(script);
 				d = new IntegerDataObject(p, executor);
 			}
+			p.removeComponent(d);
 			d.setName(ss.getAttributeValue("name"));
 			d.setComponentId(ss.getAttribute("id").getIntValue());
+			p.registerComponent(d);
 		}
 		// start events
 		for (Element ss : elements.getChildren("startEvent")) {
 			StartEvent s = p.newStartEvent();
+			p.removeComponent(s);
 			s.setComponentId(ss.getAttribute("id").getIntValue());
+			p.registerComponent(s);
 		}
 		// end events
 		for (Element ss : elements.getChildren("endEvent")) {
 			EndEvent e = p.newEndEvent();
+			p.removeComponent(e);
 			e.setComponentId(ss.getAttribute("id").getIntValue());
+			p.registerComponent(e);
 		}
 		// tasks
 		for (Element ss : elements.getChildren("task")) {
 			Task t = p.newTask(ss.getAttributeValue("name"));
+			p.removeComponent(t);
 			t.setComponentId(ss.getAttribute("id").getIntValue());
+			p.registerComponent(t);
 			String script = ss.getChildText("script").trim();
 			IntegerScriptExecutor executor = new IntegerScriptExecutor(script);
 			t.setActivityScript(executor);
@@ -156,7 +166,9 @@ public class PLGImporter extends FileImporter {
 			} else if (ss.getAttributeValue("type").equals("ParallelGateway")) {
 				g = p.newParallelGateway();
 			}
+			p.removeComponent(g);
 			g.setComponentId(ss.getAttribute("id").getIntValue());
+			p.registerComponent(g);
 		}
 		// sequences
 		for (Element ss : elements.getChildren("sequenceFlow")) {
@@ -164,7 +176,9 @@ public class PLGImporter extends FileImporter {
 				Sequence s = p.newSequence(
 						(FlowObject) p.searchComponent(ss.getAttributeValue("sourceRef")),
 						(FlowObject) p.searchComponent(ss.getAttributeValue("targetRef")));
+				p.removeComponent(s);
 				s.setComponentId(ss.getAttribute("id").getIntValue());
+				p.registerComponent(s);
 			} catch (IllegalSequenceException e) {
 				e.printStackTrace();
 			}
