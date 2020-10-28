@@ -24,6 +24,11 @@
 			<name></name>
 			<url>https://repo.spring.io/libs-release/</url>
 		</repository>
+		<repository>
+			<id>PLG Libraries</id>
+			<name></name>
+			<url>https://maven.pkg.github.com/delas/plg/</url>
+		</repository>
 	</repositories>
 	
 	<dependencies>
