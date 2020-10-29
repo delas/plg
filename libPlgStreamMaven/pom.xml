@@ -6,7 +6,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>plg</groupId>
 	<artifactId>libPlgStream</artifactId>
-	<version>0.0.1</version>
+	<version>0.0.2</version>
 	<name></name>
 	<description></description>
 	
@@ -24,7 +24,7 @@
 		<dependency>
 			<groupId>pmcep</groupId>
 			<artifactId>mqtt-xes</artifactId>
-			<version>[0.3,)</version>
+			<version>0.3.2</version>
 		</dependency>
 	</dependencies>
 	
