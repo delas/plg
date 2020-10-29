@@ -151,8 +151,10 @@ public class PLGImporter extends FileImporter {
 			t.setComponentId(ss.getAttribute("id").getIntValue());
 			p.registerComponent(t);
 			String script = ss.getChildText("script").trim();
-			IntegerScriptExecutor executor = new IntegerScriptExecutor(script);
-			t.setActivityScript(executor);
+			if (importPythonScript) {
+				IntegerScriptExecutor executor = new IntegerScriptExecutor(script);
+				t.setActivityScript(executor);
+			}
 			for (Element dos : ss.getChildren("dataObject")) {
 				DATA_OBJECT_DIRECTION direction = DATA_OBJECT_DIRECTION.valueOf(dos.getAttributeValue("direction"));
 				t.addDataObject((DataObject) p.searchComponent(dos.getAttributeValue("id")), direction);
