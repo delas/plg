@@ -24,11 +24,6 @@
 			<name></name>
 			<url>https://repo.spring.io/libs-release/</url>
 		</repository>
-		<repository>
-			<id>PLG Libraries</id>
-			<name></name>
-			<url>https://maven.pkg.github.com/delas/plg/</url>
-		</repository>
 	</repositories>
 	
 	<dependencies>
@@ -91,9 +86,9 @@
 	
 	<distributionManagement>
 		<repository>
-			<id>github</id>
-			<name>delas</name>
-			<url>https://maven.pkg.github.com/delas/plg</url>
+			<id>bintray-delas-plg</id>
+			<name>delas-plg</name>
+			<url>https://api.bintray.com/maven/delas/plg/libPlg/;publish=1</url>
 		</repository>
 	</distributionManagement>
 </project>
