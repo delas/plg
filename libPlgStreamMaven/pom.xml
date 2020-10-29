@@ -6,7 +6,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>plg</groupId>
 	<artifactId>libPlgStream</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 	<name></name>
 	<description></description>
 	
@@ -19,7 +19,7 @@
 		<dependency>
 			<groupId>plg</groupId>
 			<artifactId>libPlg</artifactId>
-			<version>[0.0.3,)</version>
+			<version>0.0.6</version>
 		</dependency>
 		<dependency>
 			<groupId>pmcep</groupId>
@@ -30,9 +30,9 @@
 	
 	<distributionManagement>
 		<repository>
-			<id>github</id>
-			<name>delas</name>
-			<url>https://maven.pkg.github.com/delas/plg</url>
+			<id>bintray-delas-plg</id>
+			<name>delas-plg</name>
+			<url>https://api.bintray.com/maven/delas/plg/libPlgStream/;publish=1</url>
 		</repository>
 	</distributionManagement>
 </project>
