@@ -108,7 +108,7 @@ public class GraphvizBPMNExporter extends FileExporter {
 			"	// gateways\r\n" + 
 			"	node [\r\n" + 
 			"		shape=\"diamond\",\r\n" + 
-			"		//fixedsize=\"true\",\r\n" + 
+			"		fixedsize=\"true\",\r\n" + 
 			"		width=\"0.5\",\r\n" + 
 			"		height=\"0.5\",\r\n" + 
 			"		fontsize=20,\r\n" + 
