@@ -33,7 +33,7 @@ public class ImageUtils {
 	 */
 	public static ImageIcon loadImage(String imageFile, int width, int height) {
 		try {
-			return new ImageIcon(ImageIO.read(ClassLoader.getSystemResource(imageFile)).getScaledInstance(width, height, BufferedImage.SCALE_FAST));
+			return new ImageIcon(ImageIO.read(ImageUtils.class.getResource(imageFile)).getScaledInstance(width, height, BufferedImage.SCALE_FAST));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -50,7 +50,7 @@ public class ImageUtils {
 	 */
 	public static ImageIcon loadImage(String imageFile) {
 		try {
-			return new ImageIcon(ImageIO.read(ClassLoader.getSystemResource(imageFile)));
+			return new ImageIcon(ImageIO.read(ImageUtils.class.getResource(imageFile)));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
