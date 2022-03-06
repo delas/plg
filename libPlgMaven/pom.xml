@@ -6,7 +6,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>plg</groupId>
 	<artifactId>libPlg</artifactId>
-	<version>0.0.8</version>
+	<version>0.0.9</version>
 	
 	<properties>
 		<maven.compiler.source>11</maven.compiler.source>
@@ -18,11 +18,6 @@
 			<id>ApromoreCore_SupportLibs</id>
 			<name>Maven repository for JARs specific to the Apromore project</name>
 			<url>https://raw.github.com/apromore/ApromoreCore_SupportLibs/master/mvn-repo/</url>
-		</repository>
-		<repository>
-			<id>SpringLibraries</id>
-			<name></name>
-			<url>https://repo.spring.io/libs-release/</url>
 		</repository>
 	</repositories>
 	
@@ -83,12 +78,4 @@
 			<version>29.0-jre</version>
 		</dependency>
 	</dependencies>
-	
-	<distributionManagement>
-		<repository>
-			<id>bintray-delas-plg</id>
-			<name>delas-plg</name>
-			<url>https://api.bintray.com/maven/delas/plg/libPlg/;publish=1</url>
-		</repository>
-	</distributionManagement>
 </project>
