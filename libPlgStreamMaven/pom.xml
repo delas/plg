@@ -14,25 +14,24 @@
 		<maven.compiler.source>11</maven.compiler.source>
 		<maven.compiler.target>11</maven.compiler.target>
 	</properties>
+	
+	<repositories>
+		<repository>
+			<id>jitpack.io</id>
+			<url>https://jitpack.io</url>
+		</repository>
+	</repositories>
 
 	<dependencies>
 		<dependency>
-			<groupId>plg</groupId>
+			<groupId>com.github.plg</groupId>
 			<artifactId>libPlg</artifactId>
-			<version>0.0.6</version>
+			<version>master-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>pmcep</groupId>
+			<groupId>com.github.beamline</groupId>
 			<artifactId>mqtt-xes</artifactId>
-			<version>0.3.2</version>
+			<version>master-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
-	
-	<distributionManagement>
-		<repository>
-			<id>bintray-delas-plg</id>
-			<name>delas-plg</name>
-			<url>https://api.bintray.com/maven/delas/plg/libPlgStream/;publish=1</url>
-		</repository>
-	</distributionManagement>
 </project>
