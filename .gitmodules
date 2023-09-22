@@ -4,3 +4,6 @@
 [submodule "reflections"]
 	path = reflections
 	url = https://github.com/ronmamo/reflections
+[submodule "libPlg"]
+	path = libPlg
+	url = https://github.com/delas/libPlg.git
