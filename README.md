@@ -1,4 +1,4 @@
-# Processes and Logs Generator [![Build Status](https://travis-ci.org/delas/plg.svg?branch=master)](https://travis-ci.org/delas/plg)
+# Processes and Logs Generator
 
 [Process Log Generator](http://plg.processmining.it/) is a application capable to generate random business processes, starting from some general "complexity paramenters". PLG is also able to "execute" a given process model in order to generate a process log.
 
