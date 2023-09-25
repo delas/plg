@@ -15,6 +15,12 @@ More information at the project home page http://plg.processmining.it/.
  * How to specify [Data Objects](https://github.com/delas/plg/wiki/Data-Objects-Definition) to generate multiperspectives logs
  * How to work with [times in PLG](https://github.com/delas/plg/wiki/Managing-Timestamps)
 
+## Libraries
+PLG makes use of the following libraries:
+* libPlg [![](https://jitpack.io/v/delas/libPlg.svg)](https://jitpack.io/#delas/libPlg)
+* libPlgStream [![](https://jitpack.io/v/delas/libPlgStream.svg)](https://jitpack.io/#delas/libPlgStream)
+* libPlgVisualizer [![](https://jitpack.io/v/delas/libPlgVisualizer.svg)](https://jitpack.io/#delas/libPlgVisualizer)
+
 ## Citation
 
 Please, cite this work as:
