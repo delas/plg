@@ -1,9 +1,15 @@
 package plg.gui.widgets.list;
 
+import org.ocpsoft.prettytime.PrettyTime;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.temporal.Temporal;
+import java.util.Date;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -68,9 +74,14 @@ public class MultilineImageListEntryRenderer<E>
 			int index,
 			boolean isSelected,
 			boolean cellHasFocus) {
-		
+
 		MultilineImageListEntry entry = (MultilineImageListEntry) value;
-		text.setText("<html><b>" + entry.getFirstLine() + "&nbsp;</b><br>" + entry.getSecondLine() + "&nbsp;</html>");
+
+		PrettyTime p = new PrettyTime();
+		String dateDifference = p.format(entry.getCreationDate());
+		String difference = String.valueOf(Duration.between(entry.getCreationDate(), Instant.now()));
+
+		text.setText("<html><b>" + entry.getFirstLine() + "&nbsp;</b><br>" + entry.getSecondLine() + "<br><small>Created " + dateDifference + "</small>&nbsp;</html>");
 		text.setIcon(entry.getIcon());
 		
 		if (isSelected) {

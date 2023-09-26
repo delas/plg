@@ -11,6 +11,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
@@ -112,6 +114,13 @@ public class ProcessesList extends MainWindowPanel {
 				}
 			}
 		});
+
+		new Timer().schedule(new TimerTask() {
+			@Override
+			public void run() {
+				list.updateUI();
+			}
+		}, 0, 10*1000);
 		
 		setPreferredSize(new Dimension(WIDTH, 0));
 		setMinimumSize(new Dimension(WIDTH, 0));

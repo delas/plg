@@ -1,6 +1,17 @@
 package plg.gui.widgets.list;
 
-import javax.swing.Icon;
+import plg.gui.util.ImageUtils;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.time.Instant;
+import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * This class describes an entry of a multiline list with an image
@@ -14,6 +25,7 @@ public class MultilineImageListEntry {
 	private String firstLine;
 	private String secondLine;
 	private Object item;
+	private Instant creationDate;
 	
 	/**
 	 * Basic constructor
@@ -53,6 +65,7 @@ public class MultilineImageListEntry {
 		this.firstLine = firstLine;
 		this.secondLine = secondLine;
 		this.item = item;
+		this.creationDate = Instant.now();
 	}
 
 	/**
@@ -108,38 +121,58 @@ public class MultilineImageListEntry {
 	public String getSecondLine() {
 		return secondLine;
 	}
+
+	/**
+	 * This method returns the creation date of the entry
+	 *
+	 * @return the creation date
+	 */
+	public Instant getCreationDate() {
+		return creationDate;
+	}
 	
 	@Override
 	public String toString() {
 		return this.firstLine + "\n" + this.secondLine;
 	}
 	
-	/*@SuppressWarnings("unchecked")
-	public static void main(String[] args) throws IOException {
-		
-		JFrame jf = new JFrame("Multiline Image List Entry");
-		jf.setLayout(new BorderLayout());
-		
-		//Icon icon = new ImageIcon(ImageUtils.makeRoundedCorner(ImageIO.read(new File("resources/icons/plg.png")).getScaledInstance(48, 48, BufferedImage.SCALE_FAST), 10));
-		Icon icon = new ImageIcon(ImageIO.read(new File("resources/icons/plg.png")).getScaledInstance(48, 48, BufferedImage.SCALE_FAST));
-		
-		DefaultListModel<MultilineImageListEntry> dlm = new DefaultListModel<MultilineImageListEntry>();
-		dlm.addElement(new MultilineImageListEntry(1, icon, "prova", "altra prova"));
-		dlm.addElement(new MultilineImageListEntry(2, icon, "prova", "altra prova"));
-		dlm.addElement(new MultilineImageListEntry(3, icon, "prova", "altra prova"));
-		dlm.addElement(new MultilineImageListEntry(4, icon, "prova", "altra prova"));
-		
-		JList<MultilineImageListEntry> list = new JList<MultilineImageListEntry>(dlm);
-		list.setCellRenderer(new MultilineImageListEntryRenderer());
-		
-		JPanel p = new JPanel();
-		p.setLayout(new BorderLayout());
-		p.setBackground(Color.BLACK);
-		p.add(list, BorderLayout.CENTER);
-		
-		jf.add(p, BorderLayout.CENTER);
-		jf.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		jf.setMinimumSize(new Dimension(500, 500));
-		jf.setVisible(true);
-	}*/
+//	@SuppressWarnings("unchecked")
+//	public static void main(String[] args) throws IOException {
+//
+//		JFrame jf = new JFrame("Multiline Image List Entry");
+//		jf.setLayout(new BorderLayout());
+//
+//		//Icon icon = new ImageIcon(ImageUtils.makeRoundedCorner(ImageIO.read(new File("resources/icons/plg.png")).getScaledInstance(48, 48, BufferedImage.SCALE_FAST), 10));
+//		Icon icon = new ImageIcon(ImageUtils.class.getClassLoader().getResource("icons/plg.png"));//.getScaledInstance(48, 48, BufferedImage.SCALE_FAST));
+//
+//		DefaultListModel<MultilineImageListEntry> dlm = new DefaultListModel<MultilineImageListEntry>();
+//		dlm.addElement(new MultilineImageListEntry(1, icon, "prova", "altra prova"));
+//		dlm.addElement(new MultilineImageListEntry(2, icon, "prova", "altra prova"));
+//		dlm.addElement(new MultilineImageListEntry(3, icon, "prova", "altra prova"));
+//		dlm.addElement(new MultilineImageListEntry(4, icon, "prova", "altra prova"));
+//
+//
+//
+//
+//		JList<MultilineImageListEntry> list = new JList<MultilineImageListEntry>(dlm);
+//		list.setCellRenderer(new MultilineImageListEntryRenderer());
+//
+//		new Timer().schedule(new TimerTask() {
+//			@Override
+//			public void run() {
+//				System.out.println("update");
+//				list.updateUI();
+//			}
+//		}, 0, 10*1000);
+//
+//		JPanel p = new JPanel();
+//		p.setLayout(new BorderLayout());
+//		p.setBackground(Color.BLACK);
+//		p.add(list, BorderLayout.CENTER);
+//
+//		jf.add(p, BorderLayout.CENTER);
+//		jf.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+//		jf.setMinimumSize(new Dimension(500, 500));
+//		jf.setVisible(true);
+//	}
 }
