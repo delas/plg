@@ -10,6 +10,33 @@ More information at the project home page http://plg.processmining.it/.
 
 ![Untitled](https://github.com/delas/plg/assets/867237/5d5dd159-826c-4b09-9de5-0b7176a3c5a6)
 
+## Main features
+
+* Random process generation, with different complexity parameters
+* Random process evolution (to generate slight variations of existing processes)
+* Configuration of time for activities duration and time between activities (via Python scripts)
+* Generation of static/dynamic data objects for multi-perspective event log generation (via Python scripts)
+* Import of process from
+  * PLG file format
+  * BPMN files (generated from SAP Signavio)
+* Export of generated processes as
+  * PLG file format
+  * BPMN 2.0 XML file
+  * BPMN as Graphviz Dot file
+  * Petri net as Graphviz Dot file
+  * Petri net as LoLA file
+  * Petri net as PNML file
+  * Petri net as TPN file
+* Generation of an event log with any number of traces
+* Fine-tuned configuration of noise parameters for event log generation
+* Export of the generated event log as
+  * XES file (both compressed as `.xes.gz` and not compressed as `.xes`)
+  * MXML file (both compressed as `.mxml.gz` and not compressed as `.mxml`)
+* Generation of an infinite stream of events
+* Event streams generated as MQTT-XES format (cf. https://www.beamline.cloud/mqtt-xes/)
+* Ability to dynamically switch the process generting the events (to simulate concept drift in streams)
+* Generation of noise into the stream
+
 ## Help
 * Visit the [Wiki](https://github.com/delas/plg/wiki) for all information. Useful quick documentation:
  * How to specify [Data Objects](https://github.com/delas/plg/wiki/Data-Objects-Definition) to generate multiperspectives logs
@@ -17,9 +44,9 @@ More information at the project home page http://plg.processmining.it/.
 
 ## Libraries
 PLG makes use of the following libraries:
-* libPlg [![](https://jitpack.io/v/delas/libPlg.svg)](https://jitpack.io/#delas/libPlg)
-* libPlgStream [![](https://jitpack.io/v/delas/libPlgStream.svg)](https://jitpack.io/#delas/libPlgStream)
-* libPlgVisualizer [![](https://jitpack.io/v/delas/libPlgVisualizer.svg)](https://jitpack.io/#delas/libPlgVisualizer)
+* [`libPlg`](https://github.com/delas/libPlg): library for processes and event generation
+* [`libPlgStream`](https://github.com/delas/libPlgStream): library for stream generation
+* [`libPlgVisualizer`](https://github.com/delas/libPlgVisualizer): library for process visualization
 
 ## Citation
 
