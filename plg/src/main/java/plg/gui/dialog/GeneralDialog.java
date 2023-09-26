@@ -160,7 +160,7 @@ public abstract class GeneralDialog extends JDialog {
 			public void mouseReleased(MouseEvent e) {
 				if (Desktop.isDesktopSupported()) {
 					try {
-						Desktop.getDesktop().browse(new URI("http://plg.processmining.it/help/Dialog" + title.replace(" ", "")));
+						Desktop.getDesktop().browse(new URI("https://github.com/delas/plg/wiki/Dialog" + title.replace(" ", "")));
 					} catch (IOException | URISyntaxException ex) { }
 				}
 			}
