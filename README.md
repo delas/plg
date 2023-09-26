@@ -8,8 +8,7 @@ More information at the project home page http://plg.processmining.it/.
 
 **Attention:** this repository is a complete rewriting of the project already available at: https://github.com/delas/plg-old.
 
-![Untitled](https://github.com/delas/plg/assets/867237/d5d9962e-eaa5-4540-9663-c78e67eeb304)
-
+![Untitled](https://github.com/delas/plg/assets/867237/5d5dd159-826c-4b09-9de5-0b7176a3c5a6)
 
 ## Help
 * Visit the [Wiki](https://github.com/delas/plg/wiki) for all information. Useful quick documentation:
