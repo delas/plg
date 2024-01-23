@@ -143,7 +143,7 @@ public class MultilineImageListEntry {
 //		jf.setLayout(new BorderLayout());
 //
 //		//Icon icon = new ImageIcon(ImageUtils.makeRoundedCorner(ImageIO.read(new File("resources/icons/plg.png")).getScaledInstance(48, 48, BufferedImage.SCALE_FAST), 10));
-//		Icon icon = new ImageIcon(ImageUtils.class.getClassLoader().getResource("icons/plg.png"));//.getScaledInstance(48, 48, BufferedImage.SCALE_FAST));
+//		Icon icon = plg.gui.util.collections.ImagesCollection.PLG_ICON_SCALED; // new ImageIcon(ImageUtils.class.getClassLoader().getResource("icons/plg.png"));//.getScaledInstance(48, 48, BufferedImage.SCALE_FAST));
 //
 //		DefaultListModel<MultilineImageListEntry> dlm = new DefaultListModel<MultilineImageListEntry>();
 //		dlm.addElement(new MultilineImageListEntry(1, icon, "prova", "altra prova"));
@@ -163,7 +163,7 @@ public class MultilineImageListEntry {
 //				System.out.println("update");
 //				list.updateUI();
 //			}
-//		}, 0, 10*1000);
+//		}, 0, 5*1000);
 //
 //		JPanel p = new JPanel();
 //		p.setLayout(new BorderLayout());
